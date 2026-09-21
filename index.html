@@ -3,2224 +3,1526 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jamia Qamrul Islam | Online Result</title>
 
-<title>Jamia Qamrul Islam | Student Portal</title>
+<!-- PDF Library -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
 <style>
-
-*{
-    box-sizing:border-box;
-    margin:0;
-    padding:0;
-}
-
-:root{
-    --green:#075e54;
-    --dark:#043c36;
-    --gold:#d4af37;
-    --light:#f4f7f5;
-    --white:#ffffff;
-    --text:#222;
-    --red:#c62828;
-    --shadow:0 8px 25px rgba(0,0,0,.12);
-}
-
-html{
-    scroll-behavior:smooth;
-}
+*{box-sizing:border-box;margin:0;padding:0}
 
 body{
-    font-family:Arial,sans-serif;
-    background:var(--light);
-    color:var(--text);
-    line-height:1.6;
+    font-family:Arial,Helvetica,sans-serif;
+    background:#eef3f1;
+    color:#17201d;
 }
 
 .topbar{
-    background:#032d29;
-    color:white;
+    background:#071f18;
+    color:#fff;
     text-align:center;
-    padding:7px;
+    padding:8px;
     font-size:13px;
+    letter-spacing:.5px;
 }
 
 header{
-    background:linear-gradient(135deg,#064f47,#087a6d,#043c36);
+    background:linear-gradient(135deg,#073b2d,#0b6048,#073b2d);
     color:white;
+    padding:25px 15px;
     text-align:center;
-    padding:30px 15px 45px;
+    position:relative;
+    overflow:hidden;
+}
+
+header:before{
+    content:"";
+    position:absolute;
+    width:350px;
+    height:350px;
+    border:1px solid rgba(255,255,255,.15);
+    border-radius:50%;
+    left:-150px;
+    top:-180px;
 }
 
 .logo{
-    width:95px;
-    height:95px;
-    margin:auto;
-    border:4px solid var(--gold);
+    width:82px;
+    height:82px;
     border-radius:50%;
-    background:white;
+    margin:auto;
+    background:linear-gradient(145deg,#f7d77b,#b88624);
     display:flex;
-    align-items:center;
     justify-content:center;
-    font-size:43px;
+    align-items:center;
+    color:#06392b;
+    font-size:39px;
+    border:5px solid rgba(255,255,255,.8);
+    box-shadow:0 5px 25px rgba(0,0,0,.35);
 }
 
 header h1{
-    margin-top:15px;
-    font-size:29px;
+    margin-top:12px;
+    font-size:30px;
 }
 
-header h2{
-    color:#f5d875;
-    font-size:20px;
+header p{
+    margin-top:5px;
+    color:#e8d18b;
+    font-size:15px;
 }
 
 nav{
+    background:#fff;
+    padding:10px;
+    display:flex;
+    justify-content:center;
+    gap:7px;
+    flex-wrap:wrap;
+    box-shadow:0 3px 12px rgba(0,0,0,.12);
     position:sticky;
     top:0;
-    z-index:100;
-    background:white;
-    box-shadow:0 3px 15px rgba(0,0,0,.12);
-    padding:10px;
-    text-align:center;
+    z-index:20;
 }
 
-nav a{
-    display:inline-block;
-    text-decoration:none;
-    color:var(--green);
+nav button{
+    border:0;
+    background:#073b2d;
+    color:#fff;
+    padding:9px 14px;
+    border-radius:20px;
+    cursor:pointer;
     font-weight:bold;
-    padding:7px;
-    font-size:14px;
 }
 
 .container{
-    width:94%;
     max-width:1100px;
-    margin:25px auto;
+    margin:auto;
+    padding:25px 15px 60px;
 }
 
 .hero{
-    background:linear-gradient(135deg,#043c36,#087a6d);
-    color:white;
-    border-radius:20px;
-    padding:55px 20px;
+    background:linear-gradient(135deg,#fff,#e5f1ed);
+    border-radius:22px;
+    padding:40px 20px;
     text-align:center;
-    box-shadow:var(--shadow);
+    box-shadow:0 7px 25px rgba(0,0,0,.08);
+    margin-bottom:22px;
 }
 
 .hero h2{
-    font-size:34px;
+    color:#073b2d;
+    font-size:30px;
 }
 
-.gold{
-    color:#f2d36d;
-}
-
-.btn{
-    border:0;
-    border-radius:8px;
-    padding:11px 18px;
-    background:var(--green);
-    color:white;
-    cursor:pointer;
-    margin:4px;
-    font-size:14px;
-}
-
-.btn-gold{
-    background:var(--gold);
-    color:#17352f;
-}
-
-.btn-danger{
-    background:var(--red);
+.hero p{
+    margin:10px auto 20px;
+    max-width:700px;
+    color:#555;
 }
 
 .card{
-    background:white;
-    border-radius:17px;
-    padding:23px;
-    margin-bottom:22px;
-    box-shadow:var(--shadow);
+    background:#fff;
+    border-radius:20px;
+    padding:25px;
+    margin:20px 0;
+    box-shadow:0 6px 22px rgba(0,0,0,.09);
 }
 
 .card h2{
-    color:var(--green);
-    margin-bottom:15px;
+    color:#073b2d;
+    margin-bottom:18px;
 }
 
-input,
-select,
-textarea{
+.grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+    gap:15px;
+}
+
+input,select{
     width:100%;
-    padding:12px;
-    border:1px solid #ccc;
-    border-radius:8px;
+    padding:13px;
+    border:1px solid #ccd8d3;
+    border-radius:10px;
     margin:6px 0 12px;
     font-size:15px;
 }
 
 label{
     font-weight:bold;
+    color:#28443a;
 }
 
-textarea{
-    min-height:100px;
+.btn{
+    background:linear-gradient(135deg,#087653,#064b38);
+    color:white;
+    border:0;
+    padding:12px 20px;
+    border-radius:10px;
+    cursor:pointer;
+    font-weight:bold;
+    margin:4px;
 }
 
-.hidden{
-    display:none!important;
+.btn.gold{
+    background:linear-gradient(135deg,#d7aa45,#9b701d);
 }
 
-.status{
-    padding:10px;
-    border-radius:7px;
-    margin-top:10px;
-    text-align:center;
+.btn.red{
+    background:#a93232;
+}
+
+.btn.gray{
+    background:#555;
+}
+
+.message{
+    margin-top:12px;
+    padding:12px;
+    border-radius:10px;
     font-weight:bold;
 }
 
-.success{
-    background:#e8f5e9;
-    color:#20752a;
-}
+.success{background:#dff4e8;color:#146238}
+.error{background:#ffe0e0;color:#9a2020}
 
-.error{
-    background:#ffebee;
-    color:#b71c1c;
-}
-
-.info-grid{
-    display:grid;
-    grid-template-columns:repeat(2,1fr);
-    gap:12px;
-    margin-top:18px;
-}
-
-.info-item{
-    background:#f3f7f5;
-    padding:12px;
-    border-radius:8px;
-}
-
-.info-item b{
-    color:var(--green);
-}
-
-.student-profile{
-    text-align:center;
-}
-
-.student-photo{
-    width:125px;
-    height:125px;
-    border-radius:50%;
-    object-fit:cover;
-    border:4px solid var(--gold);
-    display:block;
-    margin:10px auto 15px;
-}
+.hidden{display:none!important}
 
 /* RESULT CARD */
 
+.result-wrapper{
+    max-width:850px;
+    margin:20px auto;
+}
+
 .result-card{
-    border:3px solid var(--green);
-    border-radius:15px;
+    position:relative;
     overflow:hidden;
-    background:white;
+    background:#fff;
+    border:5px solid #0a513d;
+    border-radius:12px;
+    padding:12px;
+    box-shadow:0 10px 35px rgba(0,0,0,.16);
 }
 
-.result-header{
-    background:linear-gradient(135deg,#075e54,#043c36);
-    color:white;
+.result-inner{
+    position:relative;
+    border:2px solid #c59b3c;
+    padding:25px;
+    min-height:700px;
+}
+
+.watermark{
+    position:absolute;
+    inset:0;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    pointer-events:none;
+    opacity:.055;
+    transform:rotate(-25deg);
+    font-size:55px;
+    font-weight:bold;
+    color:#0a513d;
+    white-space:nowrap;
+}
+
+.result-head{
     text-align:center;
-    padding:20px;
+    border-bottom:2px solid #c59b3c;
+    padding-bottom:15px;
 }
 
-.result-header h2{
-    color:white;
-    margin:0;
-}
-
-.result-header h3{
-    color:#f5d875;
-    margin-top:5px;
-}
-
-.result-student{
+.result-logo{
+    width:70px;
+    height:70px;
+    margin:auto;
+    border-radius:50%;
+    background:#0a513d;
+    color:#e7c45e;
     display:flex;
     align-items:center;
+    justify-content:center;
+    font-size:32px;
+    border:3px solid #c59b3c;
+}
+
+.result-head h1{
+    color:#073b2d;
+    margin-top:8px;
+    font-size:28px;
+}
+
+.result-head h3{
+    color:#a47721;
+    margin-top:4px;
+}
+
+.result-title{
+    display:inline-block;
+    margin-top:14px;
+    padding:8px 25px;
+    border-radius:30px;
+    background:#073b2d;
+    color:#fff;
+    font-weight:bold;
+    letter-spacing:1px;
+}
+
+.student-info{
+    display:grid;
+    grid-template-columns:1fr 120px;
     gap:20px;
-    padding:20px;
-    border-bottom:1px solid #ddd;
+    margin:20px 0;
+    align-items:center;
 }
 
-.result-student img{
-    width:100px;
-    height:100px;
-    border-radius:50%;
-    object-fit:cover;
-    border:3px solid var(--gold);
-}
-
-.result-info{
-    flex:1;
-}
-
-.result-info p{
-    margin:3px 0;
-}
-
-.result-table{
+.info-table{
     width:100%;
     border-collapse:collapse;
 }
 
-.result-table th,
-.result-table td{
-    border:1px solid #ccc;
-    padding:11px;
-    text-align:center;
+.info-table td{
+    border:1px solid #d7c692;
+    padding:9px;
 }
 
-.result-table th{
-    background:var(--green);
-    color:white;
+.info-table td:first-child{
+    background:#f4f0df;
+    font-weight:bold;
+    width:35%;
 }
 
-.result-summary{
-    display:grid;
-    grid-template-columns:repeat(4,1fr);
-    gap:10px;
-    padding:15px;
-}
-
-.summary-box{
-    background:#f3f7f5;
-    padding:13px;
-    text-align:center;
+.student-photo{
+    width:110px;
+    height:125px;
+    object-fit:cover;
+    border:3px solid #c59b3c;
     border-radius:8px;
-}
-
-.summary-box b{
     display:block;
-    color:var(--green);
-    margin-bottom:5px;
+    margin:auto;
+    background:#e9eeec;
 }
 
-.grade{
-    font-weight:bold;
-    color:var(--green);
-}
-
-.pass{
-    color:#16852a;
-    font-weight:bold;
-}
-
-.fail{
-    color:#c62828;
-    font-weight:bold;
-}
-
-.admin-box{
-    border:2px solid #e3eee9;
-    border-radius:12px;
-    padding:18px;
+.marks-table{
+    width:100%;
+    border-collapse:collapse;
     margin-top:15px;
 }
 
-.admin-student{
+.marks-table th{
+    background:#073b2d;
+    color:white;
+    padding:11px 7px;
+}
+
+.marks-table td{
+    border:1px solid #cfd8d4;
+    padding:10px;
+    text-align:center;
+}
+
+.marks-table tr:nth-child(even){
+    background:#f4f7f5;
+}
+
+.summary{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:8px;
+    margin-top:18px;
+}
+
+.summary-box{
+    border:1px solid #c59b3c;
+    border-radius:8px;
+    text-align:center;
+    padding:10px;
+    background:#faf8ef;
+}
+
+.summary-box small{
+    display:block;
+    color:#666;
+}
+
+.summary-box strong{
+    display:block;
+    color:#073b2d;
+    font-size:18px;
+    margin-top:5px;
+}
+
+.signature{
     display:flex;
-    align-items:center;
-    gap:12px;
-    padding:12px;
-    border-bottom:1px solid #ddd;
+    justify-content:space-between;
+    margin-top:60px;
+    text-align:center;
 }
 
-.admin-student img{
-    width:55px;
-    height:55px;
-    border-radius:50%;
-    object-fit:cover;
+.signature div{
+    width:30%;
+    border-top:1px solid #555;
+    padding-top:7px;
 }
 
-.admin-actions{
-    margin-left:auto;
+.result-footer{
+    text-align:center;
+    margin-top:25px;
+    color:#777;
+    font-size:12px;
 }
 
-.notice{
-    border-left:5px solid var(--gold);
-    background:#fffbea;
+/* ADMIN */
+
+.admin-student{
+    border:1px solid #d5dedb;
     padding:15px;
+    border-radius:12px;
     margin:10px 0;
-    border-radius:7px;
+    background:#fafcfb;
 }
 
-.notice h3{
-    color:var(--green);
+.admin-student strong{
+    color:#073b2d;
 }
 
-.table-wrap{
-    overflow-x:auto;
+.subject-box{
+    border:1px solid #d7dedb;
+    border-radius:12px;
+    padding:14px;
+    margin-bottom:12px;
+    background:#f8faf9;
+}
+
+.subject-box h4{
+    margin-bottom:8px;
+    color:#073b2d;
 }
 
 footer{
-    background:#032d29;
-    color:white;
+    background:#071f18;
+    color:#fff;
     text-align:center;
-    padding:30px;
-    margin-top:40px;
+    padding:25px 10px;
+    margin-top:30px;
 }
 
-@media(max-width:700px){
-
-    header h1{
-        font-size:24px;
-    }
-
-    .hero h2{
-        font-size:27px;
-    }
-
-    .info-grid{
-        grid-template-columns:1fr;
-    }
-
-    .result-student{
-        flex-direction:column;
-        text-align:center;
-    }
-
-    .result-summary{
-        grid-template-columns:repeat(2,1fr);
-    }
-
-    nav a{
-        font-size:12px;
-        padding:5px;
-    }
-
-    .admin-student{
-        flex-wrap:wrap;
-    }
-
-    .admin-actions{
-        margin-left:0;
-        width:100%;
-    }
-
+footer span{
+    color:#e5c45c;
 }
 
+@media(max-width:650px){
+    header h1{font-size:24px}
+    .hero h2{font-size:24px}
+    .card{padding:18px}
+    .result-inner{padding:12px}
+    .student-info{grid-template-columns:1fr}
+    .summary{grid-template-columns:repeat(2,1fr)}
+    .marks-table{font-size:13px}
+    .marks-table th,.marks-table td{padding:7px 3px}
+    .signature{margin-top:35px}
+}
+
+/* PRINT */
+@media print{
+    body{background:white}
+    nav,.topbar,header,.hero,.card,footer,.pdf-buttons{
+        display:none!important;
+    }
+    .result-wrapper{
+        display:block!important;
+        max-width:none;
+        margin:0;
+    }
+    .result-card{
+        box-shadow:none;
+        border:4px solid #0a513d;
+    }
+}
 </style>
 </head>
 
 <body>
 
 <div class="topbar">
-    Jamia Qamrul Islam • Student Online Portal
+    JAMIA QAMRUL ISLAM • ONLINE STUDENT PORTAL
 </div>
 
 <header>
-
-    <div class="logo">
-        🕌
-    </div>
-
+    <div class="logo">🕌</div>
     <h1>جامعہ قمر الاسلام</h1>
-
-    <h2>Jamia Qamrul Islam</h2>
-
-    <p>Islamic Education • Character Building • Knowledge</p>
-
+    <p>Jamia Qamrul Islam</p>
+    <p>Education • Knowledge • Character</p>
 </header>
 
 <nav>
-
-    <a href="#home">Home</a>
-    <a href="#login">Student Login</a>
-    <a href="#profile">Profile</a>
-    <a href="#result">Results</a>
-    <a href="#notice">Notice</a>
-    <a href="#admin">Admin</a>
-
+    <button onclick="go('home')">Home</button>
+    <button onclick="go('student')">Student Result</button>
+    <button onclick="go('admin')">Admin</button>
+    <button onclick="go('notice')">Notice</button>
 </nav>
 
 <div class="container">
 
-<!-- HOME -->
+<section id="home">
+    <div class="hero">
+        <h2>Online Student Result Portal</h2>
+        <p>
+            Welcome to Jamia Qamrul Islam Online Result System.
+            Students and parents can check academic results online.
+        </p>
+        <button class="btn gold" onclick="go('student')">
+            Check Student Result
+        </button>
+    </div>
 
-<section id="home" class="hero">
+    <div class="grid">
+        <div class="card">
+            <h2>📊 Online Result</h2>
+            <p>Check student result using Roll Number and Password.</p>
+        </div>
 
-    <h2>
-        Welcome to
-        <span class="gold">Jamia Qamrul Islam</span>
-    </h2>
+        <div class="card">
+            <h2>📄 PDF Result</h2>
+            <p>Download a beautiful result card as PDF.</p>
+        </div>
 
-    <p>
-        Modern online portal for students, parents and administration.
-    </p>
-
-    <br>
-
-    <a href="#login" class="btn btn-gold">
-        Student Login
-    </a>
-
-</section>
-
-
-<!-- ABOUT -->
-
-<section class="card" style="margin-top:25px">
-
-    <h2>About Jamia Qamrul Islam</h2>
-
-    <p>
-        Jamia Qamrul Islam provides Islamic and academic education
-        and an organized online student information system.
-    </p>
-
+        <div class="card">
+            <h2>🔐 Secure Login</h2>
+            <p>Student results are displayed after login.</p>
+        </div>
+    </div>
 </section>
 
 
 <!-- STUDENT LOGIN -->
 
-<section id="login" class="card">
-
-    <h2>🎓 Student Login</h2>
+<section id="student" class="card hidden">
+    <h2>🎓 Student Result Login</h2>
 
     <label>Roll Number</label>
-
-    <input
-        id="studentRoll"
-        type="text"
-        placeholder="Enter Roll Number"
-    >
+    <input id="studentRoll" placeholder="Enter Roll Number">
 
     <label>Password</label>
+    <input id="studentPassword" type="password" placeholder="Enter Password">
 
-    <input
-        id="studentPassword"
-        type="password"
-        placeholder="Enter Password"
-    >
+    <button class="btn" onclick="studentLogin()">View Result</button>
 
-    <button
-        class="btn"
-        onclick="studentLogin()"
-    >
-        Login
-    </button>
-
-    <div id="studentLoginMessage"></div>
-
-</section>
-
-
-<!-- PROFILE -->
-
-<section id="profile" class="card">
-
-    <h2>👤 Student Profile</h2>
-
-    <div id="profileBox">
-
-        <p>
-            Please login to view student profile.
-        </p>
-
-    </div>
-
+    <div id="studentMessage"></div>
 </section>
 
 
 <!-- RESULT -->
 
-<section id="result" class="card">
+<section id="resultSection" class="hidden">
 
-    <h2>📊 Student Result</h2>
-
-    <div id="resultBox">
-
-        <p>
-            Please login to view student result.
-        </p>
-
+    <div class="pdf-buttons" style="text-align:center;margin:20px 0">
+        <button class="btn gold" onclick="downloadPDF()">
+            📄 Download Result PDF
+        </button>
+        <button class="btn gray" onclick="window.print()">
+            🖨 Print Result
+        </button>
     </div>
+
+    <div id="resultArea" class="result-wrapper"></div>
 
 </section>
 
 
-<!-- SEARCH STUDENT -->
+<!-- ADMIN LOGIN -->
 
-<section class="card">
+<section id="admin" class="card hidden">
+    <h2>🔐 Administrator Login</h2>
 
-    <h2>🔎 Search Student</h2>
+    <label>Username</label>
+    <input id="adminUsername" placeholder="Admin Username">
 
-    <input
-        id="searchRoll"
-        type="text"
-        placeholder="Enter Roll Number"
-    >
+    <label>Password</label>
+    <input id="adminPassword" type="password" placeholder="Admin Password">
 
-    <button
-        class="btn"
-        onclick="searchStudent()"
-    >
-        Search Student
-    </button>
+    <button class="btn" onclick="adminLogin()">Login</button>
 
-    <div id="searchResult"></div>
+    <div id="adminMessage"></div>
+</section>
+
+
+<!-- ADMIN PANEL -->
+
+<section id="adminPanel" class="hidden">
+
+    <div class="card">
+        <h2>⚙️ Admin Dashboard</h2>
+        <p>Add and manage student results.</p>
+        <button class="btn red" onclick="adminLogout()">Logout</button>
+    </div>
+
+    <div class="card">
+        <h2>➕ Add New Student Result</h2>
+
+        <div class="grid">
+
+            <div>
+                <label>Student Name</label>
+                <input id="newName" placeholder="Student Name">
+            </div>
+
+            <div>
+                <label>Father Name</label>
+                <input id="newFather" placeholder="Father Name">
+            </div>
+
+            <div>
+                <label>Roll Number</label>
+                <input id="newRoll" placeholder="Roll Number">
+            </div>
+
+            <div>
+                <label>Class</label>
+                <select id="newClass">
+                    <option>Primary</option>
+                    <option>Middle</option>
+                    <option>Secondary</option>
+                    <option>FA</option>
+                </select>
+            </div>
+
+            <div>
+                <label>Password</label>
+                <input id="newPassword" placeholder="Student Password">
+            </div>
+
+            <div>
+                <label>Student Photo</label>
+                <input id="newPhoto" type="file" accept="image/*">
+            </div>
+
+        </div>
+
+        <h3 style="margin:15px 0;color:#073b2d">
+            📚 Subject Marks
+        </h3>
+
+        <div class="subject-box">
+            <h4>English</h4>
+            <div class="grid">
+                <div>
+                    <label>Total Marks</label>
+                    <input id="engMax" type="number" value="100">
+                </div>
+                <div>
+                    <label>Obtained Marks</label>
+                    <input id="engObt" type="number" value="0">
+                </div>
+            </div>
+        </div>
+
+        <div class="subject-box">
+            <h4>Urdu</h4>
+            <div class="grid">
+                <div>
+                    <label>Total Marks</label>
+                    <input id="urduMax" type="number" value="100">
+                </div>
+                <div>
+                    <label>Obtained Marks</label>
+                    <input id="urduObt" type="number" value="0">
+                </div>
+            </div>
+        </div>
+
+        <div class="subject-box">
+            <h4>Mathematics</h4>
+            <div class="grid">
+                <div>
+                    <label>Total Marks</label>
+                    <input id="mathMax" type="number" value="100">
+                </div>
+                <div>
+                    <label>Obtained Marks</label>
+                    <input id="mathObt" type="number" value="0">
+                </div>
+            </div>
+        </div>
+
+        <button class="btn gold" onclick="addStudent()">
+            💾 Save Student Result
+        </button>
+
+        <div id="addMessage"></div>
+    </div>
+
+
+    <div class="card">
+        <h2>👨‍🎓 Student Records</h2>
+        <div id="studentList"></div>
+    </div>
 
 </section>
 
 
 <!-- NOTICE -->
 
-<section id="notice" class="card">
-
+<section id="notice" class="card hidden">
     <h2>📢 Notice Board</h2>
-
     <div id="noticeList"></div>
-
-</section>
-
-
-<!-- ADMIN -->
-
-<section id="admin" class="card">
-
-    <h2>🔐 Administration</h2>
-
-    <div id="adminLoginBox">
-
-        <label>Admin User Name</label>
-
-        <input
-            id="adminUsername"
-            type="text"
-            placeholder="Enter Admin User Name"
-        >
-
-        <label>Admin Password</label>
-
-        <input
-            id="adminPassword"
-            type="password"
-            placeholder="Enter Admin Password"
-        >
-
-        <button
-            class="btn"
-            onclick="adminLogin()"
-        >
-            Admin Login
-        </button>
-
-        <div id="adminMessage"></div>
-
-    </div>
-
-
-    <!-- ADMIN PANEL -->
-
-    <div id="adminPanel" class="hidden">
-
-        <div class="admin-box">
-
-            <h2>⚙️ Admin Dashboard</h2>
-
-            <button
-                class="btn btn-danger"
-                onclick="adminLogout()"
-            >
-                Logout Admin
-            </button>
-
-        </div>
-
-
-        <!-- ADD STUDENT -->
-
-        <div class="admin-box">
-
-            <h3>➕ Add New Student</h3>
-
-            <label>Student Name</label>
-
-            <input
-                id="newName"
-                placeholder="Student Name"
-            >
-
-            <label>Father Name</label>
-
-            <input
-                id="newFather"
-                placeholder="Father Name"
-            >
-
-            <label>Roll Number</label>
-
-            <input
-                id="newRoll"
-                placeholder="Roll Number"
-            >
-
-            <label>Class</label>
-
-            <input
-                id="newClass"
-                placeholder="Class"
-            >
-
-            <label>Student Password</label>
-
-            <input
-                id="newPassword"
-                placeholder="Password"
-            >
-
-            <label>Student Photo</label>
-
-            <input
-                id="newPhoto"
-                type="file"
-                accept="image/*"
-            >
-
-
-            <h3 style="margin-top:15px;color:#075e54">
-                📚 Subjects & Marks
-            </h3>
-
-
-            <label>English Maximum Marks</label>
-
-            <input
-                id="englishMax"
-                type="number"
-                value="100"
-            >
-
-            <label>English Obtained Marks</label>
-
-            <input
-                id="englishObt"
-                type="number"
-                value="0"
-            >
-
-
-            <label>Urdu Maximum Marks</label>
-
-            <input
-                id="urduMax"
-                type="number"
-                value="100"
-            >
-
-            <label>Urdu Obtained Marks</label>
-
-            <input
-                id="urduObt"
-                type="number"
-                value="0"
-            >
-
-
-            <label>Mathematics Maximum Marks</label>
-
-            <input
-                id="mathMax"
-                type="number"
-                value="100"
-            >
-
-            <label>Mathematics Obtained Marks</label>
-
-            <input
-                id="mathObt"
-                type="number"
-                value="0"
-            >
-
-
-            <button
-                class="btn"
-                onclick="addStudent()"
-            >
-                ➕ Add Student
-            </button>
-
-            <div id="addStudentMessage"></div>
-
-        </div>
-
-
-        <!-- STUDENT MANAGEMENT -->
-
-        <div class="admin-box">
-
-            <h3>👨‍🎓 Student Management</h3>
-
-            <div id="adminStudentList"></div>
-
-        </div>
-
-
-        <!-- NOTICE MANAGEMENT -->
-
-        <div class="admin-box">
-
-            <h3>📢 Notice Management</h3>
-
-            <input
-                id="newNoticeTitle"
-                placeholder="Notice Title"
-            >
-
-            <textarea
-                id="newNoticeText"
-                placeholder="Write Notice"
-            ></textarea>
-
-            <button
-                class="btn"
-                onclick="addNotice()"
-            >
-                Add Notice
-            </button>
-
-            <div id="adminNoticeList"></div>
-
-        </div>
-
-    </div>
-
 </section>
 
 </div>
 
 
 <footer>
-
-    <h3 class="gold">
-        Jamia Qamrul Islam
-    </h3>
-
-    <p>
-        Student Online Portal
-    </p>
-
-    <p>
-        © 2026 Jamia Qamrul Islam
-    </p>
-
+    <div>© 2026 <span>Jamia Qamrul Islam</span></div>
+    <div style="margin-top:5px">Online Student Result Portal</div>
 </footer>
 
 
 <script>
 
-/* ================================
-   DEFAULT STUDENT
-================================ */
-
-var defaultStudents = [
-
+const defaultStudents = [
     {
         name:"Muhammad Ahmad",
-
         father:"Muhammad Ali",
-
         roll:"1001",
-
         className:"Middle",
-
         password:"1234",
-
         photo:"",
-
-        subjects:[
-            "English",
-            "Urdu",
-            "Mathematics"
-        ],
-
         marks:{
-
-            English:{
-                max:100,
-                obtained:78
-            },
-
-            Urdu:{
-                max:100,
-                obtained:85
-            },
-
-            Mathematics:{
-                max:100,
-                obtained:82
-            }
-
+            English:{max:100,obtained:78},
+            Urdu:{max:100,obtained:85},
+            Mathematics:{max:100,obtained:82}
         }
-
     }
-
 ];
 
+let students = JSON.parse(localStorage.getItem("jamiaStudents"));
 
-/* ================================
-   LOAD STUDENTS
-================================ */
+if(!students){
+    students = defaultStudents;
+    saveStudents();
+}
 
-var students =
-    JSON.parse(
-        localStorage.getItem("jamiaStudents")
-    ) || defaultStudents;
+let currentStudent = null;
 
 
-/* ================================
-   DEFAULT NOTICES
-================================ */
+/* NAVIGATION */
 
-var defaultNotices = [
+function go(id){
 
-    {
-        title:"Welcome",
+    document.querySelectorAll("section").forEach(function(sec){
+        if(sec.id !== "home"){
+            sec.classList.add("hidden");
+        }
+    });
 
-        text:
-        "Welcome to Jamia Qamrul Islam Student Online Portal."
-    },
-
-    {
-        title:"Important Notice",
-
-        text:
-        "Student results and profiles are available online."
+    if(id === "home"){
+        document.getElementById("home").classList.remove("hidden");
+    }else{
+        document.getElementById(id).classList.remove("hidden");
     }
 
-];
+    window.scrollTo({
+        top:0,
+        behavior:"smooth"
+    });
+}
 
 
-var notices =
-    JSON.parse(
-        localStorage.getItem("jamiaNotices")
-    ) || defaultNotices;
-
-
-/* ================================
-   SAVE DATA
-================================ */
+/* STORAGE */
 
 function saveStudents(){
-
     localStorage.setItem(
         "jamiaStudents",
         JSON.stringify(students)
     );
-
 }
 
 
-function saveNotices(){
-
-    localStorage.setItem(
-        "jamiaNotices",
-        JSON.stringify(notices)
-    );
-
-}
-
-
-/* ================================
-   STUDENT LOGIN
-================================ */
+/* STUDENT LOGIN */
 
 function studentLogin(){
 
-    var roll =
-        document.getElementById(
-            "studentRoll"
-        ).value.trim();
-
-
-    var password =
-        document.getElementById(
-            "studentPassword"
-        ).value.trim();
-
-
-    var student =
-        students.find(function(s){
-
-            return (
-                s.roll === roll &&
-                s.password === password
-            );
-
-        });
-
-
-    if(student){
-
-        document.getElementById(
-            "studentLoginMessage"
-        ).innerHTML =
-        '<div class="status success">' +
-        'Login Successful ✓' +
-        '</div>';
-
-
-        showStudent(student);
-
-
-        document
-        .getElementById("profile")
-        .scrollIntoView();
-
-    }
-
-    else{
-
-        document.getElementById(
-            "studentLoginMessage"
-        ).innerHTML =
-        '<div class="status error">' +
-        'Invalid Roll Number or Password' +
-        '</div>';
-
-    }
-
-}
-
-
-/* ================================
-   SHOW STUDENT PROFILE
-================================ */
-
-function showStudent(student){
-
-    var photo =
-        student.photo ||
-        "https://via.placeholder.com/300x300.png?text=Student";
-
-
-    var subjects =
-        Object.keys(student.marks).join(", ");
-
-
-    document.getElementById(
-        "profileBox"
-    ).innerHTML = `
-
-        <div class="student-profile">
-
-            <img
-                src="${photo}"
-                class="student-photo"
-            >
-
-            <h2>
-                ${student.name}
-            </h2>
-
-            <div class="info-grid">
-
-                <div class="info-item">
-
-                    <b>Father Name</b>
-
-                    <br>
-
-                    ${student.father}
-
-                </div>
-
-
-                <div class="info-item">
-
-                    <b>Roll Number</b>
-
-                    <br>
-
-                    ${student.roll}
-
-                </div>
-
-
-                <div class="info-item">
-
-                    <b>Class</b>
-
-                    <br>
-
-                    ${student.className}
-
-                </div>
-
-
-                <div class="info-item">
-
-                    <b>Books / Subjects</b>
-
-                    <br>
-
-                    ${subjects}
-
-                </div>
-
-            </div>
-
-        </div>
-
-    `;
-
-
-    showResult(student);
-
-}
-
-
-/* ================================
-   SHOW RESULT CARD
-================================ */
-
-function showResult(student){
-
-    var rows = "";
-
-    var totalMaximum = 0;
-
-    var totalObtained = 0;
-
-
-    Object.keys(student.marks)
-    .forEach(function(subject,index){
-
-        var maximum =
-            Number(
-                student.marks[subject].max
-            );
-
-
-        var obtained =
-            Number(
-                student.marks[subject].obtained
-            );
-
-
-        totalMaximum += maximum;
-
-        totalObtained += obtained;
-
-
-        var percentage =
-            maximum > 0
-            ? (obtained / maximum) * 100
-            : 0;
-
-
-        var grade = "F";
-
-
-        if(percentage >= 80){
-
-            grade = "A+";
-
-        }
-
-        else if(percentage >= 70){
-
-            grade = "A";
-
-        }
-
-        else if(percentage >= 60){
-
-            grade = "B";
-
-        }
-
-        else if(percentage >= 50){
-
-            grade = "C";
-
-        }
-
-        else if(percentage >= 40){
-
-            grade = "D";
-
-        }
-
-
-        rows += `
-
-            <tr>
-
-                <td>
-                    ${index + 1}
-                </td>
-
-                <td>
-                    <b>${subject}</b>
-                </td>
-
-                <td>
-                    ${maximum}
-                </td>
-
-                <td>
-                    ${obtained}
-                </td>
-
-                <td class="grade">
-                    ${grade}
-                </td>
-
-            </tr>
-
-        `;
-
+    let roll = document.getElementById("studentRoll").value.trim();
+    let password = document.getElementById("studentPassword").value.trim();
+
+    let student = students.find(function(s){
+        return String(s.roll) === String(roll)
+        && String(s.password) === String(password);
     });
-
-
-    var percentage =
-        totalMaximum > 0
-        ? (
-            totalObtained /
-            totalMaximum *
-            100
-          ).toFixed(1)
-        : 0;
-
-
-    var overallGrade = "F";
-
-
-    if(percentage >= 80){
-
-        overallGrade = "A+";
-
-    }
-
-    else if(percentage >= 70){
-
-        overallGrade = "A";
-
-    }
-
-    else if(percentage >= 60){
-
-        overallGrade = "B";
-
-    }
-
-    else if(percentage >= 50){
-
-        overallGrade = "C";
-
-    }
-
-    else if(percentage >= 40){
-
-        overallGrade = "D";
-
-    }
-
-
-    var result =
-        percentage >= 40
-        ? "PASS"
-        : "FAIL";
-
-
-    var photo =
-        student.photo ||
-        "https://via.placeholder.com/300x300.png?text=Student";
-
-
-    document.getElementById(
-        "resultBox"
-    ).innerHTML = `
-
-        <div class="result-card">
-
-
-            <div class="result-header">
-
-                <h2>
-                    جامعہ قمر الاسلام
-                </h2>
-
-                <h3>
-                    Jamia Qamrul Islam
-                </h3>
-
-                <p>
-                    STUDENT RESULT CARD
-                </p>
-
-            </div>
-
-
-            <div class="result-student">
-
-                <img
-                    src="${photo}"
-                >
-
-                <div class="result-info">
-
-                    <p>
-                        <b>Student Name:</b>
-                        ${student.name}
-                    </p>
-
-                    <p>
-                        <b>Father Name:</b>
-                        ${student.father}
-                    </p>
-
-                    <p>
-                        <b>Roll Number:</b>
-                        ${student.roll}
-                    </p>
-
-                    <p>
-                        <b>Class:</b>
-                        ${student.className}
-                    </p>
-
-                </div>
-
-            </div>
-
-
-            <div class="table-wrap">
-
-                <table class="result-table">
-
-                    <tr>
-
-                        <th>No.</th>
-
-                        <th>
-                            Book / Subject
-                        </th>
-
-                        <th>
-                            Maximum Marks
-                        </th>
-
-                        <th>
-                            Obtained Marks
-                        </th>
-
-                        <th>
-                            Grade
-                        </th>
-
-                    </tr>
-
-                    ${rows}
-
-                </table>
-
-            </div>
-
-
-            <div class="result-summary">
-
-
-                <div class="summary-box">
-
-                    <b>
-                        Total Marks
-                    </b>
-
-                    ${totalMaximum}
-
-                </div>
-
-
-                <div class="summary-box">
-
-                    <b>
-                        Obtained Marks
-                    </b>
-
-                    ${totalObtained}
-
-                </div>
-
-
-                <div class="summary-box">
-
-                    <b>
-                        Percentage
-                    </b>
-
-                    ${percentage}%
-
-                </div>
-
-
-                <div class="summary-box">
-
-                    <b>
-                        Result
-                    </b>
-
-                    <span
-                        class="${
-                            result === "PASS"
-                            ? "pass"
-                            : "fail"
-                        }"
-                    >
-                        ${result}
-                    </span>
-
-                </div>
-
-
-            </div>
-
-
-            <div
-                style="
-                text-align:center;
-                padding:15px;
-                border-top:1px solid #ddd;
-                "
-            >
-
-                <b>
-                    Overall Grade:
-                    ${overallGrade}
-                </b>
-
-            </div>
-
-
-        </div>
-
-    `;
-
-}
-
-
-/* ================================
-   SEARCH STUDENT
-================================ */
-
-function searchStudent(){
-
-    var roll =
-        document.getElementById(
-            "searchRoll"
-        ).value.trim();
-
-
-    var student =
-        students.find(function(s){
-
-            return s.roll === roll;
-
-        });
-
-
-    var box =
-        document.getElementById(
-            "searchResult"
-        );
-
 
     if(!student){
 
-        box.innerHTML =
-        '<div class="status error">' +
-        'Student not found.' +
-        '</div>';
+        document.getElementById("studentMessage").innerHTML =
+        '<div class="message error">Invalid Roll Number or Password.</div>';
 
         return;
+    }
 
+    currentStudent = student;
+
+    document.getElementById("studentMessage").innerHTML =
+    '<div class="message success">Result found successfully.</div>';
+
+    showResult(student);
+
+    document.getElementById("resultSection").classList.remove("hidden");
+
+    setTimeout(function(){
+        document.getElementById("resultSection").scrollIntoView({
+            behavior:"smooth"
+        });
+    },200);
+}
+
+
+/* SHOW RESULT */
+
+function showResult(student){
+
+    let total = 0;
+    let obtained = 0;
+
+    Object.keys(student.marks).forEach(function(subject){
+
+        total += Number(student.marks[subject].max);
+        obtained += Number(student.marks[subject].obtained);
+
+    });
+
+    let percentage = total > 0
+        ? (obtained / total * 100)
+        : 0;
+
+    let grade = getGrade(percentage);
+
+    let status = percentage >= 40 ? "PASS" : "FAIL";
+
+    let photo = student.photo || "";
+
+    if(!photo){
+        photo =
+        "data:image/svg+xml;charset=UTF-8," +
+        encodeURIComponent(
+            '<svg xmlns="http://www.w3.org/2000/svg" width="200" height="250">' +
+            '<rect width="100%" height="100%" fill="#e8eeeb"/>' +
+            '<text x="50%" y="50%" text-anchor="middle" fill="#49635a" font-size="20">Student Photo</text>' +
+            '</svg>'
+        );
+    }
+
+    let rows = "";
+
+    Object.keys(student.marks).forEach(function(subject){
+
+        let m = student.marks[subject];
+
+        rows += `
+        <tr>
+            <td>${subject}</td>
+            <td>${m.max}</td>
+            <td>${m.obtained}</td>
+            <td>${((m.obtained / m.max) * 100).toFixed(1)}%</td>
+        </tr>
+        `;
+    });
+
+
+    document.getElementById("resultArea").innerHTML = `
+
+    <div class="result-card" id="pdfResultCard">
+
+        <div class="result-inner">
+
+            <div class="watermark">
+                JAMIA QAMRUL ISLAM
+            </div>
+
+            <div class="result-head">
+
+                <div class="result-logo">🕌</div>
+
+                <h1>جامعہ قمر الاسلام</h1>
+
+                <h3>JAMIA QAMRUL ISLAM</h3>
+
+                <div class="result-title">
+                    STUDENT RESULT CARD
+                </div>
+
+            </div>
+
+
+            <div class="student-info">
+
+                <table class="info-table">
+                    <tr>
+                        <td>Student Name</td>
+                        <td>${student.name}</td>
+                    </tr>
+
+                    <tr>
+                        <td>Father Name</td>
+                        <td>${student.father}</td>
+                    </tr>
+
+                    <tr>
+                        <td>Roll Number</td>
+                        <td>${student.roll}</td>
+                    </tr>
+
+                    <tr>
+                        <td>Class</td>
+                        <td>${student.className}</td>
+                    </tr>
+                </table>
+
+                <img class="student-photo"
+                     src="${photo}"
+                     alt="Student Photo">
+
+            </div>
+
+
+            <table class="marks-table">
+
+                <thead>
+                    <tr>
+                        <th>Subject</th>
+                        <th>Total Marks</th>
+                        <th>Obtained Marks</th>
+                        <th>Percentage</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    ${rows}
+
+                    <tr style="font-weight:bold;background:#eee6c9">
+                        <td>TOTAL</td>
+                        <td>${total}</td>
+                        <td>${obtained}</td>
+                        <td>${percentage.toFixed(2)}%</td>
+                    </tr>
+                </tbody>
+
+            </table>
+
+
+            <div class="summary">
+
+                <div class="summary-box">
+                    <small>Total Marks</small>
+                    <strong>${total}</strong>
+                </div>
+
+                <div class="summary-box">
+                    <small>Obtained</small>
+                    <strong>${obtained}</strong>
+                </div>
+
+                <div class="summary-box">
+                    <small>Percentage</small>
+                    <strong>${percentage.toFixed(2)}%</strong>
+                </div>
+
+                <div class="summary-box">
+                    <small>Grade</small>
+                    <strong>${grade}</strong>
+                </div>
+
+            </div>
+
+
+            <div style="
+                text-align:center;
+                margin-top:18px;
+                font-size:20px;
+                font-weight:bold;
+                color:${status === "PASS" ? "#146238" : "#a93232"};
+            ">
+                RESULT: ${status}
+            </div>
+
+
+            <div class="signature">
+
+                <div>Class Teacher</div>
+
+                <div>Principal</div>
+
+                <div>Official Stamp</div>
+
+            </div>
+
+
+            <div class="result-footer">
+                This is an electronically generated result card of Jamia Qamrul Islam.
+            </div>
+
+        </div>
+
+    </div>
+    `;
+}
+
+
+/* GRADE */
+
+function getGrade(p){
+
+    if(p >= 90) return "A+";
+    if(p >= 80) return "A";
+    if(p >= 70) return "B";
+    if(p >= 60) return "C";
+    if(p >= 50) return "D";
+    if(p >= 40) return "E";
+
+    return "F";
+}
+
+
+/* PDF DOWNLOAD */
+
+async function downloadPDF(){
+
+    if(!currentStudent){
+        alert("Please login and open a result first.");
+        return;
+    }
+
+    const { jsPDF } = window.jspdf;
+
+    let student = currentStudent;
+
+    let total = 0;
+    let obtained = 0;
+
+    Object.keys(student.marks).forEach(function(subject){
+
+        total += Number(student.marks[subject].max);
+        obtained += Number(student.marks[subject].obtained);
+
+    });
+
+    let percentage =
+        total > 0 ? (obtained / total * 100) : 0;
+
+    let grade = getGrade(percentage);
+
+    let pdf = new jsPDF("p","mm","a4");
+
+    /* Border */
+
+    pdf.setDrawColor(10,81,61);
+    pdf.setLineWidth(2);
+    pdf.rect(7,7,196,283);
+
+    pdf.setDrawColor(197,155,60);
+    pdf.setLineWidth(.7);
+    pdf.rect(11,11,188,275);
+
+
+    /* Watermark */
+
+    pdf.setTextColor(10,81,61);
+    pdf.setFontSize(35);
+
+    pdf.text(
+        "JAMIA QAMRUL ISLAM",
+        105,
+        160,
+        {
+            align:"center",
+            angle:35
+        }
+    );
+
+
+    /* Header */
+
+    pdf.setTextColor(7,59,45);
+
+    pdf.setFontSize(23);
+
+    pdf.text(
+        "JAMIA QAMRUL ISLAM",
+        105,
+        28,
+        {align:"center"}
+    );
+
+    pdf.setTextColor(164,119,33);
+
+    pdf.setFontSize(11);
+
+    pdf.text(
+        "Student Result Card",
+        105,
+        37,
+        {align:"center"}
+    );
+
+
+    /* Student Information */
+
+    pdf.setTextColor(30,30,30);
+
+    pdf.setFontSize(11);
+
+    pdf.text("Student Name:",20,52);
+    pdf.text(String(student.name),65,52);
+
+    pdf.text("Father Name:",20,61);
+    pdf.text(String(student.father),65,61);
+
+    pdf.text("Roll Number:",20,70);
+    pdf.text(String(student.roll),65,70);
+
+    pdf.text("Class:",20,79);
+    pdf.text(String(student.className),65,79);
+
+
+    /* Table Header */
+
+    let y = 95;
+
+    pdf.setFillColor(7,59,45);
+    pdf.setTextColor(255,255,255);
+
+    pdf.rect(18,y-7,174,10,"F");
+
+    pdf.setFontSize(10);
+
+    pdf.text("Subject",25,y);
+    pdf.text("Total Marks",85,y);
+    pdf.text("Obtained",125,y);
+    pdf.text("Percentage",158,y);
+
+
+    /* Rows */
+
+    pdf.setTextColor(30,30,30);
+
+    y += 10;
+
+    Object.keys(student.marks).forEach(function(subject){
+
+        let m = student.marks[subject];
+
+        pdf.setDrawColor(190,190,190);
+        pdf.rect(18,y-7,174,10);
+
+        pdf.text(subject,25,y);
+        pdf.text(String(m.max),90,y);
+        pdf.text(String(m.obtained),130,y);
+
+        let p = (m.obtained / m.max * 100).toFixed(1);
+
+        pdf.text(p+"%",163,y);
+
+        y += 10;
+    });
+
+
+    /* Total */
+
+    pdf.setFillColor(244,240,223);
+    pdf.rect(18,y-7,174,11,"F");
+
+    pdf.setTextColor(7,59,45);
+    pdf.setFontSize(11);
+
+    pdf.text("TOTAL",25,y);
+    pdf.text(String(total),90,y);
+    pdf.text(String(obtained),130,y);
+    pdf.text(percentage.toFixed(2)+"%",158,y);
+
+
+    /* Summary */
+
+    y += 25;
+
+    pdf.setFontSize(11);
+
+    pdf.text(
+        "Total Marks: " + total,
+        25,
+        y
+    );
+
+    pdf.text(
+        "Obtained Marks: " + obtained,
+        25,
+        y+10
+    );
+
+    pdf.text(
+        "Percentage: " + percentage.toFixed(2) + "%",
+        25,
+        y+20
+    );
+
+    pdf.text(
+        "Grade: " + grade,
+        25,
+        y+30
+    );
+
+
+    pdf.setFontSize(15);
+
+    pdf.setTextColor(
+        percentage >= 40 ? 20 : 160,
+        percentage >= 40 ? 100 : 30,
+        percentage >= 40 ? 60 : 30
+    );
+
+    pdf.text(
+        percentage >= 40 ? "RESULT: PASS" : "RESULT: FAIL",
+        105,
+        y+50,
+        {align:"center"}
+    );
+
+
+    /* Signatures */
+
+    pdf.setTextColor(50,50,50);
+    pdf.setFontSize(9);
+
+    pdf.line(25,255,70,255);
+    pdf.text("Class Teacher",47,261,{align:"center"});
+
+    pdf.line(82,255,127,255);
+    pdf.text("Principal",104,261,{align:"center"});
+
+    pdf.line(140,255,185,255);
+    pdf.text("Official Stamp",162,261,{align:"center"});
+
+
+    pdf.setFontSize(8);
+    pdf.setTextColor(110,110,110);
+
+    pdf.text(
+        "Jamia Qamrul Islam • Online Student Result",
+        105,
+        275,
+        {align:"center"}
+    );
+
+
+    pdf.save(
+        "Jamia-Qamrul-Islam-Result-" +
+        student.roll +
+        ".pdf"
+    );
+}
+
+
+/* ADMIN LOGIN */
+
+function adminLogin(){
+
+    let username =
+        document.getElementById("adminUsername").value.trim();
+
+    let password =
+        document.getElementById("adminPassword").value.trim();
+
+    if(username === "admin" && password === "1234"){
+
+        document.getElementById("adminMessage").innerHTML =
+        '<div class="message success">Admin Login Successful.</div>';
+
+        document.getElementById("adminPanel")
+        .classList.remove("hidden");
+
+        loadStudents();
+
+        setTimeout(function(){
+            document.getElementById("adminPanel").scrollIntoView({
+                behavior:"smooth"
+            });
+        },200);
+
+    }else{
+
+        document.getElementById("adminMessage").innerHTML =
+        '<div class="message error">Invalid Admin Username or Password.</div>';
+
+    }
+}
+
+
+/* ADMIN LOGOUT */
+
+function adminLogout(){
+
+    document.getElementById("adminPanel")
+    .classList.add("hidden");
+
+    document.getElementById("adminUsername").value = "";
+    document.getElementById("adminPassword").value = "";
+
+    go("home");
+}
+
+
+/* ADD STUDENT */
+
+function addStudent(){
+
+    let name =
+        document.getElementById("newName").value.trim();
+
+    let father =
+        document.getElementById("newFather").value.trim();
+
+    let roll =
+        document.getElementById("newRoll").value.trim();
+
+    let className =
+        document.getElementById("newClass").value;
+
+    let password =
+        document.getElementById("newPassword").value.trim();
+
+    if(!name || !father || !roll || !password){
+
+        document.getElementById("addMessage").innerHTML =
+        '<div class="message error">Please fill all required fields.</div>';
+
+        return;
+    }
+
+    let exists = students.some(function(s){
+        return String(s.roll) === String(roll);
+    });
+
+    if(exists){
+
+        document.getElementById("addMessage").innerHTML =
+        '<div class="message error">This Roll Number already exists.</div>';
+
+        return;
     }
 
 
-    box.innerHTML = `
+    let student = {
 
-        <div class="admin-box">
+        name:name,
+        father:father,
+        roll:roll,
+        className:className,
+        password:password,
+        photo:"",
+        marks:{
+            English:{
+                max:Number(document.getElementById("engMax").value),
+                obtained:Number(document.getElementById("engObt").value)
+            },
 
-            <div class="student-profile">
+            Urdu:{
+                max:Number(document.getElementById("urduMax").value),
+                obtained:Number(document.getElementById("urduObt").value)
+            },
 
-                <h2>
-                    ${student.name}
-                </h2>
+            Mathematics:{
+                max:Number(document.getElementById("mathMax").value),
+                obtained:Number(document.getElementById("mathObt").value)
+            }
+        }
 
-                <p>
-                    <b>Father:</b>
-                    ${student.father}
-                </p>
+    };
 
-                <p>
-                    <b>Roll:</b>
-                    ${student.roll}
-                </p>
 
-                <p>
-                    <b>Class:</b>
-                    ${student.className}
-                </p>
+    let photoInput =
+        document.getElementById("newPhoto");
 
-                <button
-                    class="btn"
-                    onclick="showResult(students[${students.indexOf(student)}])"
-                >
+    if(photoInput.files && photoInput.files.length > 0){
+
+        let reader = new FileReader();
+
+        reader.onload = function(e){
+
+            student.photo = e.target.result;
+
+            students.push(student);
+
+            saveStudents();
+
+            afterAdd();
+
+        };
+
+        reader.readAsDataURL(photoInput.files[0]);
+
+    }else{
+
+        students.push(student);
+
+        saveStudents();
+
+        afterAdd();
+    }
+}
+
+
+/* AFTER ADD */
+
+function afterAdd(){
+
+    document.getElementById("addMessage").innerHTML =
+    '<div class="message success">Student Result Saved Successfully.</div>';
+
+    clearForm();
+
+    loadStudents();
+}
+
+
+/* CLEAR FORM */
+
+function clearForm(){
+
+    document.getElementById("newName").value="";
+    document.getElementById("newFather").value="";
+    document.getElementById("newRoll").value="";
+    document.getElementById("newPassword").value="";
+    document.getElementById("newPhoto").value="";
+
+    document.getElementById("engObt").value="0";
+    document.getElementById("urduObt").value="0";
+    document.getElementById("mathObt").value="0";
+}
+
+
+/* STUDENT LIST */
+
+function loadStudents(){
+
+    let html="";
+
+    if(students.length === 0){
+
+        html="<p>No student records found.</p>";
+
+    }else{
+
+        students.forEach(function(student,index){
+
+            html += `
+
+            <div class="admin-student">
+
+                <strong>${student.name}</strong><br>
+
+                Father: ${student.father}<br>
+
+                Roll Number: ${student.roll}<br>
+
+                Class: ${student.className}<br><br>
+
+                <button class="btn"
+                    onclick="viewAdminResult(${index})">
                     View Result
+                </button>
+
+                <button class="btn red"
+                    onclick="deleteStudent(${index})">
+                    Delete
                 </button>
 
             </div>
 
-        </div>
+            `;
+        });
+    }
 
-    `;
-
+    document.getElementById("studentList").innerHTML = html;
 }
 
 
-/* ================================
-   ADMIN LOGIN
-================================ */
+/* ADMIN VIEW RESULT */
 
-function adminLogin(){
+function viewAdminResult(index){
 
-    var username =
-        document.getElementById(
-            "adminUsername"
-        ).value.trim();
+    currentStudent = students[index];
 
+    showResult(currentStudent);
 
-    var password =
-        document.getElementById(
-            "adminPassword"
-        ).value.trim();
-
-
-    if(
-        username === "admin" &&
-        password === "1234"
-    ){
-
-        document
-        .getElementById("adminLoginBox")
-        .classList.add("hidden");
-
-
-        document
-        .getElementById("adminPanel")
-        .classList.remove("hidden");
-
-
-        renderAdminStudents();
-
-        renderAdminNotices();
-
-    }
-
-    else{
-
-        document.getElementById(
-            "adminMessage"
-        ).innerHTML =
-        '<div class="status error">' +
-        'Invalid Admin Login' +
-        '</div>';
-
-    }
-
-}
-
-
-/* ================================
-   ADMIN LOGOUT
-================================ */
-
-function adminLogout(){
-
-    document
-    .getElementById("adminPanel")
-    .classList.add("hidden");
-
-
-    document
-    .getElementById("adminLoginBox")
+    document.getElementById("resultSection")
     .classList.remove("hidden");
 
-}
-
-
-/* ================================
-   ADD STUDENT
-================================ */
-
-function addStudent(){
-
-    var name =
-        document.getElementById(
-            "newName"
-        ).value.trim();
-
-
-    var father =
-        document.getElementById(
-            "newFather"
-        ).value.trim();
-
-
-    var roll =
-        document.getElementById(
-            "newRoll"
-        ).value.trim();
-
-
-    var className =
-        document.getElementById(
-            "newClass"
-        ).value.trim();
-
-
-    var password =
-        document.getElementById(
-            "newPassword"
-        ).value.trim();
-
-
-    var photoInput =
-        document.getElementById(
-            "newPhoto"
-        );
-
-
-    if(
-        !name ||
-        !father ||
-        !roll ||
-        !className ||
-        !password
-    ){
-
-        document.getElementById(
-            "addStudentMessage"
-        ).innerHTML =
-        '<div class="status error">' +
-        'Please fill all required fields.' +
-        '</div>';
-
-        return;
-
-    }
-
-
-    var exists =
-        students.some(function(s){
-
-            return s.roll === roll;
-
-        });
-
-
-    if(exists){
-
-        document.getElementById(
-            "addStudentMessage"
-        ).innerHTML =
-        '<div class="status error">' +
-        'This Roll Number already exists.' +
-        '</div>';
-
-        return;
-
-    }
-
-
-    if(
-        photoInput.files &&
-        photoInput.files.length > 0
-    ){
-
-        var reader =
-            new FileReader();
-
-
-        reader.onload =
-            function(e){
-
-                createStudent(
-                    e.target.result
-                );
-
-            };
-
-
-        reader.readAsDataURL(
-            photoInput.files[0]
-        );
-
-    }
-
-    else{
-
-        createStudent("");
-
-    }
-
-}
-
-
-/* ================================
-   CREATE STUDENT
-================================ */
-
-function createStudent(photo){
-
-    var name =
-        document.getElementById(
-            "newName"
-        ).value.trim();
-
-
-    var father =
-        document.getElementById(
-            "newFather"
-        ).value.trim();
-
-
-    var roll =
-        document.getElementById(
-            "newRoll"
-        ).value.trim();
-
-
-    var className =
-        document.getElementById(
-            "newClass"
-        ).value.trim();
-
-
-    var password =
-        document.getElementById(
-            "newPassword"
-        ).value.trim();
-
-
-    var englishMax =
-        Number(
-            document.getElementById(
-                "englishMax"
-            ).value
-        ) || 100;
-
-
-    var englishObt =
-        Number(
-            document.getElementById(
-                "englishObt"
-            ).value
-        ) || 0;
-
-
-    var urduMax =
-        Number(
-            document.getElementById(
-                "urduMax"
-            ).value
-        ) || 100;
-
-
-    var urduObt =
-        Number(
-            document.getElementById(
-                "urduObt"
-            ).value
-        ) || 0;
-
-
-    var mathMax =
-        Number(
-            document.getElementById(
-                "mathMax"
-            ).value
-        ) || 100;
-
-
-    var mathObt =
-        Number(
-            document.getElementById(
-                "mathObt"
-            ).value
-        ) || 0;
-
-
-    students.push({
-
-        name:name,
-
-        father:father,
-
-        roll:roll,
-
-        className:className,
-
-        password:password,
-
-        photo:photo,
-
-        subjects:[
-            "English",
-            "Urdu",
-            "Mathematics"
-        ],
-
-        marks:{
-
-            English:{
-                max:englishMax,
-                obtained:englishObt
-            },
-
-            Urdu:{
-                max:urduMax,
-                obtained:urduObt
-            },
-
-            Mathematics:{
-                max:mathMax,
-                obtained:mathObt
-            }
-
-        }
-
+    document.getElementById("resultSection")
+    .scrollIntoView({
+        behavior:"smooth"
     });
-
-
-    saveStudents();
-
-    renderAdminStudents();
-
-
-    document.getElementById(
-        "addStudentMessage"
-    ).innerHTML =
-    '<div class="status success">' +
-    'Student Added Successfully ✓' +
-    '</div>';
-
-
-    document.getElementById(
-        "newName"
-    ).value = "";
-
-
-    document.getElementById(
-        "newFather"
-    ).value = "";
-
-
-    document.getElementById(
-        "newRoll"
-    ).value = "";
-
-
-    document.getElementById(
-        "newClass"
-    ).value = "";
-
-
-    document.getElementById(
-        "newPassword"
-    ).value = "";
-
-
-    document.getElementById(
-        "newPhoto"
-    ).value = "";
-
 }
 
 
-/* ================================
-   ADMIN STUDENT LIST
-================================ */
-
-function renderAdminStudents(){
-
-    var box =
-        document.getElementById(
-            "adminStudentList"
-        );
-
-
-    var html = "";
-
-
-    students.forEach(
-        function(student,index){
-
-            var photo =
-                student.photo ||
-                "https://via.placeholder.com/100?text=Student";
-
-
-            html += `
-
-                <div class="admin-student">
-
-                    <img
-                        src="${photo}"
-                    >
-
-                    <div>
-
-                        <b>
-                            ${student.name}
-                        </b>
-
-                        <br>
-
-                        Roll:
-                        ${student.roll}
-
-                        <br>
-
-                        Class:
-                        ${student.className}
-
-                    </div>
-
-
-                    <div class="admin-actions">
-
-                        <button
-                            class="btn"
-                            onclick="editStudent(${index})"
-                        >
-                            Edit
-                        </button>
-
-
-                        <button
-                            class="btn btn-danger"
-                            onclick="deleteStudent(${index})"
-                        >
-                            Delete
-                        </button>
-
-                    </div>
-
-                </div>
-
-            `;
-
-        }
-    );
-
-
-    box.innerHTML = html;
-
-}
-
-
-/* ================================
-   EDIT STUDENT
-================================ */
-
-function editStudent(index){
-
-    var student =
-        students[index];
-
-
-    var name =
-        prompt(
-            "Student Name:",
-            student.name
-        );
-
-
-    if(name === null) return;
-
-
-    var father =
-        prompt(
-            "Father Name:",
-            student.father
-        );
-
-
-    if(father === null) return;
-
-
-    var className =
-        prompt(
-            "Class:",
-            student.className
-        );
-
-
-    if(className === null) return;
-
-
-    var password =
-        prompt(
-            "Student Password:",
-            student.password
-        );
-
-
-    if(password === null) return;
-
-
-    student.name = name;
-
-    student.father = father;
-
-    student.className = className;
-
-    student.password = password;
-
-
-    saveStudents();
-
-    renderAdminStudents();
-
-
-    alert(
-        "Student information updated successfully."
-    );
-
-}
-
-
-/* ================================
-   DELETE STUDENT
-================================ */
+/* DELETE STUDENT */
 
 function deleteStudent(index){
 
-    var student =
-        students[index];
+    let student = students[index];
 
+    let ok = confirm(
+        "Delete result of " +
+        student.name +
+        "?"
+    );
 
-    if(
-        !confirm(
-            "Delete " +
-            student.name +
-            " permanently?"
-        )
-    ){
-
-        return;
-
-    }
-
+    if(!ok) return;
 
     students.splice(index,1);
 
     saveStudents();
 
-    renderAdminStudents();
-
+    loadStudents();
 }
 
 
-/* ================================
-   DISPLAY NOTICES
-================================ */
+/* NOTICES */
 
-function renderNotices(){
+let notices = JSON.parse(
+    localStorage.getItem("jamiaNotices")
+);
 
-    var box =
-        document.getElementById(
-            "noticeList"
-        );
+if(!notices){
 
+    notices = [
+        "Welcome to Jamia Qamrul Islam Online Result Portal.",
+        "Students can check their results using Roll Number and Password."
+    ];
 
-    var html = "";
-
-
-    notices.forEach(
-        function(notice){
-
-            html += `
-
-                <div class="notice">
-
-                    <h3>
-                        ${notice.title}
-                    </h3>
-
-                    <p>
-                        ${notice.text}
-                    </p>
-
-                </div>
-
-            `;
-
-        }
+    localStorage.setItem(
+        "jamiaNotices",
+        JSON.stringify(notices)
     );
-
-
-    box.innerHTML = html;
-
 }
 
 
-/* ================================
-   ADD NOTICE
-================================ */
+function loadNotices(){
 
-function addNotice(){
+    let html="";
 
-    var title =
-        document.getElementById(
-            "newNoticeTitle"
-        ).value.trim();
+    notices.forEach(function(n){
 
-
-    var text =
-        document.getElementById(
-            "newNoticeText"
-        ).value.trim();
-
-
-    if(!title || !text){
-
-        alert(
-            "Please enter notice title and text."
-        );
-
-        return;
-
-    }
-
-
-    notices.unshift({
-
-        title:title,
-
-        text:text
+        html += `
+        <div class="admin-student">
+            📢 ${n}
+        </div>
+        `;
 
     });
 
-
-    saveNotices();
-
-    renderNotices();
-
-    renderAdminNotices();
-
-
-    document.getElementById(
-        "newNoticeTitle"
-    ).value = "";
-
-
-    document.getElementById(
-        "newNoticeText"
-    ).value = "";
-
+    document.getElementById("noticeList").innerHTML = html;
 }
 
-
-/* ================================
-   ADMIN NOTICE LIST
-================================ */
-
-function renderAdminNotices(){
-
-    var box =
-        document.getElementById(
-            "adminNoticeList"
-        );
-
-
-    var html = "";
-
-
-    notices.forEach(
-        function(notice,index){
-
-            html += `
-
-                <div class="notice">
-
-                    <h3>
-                        ${notice.title}
-                    </h3>
-
-                    <p>
-                        ${notice.text}
-                    </p>
-
-                    <button
-                        class="btn btn-danger"
-                        onclick="deleteNotice(${index})"
-                    >
-                        Delete Notice
-                    </button>
-
-                </div>
-
-            `;
-
-        }
-    );
-
-
-    box.innerHTML = html;
-
-}
-
-
-/* ================================
-   DELETE NOTICE
-================================ */
-
-function deleteNotice(index){
-
-    if(
-        !confirm(
-            "Delete this notice?"
-        )
-    ){
-
-        return;
-
-    }
-
-
-    notices.splice(index,1);
-
-    saveNotices();
-
-    renderNotices();
-
-    renderAdminNotices();
-
-}
-
-
-/* ================================
-   START WEBSITE
-================================ */
-
-renderNotices();
+loadNotices();
 
 </script>
 
