@@ -18,11 +18,11 @@
     --green:#075e54;
     --dark:#043c36;
     --gold:#d4af37;
-    --light:#f5f8f6;
+    --light:#f4f7f5;
     --white:#ffffff;
-    --text:#1f2937;
-    --danger:#c62828;
-    --shadow:0 10px 30px rgba(0,0,0,.10);
+    --text:#222;
+    --red:#c62828;
+    --shadow:0 8px 25px rgba(0,0,0,.12);
 }
 
 html{
@@ -30,121 +30,68 @@ html{
 }
 
 body{
-    font-family:Arial, sans-serif;
+    font-family:Arial,sans-serif;
     background:var(--light);
     color:var(--text);
     line-height:1.6;
 }
 
-/* TOP BAR */
-
 .topbar{
     background:#032d29;
-    color:#fff;
+    color:white;
     text-align:center;
     padding:7px;
     font-size:13px;
 }
 
-/* HEADER */
-
 header{
-    position:relative;
-    overflow:hidden;
-    background:
-    linear-gradient(135deg,#064f47,#087a6d 55%,#043c36);
+    background:linear-gradient(135deg,#064f47,#087a6d,#043c36);
     color:white;
-    padding:35px 15px 50px;
     text-align:center;
-}
-
-header:before{
-    content:"";
-    position:absolute;
-    width:300px;
-    height:300px;
-    border:1px solid rgba(212,175,55,.35);
-    border-radius:50%;
-    top:-180px;
-    left:-100px;
-}
-
-header:after{
-    content:"";
-    position:absolute;
-    width:300px;
-    height:300px;
-    border:1px solid rgba(212,175,55,.35);
-    border-radius:50%;
-    bottom:-220px;
-    right:-100px;
+    padding:30px 15px 45px;
 }
 
 .logo{
-    position:relative;
-    z-index:2;
-    width:100px;
-    height:100px;
+    width:95px;
+    height:95px;
     margin:auto;
     border:4px solid var(--gold);
     border-radius:50%;
-    background:#fff;
-    color:var(--green);
+    background:white;
     display:flex;
     align-items:center;
     justify-content:center;
-    font-size:45px;
-    box-shadow:0 8px 25px rgba(0,0,0,.25);
+    font-size:43px;
 }
 
 header h1{
-    position:relative;
-    z-index:2;
-    margin-top:18px;
-    font-size:30px;
+    margin-top:15px;
+    font-size:29px;
 }
 
 header h2{
-    position:relative;
-    z-index:2;
     color:#f5d875;
-    font-size:21px;
-    margin-top:3px;
+    font-size:20px;
 }
-
-header p{
-    position:relative;
-    z-index:2;
-    margin-top:8px;
-    opacity:.92;
-}
-
-/* NAVIGATION */
 
 nav{
     position:sticky;
     top:0;
     z-index:100;
-    background:#fff;
+    background:white;
     box-shadow:0 3px 15px rgba(0,0,0,.12);
-    padding:12px 8px;
+    padding:10px;
     text-align:center;
 }
 
 nav a{
     display:inline-block;
-    color:var(--green);
     text-decoration:none;
+    color:var(--green);
     font-weight:bold;
-    padding:7px 9px;
+    padding:7px;
     font-size:14px;
 }
-
-nav a:hover{
-    color:#b38b16;
-}
-
-/* CONTAINER */
 
 .container{
     width:94%;
@@ -152,65 +99,32 @@ nav a:hover{
     margin:25px auto;
 }
 
-/* HERO */
-
 .hero{
-    min-height:300px;
-    border-radius:22px;
-    overflow:hidden;
-    position:relative;
-    background:
-    linear-gradient(rgba(4,60,54,.78),rgba(4,60,54,.88)),
-    radial-gradient(circle at center,#d4af37 0,#075e54 35%,#032d29 100%);
+    background:linear-gradient(135deg,#043c36,#087a6d);
     color:white;
-    display:flex;
-    align-items:center;
-    justify-content:center;
+    border-radius:20px;
+    padding:55px 20px;
     text-align:center;
-    padding:40px 20px;
     box-shadow:var(--shadow);
 }
 
-.hero-content{
-    position:relative;
-    z-index:2;
-}
-
 .hero h2{
-    font-size:36px;
-    margin-bottom:10px;
-    color:#fff;
+    font-size:34px;
 }
 
-.hero .gold{
+.gold{
     color:#f2d36d;
 }
 
-.hero p{
-    max-width:650px;
-    margin:auto;
-    font-size:17px;
-}
-
-.hero-buttons{
-    margin-top:25px;
-}
-
 .btn{
-    display:inline-block;
     border:0;
-    border-radius:9px;
-    padding:12px 20px;
+    border-radius:8px;
+    padding:11px 18px;
     background:var(--green);
     color:white;
-    text-decoration:none;
     cursor:pointer;
-    font-size:15px;
     margin:4px;
-}
-
-.btn:hover{
-    opacity:.9;
+    font-size:14px;
 }
 
 .btn-gold{
@@ -219,19 +133,13 @@ nav a:hover{
 }
 
 .btn-danger{
-    background:var(--danger);
+    background:var(--red);
 }
-
-.btn-dark{
-    background:#333;
-}
-
-/* CARDS */
 
 .card{
     background:white;
-    border-radius:18px;
-    padding:25px;
+    border-radius:17px;
+    padding:23px;
     margin-bottom:22px;
     box-shadow:var(--shadow);
 }
@@ -241,184 +149,32 @@ nav a:hover{
     margin-bottom:15px;
 }
 
-.section-title{
-    text-align:center;
-    margin:35px 0 18px;
-}
-
-.section-title h2{
-    color:var(--green);
-    font-size:28px;
-}
-
-.section-title p{
-    color:#777;
-}
-
-/* FEATURES */
-
-.features{
-    display:grid;
-    grid-template-columns:repeat(3,1fr);
-    gap:18px;
-}
-
-.feature{
-    background:white;
-    border-radius:15px;
-    padding:25px;
-    text-align:center;
-    box-shadow:var(--shadow);
-}
-
-.feature .icon{
-    font-size:38px;
-    margin-bottom:10px;
-}
-
-.feature h3{
-    color:var(--green);
-    margin-bottom:7px;
-}
-
-/* FORM */
-
 input,
 select,
 textarea{
     width:100%;
-    padding:13px;
-    border:1px solid #d2d7d5;
-    border-radius:9px;
-    margin:7px 0 12px;
+    padding:12px;
+    border:1px solid #ccc;
+    border-radius:8px;
+    margin:6px 0 12px;
     font-size:15px;
-    outline:none;
-}
-
-input:focus,
-select:focus,
-textarea:focus{
-    border-color:var(--green);
 }
 
 label{
     font-weight:bold;
-    color:#444;
 }
 
 textarea{
     min-height:100px;
-    resize:vertical;
 }
 
-/* STUDENT */
-
-.student-profile{
-    text-align:center;
+.hidden{
+    display:none!important;
 }
-
-.student-photo{
-    width:130px;
-    height:130px;
-    border-radius:50%;
-    object-fit:cover;
-    border:5px solid var(--gold);
-    margin:10px auto 15px;
-    display:block;
-}
-
-.info-grid{
-    display:grid;
-    grid-template-columns:repeat(2,1fr);
-    gap:12px;
-    margin-top:20px;
-}
-
-.info-item{
-    background:#f5f8f6;
-    padding:13px;
-    border-radius:10px;
-}
-
-.info-item b{
-    color:var(--green);
-}
-
-/* TABLE */
-
-.table-wrap{
-    overflow-x:auto;
-}
-
-table{
-    width:100%;
-    border-collapse:collapse;
-    margin-top:10px;
-}
-
-th,
-td{
-    padding:12px;
-    border-bottom:1px solid #ddd;
-    text-align:left;
-}
-
-th{
-    background:var(--green);
-    color:white;
-}
-
-tr:hover td{
-    background:#f5f8f6;
-}
-
-/* ADMIN */
-
-.admin-box{
-    border:2px solid #e3eee9;
-    border-radius:14px;
-    padding:20px;
-    margin-top:15px;
-}
-
-.admin-student{
-    display:flex;
-    align-items:center;
-    gap:15px;
-    padding:13px;
-    border-bottom:1px solid #ddd;
-}
-
-.admin-student img{
-    width:55px;
-    height:55px;
-    object-fit:cover;
-    border-radius:50%;
-}
-
-.admin-actions{
-    margin-left:auto;
-}
-
-/* NOTICE */
-
-.notice{
-    border-left:5px solid var(--gold);
-    background:#fffbea;
-    padding:17px;
-    margin:10px 0;
-    border-radius:8px;
-}
-
-.notice h3{
-    color:var(--green);
-}
-
-/* STATUS */
 
 .status{
-    padding:12px;
-    border-radius:8px;
+    padding:10px;
+    border-radius:7px;
     margin-top:10px;
     text-align:center;
     font-weight:bold;
@@ -434,53 +190,224 @@ tr:hover td{
     color:#b71c1c;
 }
 
-/* HIDDEN */
-
-.hidden{
-    display:none!important;
+.info-grid{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:12px;
+    margin-top:18px;
 }
 
-/* FOOTER */
+.info-item{
+    background:#f3f7f5;
+    padding:12px;
+    border-radius:8px;
+}
+
+.info-item b{
+    color:var(--green);
+}
+
+.student-profile{
+    text-align:center;
+}
+
+.student-photo{
+    width:125px;
+    height:125px;
+    border-radius:50%;
+    object-fit:cover;
+    border:4px solid var(--gold);
+    display:block;
+    margin:10px auto 15px;
+}
+
+/* RESULT CARD */
+
+.result-card{
+    border:3px solid var(--green);
+    border-radius:15px;
+    overflow:hidden;
+    background:white;
+}
+
+.result-header{
+    background:linear-gradient(135deg,#075e54,#043c36);
+    color:white;
+    text-align:center;
+    padding:20px;
+}
+
+.result-header h2{
+    color:white;
+    margin:0;
+}
+
+.result-header h3{
+    color:#f5d875;
+    margin-top:5px;
+}
+
+.result-student{
+    display:flex;
+    align-items:center;
+    gap:20px;
+    padding:20px;
+    border-bottom:1px solid #ddd;
+}
+
+.result-student img{
+    width:100px;
+    height:100px;
+    border-radius:50%;
+    object-fit:cover;
+    border:3px solid var(--gold);
+}
+
+.result-info{
+    flex:1;
+}
+
+.result-info p{
+    margin:3px 0;
+}
+
+.result-table{
+    width:100%;
+    border-collapse:collapse;
+}
+
+.result-table th,
+.result-table td{
+    border:1px solid #ccc;
+    padding:11px;
+    text-align:center;
+}
+
+.result-table th{
+    background:var(--green);
+    color:white;
+}
+
+.result-summary{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:10px;
+    padding:15px;
+}
+
+.summary-box{
+    background:#f3f7f5;
+    padding:13px;
+    text-align:center;
+    border-radius:8px;
+}
+
+.summary-box b{
+    display:block;
+    color:var(--green);
+    margin-bottom:5px;
+}
+
+.grade{
+    font-weight:bold;
+    color:var(--green);
+}
+
+.pass{
+    color:#16852a;
+    font-weight:bold;
+}
+
+.fail{
+    color:#c62828;
+    font-weight:bold;
+}
+
+.admin-box{
+    border:2px solid #e3eee9;
+    border-radius:12px;
+    padding:18px;
+    margin-top:15px;
+}
+
+.admin-student{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    padding:12px;
+    border-bottom:1px solid #ddd;
+}
+
+.admin-student img{
+    width:55px;
+    height:55px;
+    border-radius:50%;
+    object-fit:cover;
+}
+
+.admin-actions{
+    margin-left:auto;
+}
+
+.notice{
+    border-left:5px solid var(--gold);
+    background:#fffbea;
+    padding:15px;
+    margin:10px 0;
+    border-radius:7px;
+}
+
+.notice h3{
+    color:var(--green);
+}
+
+.table-wrap{
+    overflow-x:auto;
+}
 
 footer{
     background:#032d29;
     color:white;
-    margin-top:45px;
-    padding:35px 20px;
     text-align:center;
+    padding:30px;
+    margin-top:40px;
 }
 
-footer .gold{
-    color:#e4c45a;
-}
-
-/* RESPONSIVE */
-
-@media(max-width:750px){
+@media(max-width:700px){
 
     header h1{
-        font-size:25px;
+        font-size:24px;
     }
 
     .hero h2{
-        font-size:28px;
-    }
-
-    .features{
-        grid-template-columns:1fr;
+        font-size:27px;
     }
 
     .info-grid{
         grid-template-columns:1fr;
     }
 
-    nav a{
-        font-size:13px;
-        padding:6px;
+    .result-student{
+        flex-direction:column;
+        text-align:center;
     }
 
-    .card{
-        padding:19px;
+    .result-summary{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+    nav a{
+        font-size:12px;
+        padding:5px;
+    }
+
+    .admin-student{
+        flex-wrap:wrap;
+    }
+
+    .admin-actions{
+        margin-left:0;
+        width:100%;
     }
 
 }
@@ -511,7 +438,6 @@ footer .gold{
 <nav>
 
     <a href="#home">Home</a>
-    <a href="#about">About</a>
     <a href="#login">Student Login</a>
     <a href="#profile">Profile</a>
     <a href="#result">Results</a>
@@ -526,107 +452,39 @@ footer .gold{
 
 <section id="home" class="hero">
 
-    <div class="hero-content">
+    <h2>
+        Welcome to
+        <span class="gold">Jamia Qamrul Islam</span>
+    </h2>
 
-        <h2>
-            Welcome to
-            <span class="gold">Jamia Qamrul Islam</span>
-        </h2>
+    <p>
+        Modern online portal for students, parents and administration.
+    </p>
 
-        <p>
-            A modern online portal for students, parents and administration.
-        </p>
+    <br>
 
-        <div class="hero-buttons">
-
-            <a href="#login" class="btn btn-gold">
-                Student Login
-            </a>
-
-            <a href="#about" class="btn">
-                Learn More
-            </a>
-
-        </div>
-
-    </div>
-
-</section>
-
-
-<!-- FEATURES -->
-
-<div class="section-title">
-
-    <h2>Our Online Services</h2>
-
-    <p>Everything students need in one place</p>
-
-</div>
-
-<section class="features">
-
-    <div class="feature">
-
-        <div class="icon">👨‍🎓</div>
-
-        <h3>Student Profile</h3>
-
-        <p>
-            View student information, class, roll number and subjects.
-        </p>
-
-    </div>
-
-    <div class="feature">
-
-        <div class="icon">📊</div>
-
-        <h3>Student Results</h3>
-
-        <p>
-            View subject-wise marks and overall result.
-        </p>
-
-    </div>
-
-    <div class="feature">
-
-        <div class="icon">📢</div>
-
-        <h3>Notice Board</h3>
-
-        <p>
-            Important school and madrasa announcements.
-        </p>
-
-    </div>
+    <a href="#login" class="btn btn-gold">
+        Student Login
+    </a>
 
 </section>
 
 
 <!-- ABOUT -->
 
-<section id="about" class="card" style="margin-top:30px;">
+<section class="card" style="margin-top:25px">
 
     <h2>About Jamia Qamrul Islam</h2>
 
     <p>
-        Jamia Qamrul Islam provides an organized environment
-        for Islamic and academic education. This online portal
-        has been designed to make student information and results
-        easier to access.
-    </p>
-
-    <p style="margin-top:12px;">
-        The website design can later be connected with a real
-        secure database and administration system.
+        Jamia Qamrul Islam provides Islamic and academic education
+        and an organized online student information system.
     </p>
 
 </section>
 
 
-<!-- LOGIN -->
+<!-- STUDENT LOGIN -->
 
 <section id="login" class="card">
 
@@ -635,20 +493,23 @@ footer .gold{
     <label>Roll Number</label>
 
     <input
-        type="text"
         id="studentRoll"
+        type="text"
         placeholder="Enter Roll Number"
     >
 
     <label>Password</label>
 
     <input
-        type="password"
         id="studentPassword"
+        type="password"
         placeholder="Enter Password"
     >
 
-    <button class="btn" onclick="studentLogin()">
+    <button
+        class="btn"
+        onclick="studentLogin()"
+    >
         Login
     </button>
 
@@ -678,7 +539,7 @@ footer .gold{
 
 <section id="result" class="card">
 
-    <h2>📊 Student Results</h2>
+    <h2>📊 Student Result</h2>
 
     <div id="resultBox">
 
@@ -691,23 +552,22 @@ footer .gold{
 </section>
 
 
-<!-- ROLL SEARCH -->
+<!-- SEARCH STUDENT -->
 
 <section class="card">
 
     <h2>🔎 Search Student</h2>
 
-    <p>
-        Enter a roll number to search for a student.
-    </p>
-
     <input
-        type="text"
         id="searchRoll"
+        type="text"
         placeholder="Enter Roll Number"
     >
 
-    <button class="btn" onclick="searchStudent()">
+    <button
+        class="btn"
+        onclick="searchStudent()"
+    >
         Search Student
     </button>
 
@@ -727,7 +587,7 @@ footer .gold{
 </section>
 
 
-<!-- ADMIN LOGIN -->
+<!-- ADMIN -->
 
 <section id="admin" class="card">
 
@@ -735,23 +595,26 @@ footer .gold{
 
     <div id="adminLoginBox">
 
-        <p>
-            Administrator Login
-        </p>
+        <label>Admin User Name</label>
 
         <input
-            type="text"
             id="adminUsername"
-            placeholder="Admin Username"
+            type="text"
+            placeholder="Enter Admin User Name"
         >
+
+        <label>Admin Password</label>
 
         <input
-            type="password"
             id="adminPassword"
-            placeholder="Admin Password"
+            type="password"
+            placeholder="Enter Admin Password"
         >
 
-        <button class="btn" onclick="adminLogin()">
+        <button
+            class="btn"
+            onclick="adminLogin()"
+        >
             Admin Login
         </button>
 
@@ -784,50 +647,111 @@ footer .gold{
 
             <h3>➕ Add New Student</h3>
 
+            <label>Student Name</label>
+
             <input
-                type="text"
                 id="newName"
                 placeholder="Student Name"
             >
 
+            <label>Father Name</label>
+
             <input
-                type="text"
                 id="newFather"
                 placeholder="Father Name"
             >
 
+            <label>Roll Number</label>
+
             <input
-                type="text"
                 id="newRoll"
                 placeholder="Roll Number"
             >
 
+            <label>Class</label>
+
             <input
-                type="text"
                 id="newClass"
                 placeholder="Class"
             >
 
+            <label>Student Password</label>
+
             <input
-                type="text"
                 id="newPassword"
-                placeholder="Student Password"
+                placeholder="Password"
             >
 
+            <label>Student Photo</label>
+
             <input
-                type="text"
                 id="newPhoto"
-                placeholder="Photo URL"
+                type="file"
+                accept="image/*"
             >
+
+
+            <h3 style="margin-top:15px;color:#075e54">
+                📚 Subjects & Marks
+            </h3>
+
+
+            <label>English Maximum Marks</label>
 
             <input
-                type="text"
-                id="newSubjects"
-                placeholder="Subjects separated by comma"
+                id="englishMax"
+                type="number"
+                value="100"
             >
 
-            <button class="btn" onclick="addStudent()">
-                Add Student
+            <label>English Obtained Marks</label>
+
+            <input
+                id="englishObt"
+                type="number"
+                value="0"
+            >
+
+
+            <label>Urdu Maximum Marks</label>
+
+            <input
+                id="urduMax"
+                type="number"
+                value="100"
+            >
+
+            <label>Urdu Obtained Marks</label>
+
+            <input
+                id="urduObt"
+                type="number"
+                value="0"
+            >
+
+
+            <label>Mathematics Maximum Marks</label>
+
+            <input
+                id="mathMax"
+                type="number"
+                value="100"
+            >
+
+            <label>Mathematics Obtained Marks</label>
+
+            <input
+                id="mathObt"
+                type="number"
+                value="0"
+            >
+
+
+            <button
+                class="btn"
+                onclick="addStudent()"
+            >
+                ➕ Add Student
             </button>
 
             <div id="addStudentMessage"></div>
@@ -835,7 +759,7 @@ footer .gold{
         </div>
 
 
-        <!-- STUDENT LIST -->
+        <!-- STUDENT MANAGEMENT -->
 
         <div class="admin-box">
 
@@ -853,17 +777,19 @@ footer .gold{
             <h3>📢 Notice Management</h3>
 
             <input
-                type="text"
                 id="newNoticeTitle"
                 placeholder="Notice Title"
             >
 
             <textarea
                 id="newNoticeText"
-                placeholder="Write notice..."
+                placeholder="Write Notice"
             ></textarea>
 
-            <button class="btn" onclick="addNotice()">
+            <button
+                class="btn"
+                onclick="addNotice()"
+            >
                 Add Notice
             </button>
 
@@ -880,16 +806,16 @@ footer .gold{
 
 <footer>
 
-    <h3>
-        <span class="gold">Jamia Qamrul Islam</span>
+    <h3 class="gold">
+        Jamia Qamrul Islam
     </h3>
 
     <p>
         Student Online Portal
     </p>
 
-    <p style="margin-top:10px;">
-        © 2026 Jamia Qamrul Islam. All Rights Reserved.
+    <p>
+        © 2026 Jamia Qamrul Islam
     </p>
 
 </footer>
@@ -898,30 +824,49 @@ footer .gold{
 <script>
 
 /* ================================
-   DEFAULT STUDENT DATA
+   DEFAULT STUDENT
 ================================ */
 
 var defaultStudents = [
 
     {
         name:"Muhammad Ahmad",
+
         father:"Muhammad Ali",
+
         roll:"1001",
+
         className:"Middle",
+
         password:"1234",
-        photo:"https://via.placeholder.com/300x300.png?text=Student",
+
+        photo:"",
+
         subjects:[
-            "Urdu",
             "English",
-            "Mathematics",
-            "Islamiat"
+            "Urdu",
+            "Mathematics"
         ],
+
         marks:{
-            "Urdu":85,
-            "English":78,
-            "Mathematics":82,
-            "Islamiat":90
+
+            English:{
+                max:100,
+                obtained:78
+            },
+
+            Urdu:{
+                max:100,
+                obtained:85
+            },
+
+            Mathematics:{
+                max:100,
+                obtained:82
+            }
+
         }
+
     }
 
 ];
@@ -932,8 +877,9 @@ var defaultStudents = [
 ================================ */
 
 var students =
-    JSON.parse(localStorage.getItem("jamiaStudents"))
-    || defaultStudents;
+    JSON.parse(
+        localStorage.getItem("jamiaStudents")
+    ) || defaultStudents;
 
 
 /* ================================
@@ -943,21 +889,26 @@ var students =
 var defaultNotices = [
 
     {
-        title:"Important Notice",
-        text:"Student results and profiles are available through the online portal."
+        title:"Welcome",
+
+        text:
+        "Welcome to Jamia Qamrul Islam Student Online Portal."
     },
 
     {
-        title:"Welcome",
-        text:"Welcome to Jamia Qamrul Islam Student Online Portal."
+        title:"Important Notice",
+
+        text:
+        "Student results and profiles are available online."
     }
 
 ];
 
 
 var notices =
-    JSON.parse(localStorage.getItem("jamiaNotices"))
-    || defaultNotices;
+    JSON.parse(
+        localStorage.getItem("jamiaNotices")
+    ) || defaultNotices;
 
 
 /* ================================
@@ -991,38 +942,55 @@ function saveNotices(){
 function studentLogin(){
 
     var roll =
-        document.getElementById("studentRoll").value.trim();
+        document.getElementById(
+            "studentRoll"
+        ).value.trim();
+
 
     var password =
-        document.getElementById("studentPassword").value.trim();
+        document.getElementById(
+            "studentPassword"
+        ).value.trim();
 
-    var message =
-        document.getElementById("studentLoginMessage");
 
     var student =
         students.find(function(s){
 
-            return s.roll === roll &&
-                   s.password === password;
+            return (
+                s.roll === roll &&
+                s.password === password
+            );
 
         });
 
 
     if(student){
 
-        message.innerHTML =
-            '<div class="status success">Login Successful ✓</div>';
+        document.getElementById(
+            "studentLoginMessage"
+        ).innerHTML =
+        '<div class="status success">' +
+        'Login Successful ✓' +
+        '</div>';
+
 
         showStudent(student);
+
 
         document
         .getElementById("profile")
         .scrollIntoView();
 
-    }else{
+    }
 
-        message.innerHTML =
-            '<div class="status error">Invalid Roll Number or Password</div>';
+    else{
+
+        document.getElementById(
+            "studentLoginMessage"
+        ).innerHTML =
+        '<div class="status error">' +
+        'Invalid Roll Number or Password' +
+        '</div>';
 
     }
 
@@ -1030,46 +998,78 @@ function studentLogin(){
 
 
 /* ================================
-   SHOW STUDENT
+   SHOW STUDENT PROFILE
 ================================ */
 
 function showStudent(student){
 
-    var subjects =
-        student.subjects.join(", ");
+    var photo =
+        student.photo ||
+        "https://via.placeholder.com/300x300.png?text=Student";
 
-    document.getElementById("profileBox").innerHTML = `
+
+    var subjects =
+        Object.keys(student.marks).join(", ");
+
+
+    document.getElementById(
+        "profileBox"
+    ).innerHTML = `
 
         <div class="student-profile">
 
             <img
-                src="${student.photo}"
+                src="${photo}"
                 class="student-photo"
-                onerror="this.src='https://via.placeholder.com/300x300.png?text=Student'"
             >
 
-            <h2>${student.name}</h2>
+            <h2>
+                ${student.name}
+            </h2>
 
             <div class="info-grid">
 
                 <div class="info-item">
-                    <b>Father Name</b><br>
+
+                    <b>Father Name</b>
+
+                    <br>
+
                     ${student.father}
+
                 </div>
 
+
                 <div class="info-item">
-                    <b>Roll Number</b><br>
+
+                    <b>Roll Number</b>
+
+                    <br>
+
                     ${student.roll}
+
                 </div>
 
+
                 <div class="info-item">
-                    <b>Class</b><br>
+
+                    <b>Class</b>
+
+                    <br>
+
                     ${student.className}
+
                 </div>
 
+
                 <div class="info-item">
-                    <b>Subjects</b><br>
+
+                    <b>Books / Subjects</b>
+
+                    <br>
+
                     ${subjects}
+
                 </div>
 
             </div>
@@ -1085,92 +1085,327 @@ function showStudent(student){
 
 
 /* ================================
-   SHOW RESULT
+   SHOW RESULT CARD
 ================================ */
 
 function showResult(student){
 
     var rows = "";
 
-    var total = 0;
+    var totalMaximum = 0;
 
-    var count = 0;
+    var totalObtained = 0;
 
 
-    for(var subject in student.marks){
+    Object.keys(student.marks)
+    .forEach(function(subject,index){
 
-        var mark =
-            Number(student.marks[subject]);
+        var maximum =
+            Number(
+                student.marks[subject].max
+            );
 
-        total += mark;
 
-        count++;
+        var obtained =
+            Number(
+                student.marks[subject].obtained
+            );
+
+
+        totalMaximum += maximum;
+
+        totalObtained += obtained;
+
+
+        var percentage =
+            maximum > 0
+            ? (obtained / maximum) * 100
+            : 0;
+
+
+        var grade = "F";
+
+
+        if(percentage >= 80){
+
+            grade = "A+";
+
+        }
+
+        else if(percentage >= 70){
+
+            grade = "A";
+
+        }
+
+        else if(percentage >= 60){
+
+            grade = "B";
+
+        }
+
+        else if(percentage >= 50){
+
+            grade = "C";
+
+        }
+
+        else if(percentage >= 40){
+
+            grade = "D";
+
+        }
+
 
         rows += `
 
             <tr>
 
-                <td>${subject}</td>
+                <td>
+                    ${index + 1}
+                </td>
 
-                <td>${mark}</td>
+                <td>
+                    <b>${subject}</b>
+                </td>
 
-                <td>100</td>
+                <td>
+                    ${maximum}
+                </td>
+
+                <td>
+                    ${obtained}
+                </td>
+
+                <td class="grade">
+                    ${grade}
+                </td>
 
             </tr>
 
         `;
 
-    }
+    });
 
 
     var percentage =
-        count > 0
-        ? ((total / (count * 100))*100).toFixed(1)
+        totalMaximum > 0
+        ? (
+            totalObtained /
+            totalMaximum *
+            100
+          ).toFixed(1)
         : 0;
+
+
+    var overallGrade = "F";
+
+
+    if(percentage >= 80){
+
+        overallGrade = "A+";
+
+    }
+
+    else if(percentage >= 70){
+
+        overallGrade = "A";
+
+    }
+
+    else if(percentage >= 60){
+
+        overallGrade = "B";
+
+    }
+
+    else if(percentage >= 50){
+
+        overallGrade = "C";
+
+    }
+
+    else if(percentage >= 40){
+
+        overallGrade = "D";
+
+    }
 
 
     var result =
         percentage >= 40
-        ? "Passed"
-        : "Failed";
+        ? "PASS"
+        : "FAIL";
 
 
-    document.getElementById("resultBox").innerHTML = `
+    var photo =
+        student.photo ||
+        "https://via.placeholder.com/300x300.png?text=Student";
 
-        <div class="table-wrap">
 
-            <table>
+    document.getElementById(
+        "resultBox"
+    ).innerHTML = `
 
-                <tr>
+        <div class="result-card">
 
-                    <th>Subject</th>
-                    <th>Marks</th>
-                    <th>Total</th>
 
-                </tr>
+            <div class="result-header">
 
-                ${rows}
+                <h2>
+                    جامعہ قمر الاسلام
+                </h2>
 
-            </table>
+                <h3>
+                    Jamia Qamrul Islam
+                </h3>
 
-        </div>
+                <p>
+                    STUDENT RESULT CARD
+                </p>
 
-        <div class="info-grid">
-
-            <div class="info-item">
-                <b>Total Marks</b><br>
-                ${total}
             </div>
 
-            <div class="info-item">
-                <b>Percentage</b><br>
-                ${percentage}%
+
+            <div class="result-student">
+
+                <img
+                    src="${photo}"
+                >
+
+                <div class="result-info">
+
+                    <p>
+                        <b>Student Name:</b>
+                        ${student.name}
+                    </p>
+
+                    <p>
+                        <b>Father Name:</b>
+                        ${student.father}
+                    </p>
+
+                    <p>
+                        <b>Roll Number:</b>
+                        ${student.roll}
+                    </p>
+
+                    <p>
+                        <b>Class:</b>
+                        ${student.className}
+                    </p>
+
+                </div>
+
             </div>
 
-            <div class="info-item">
-                <b>Overall Result</b><br>
-                ${result}
+
+            <div class="table-wrap">
+
+                <table class="result-table">
+
+                    <tr>
+
+                        <th>No.</th>
+
+                        <th>
+                            Book / Subject
+                        </th>
+
+                        <th>
+                            Maximum Marks
+                        </th>
+
+                        <th>
+                            Obtained Marks
+                        </th>
+
+                        <th>
+                            Grade
+                        </th>
+
+                    </tr>
+
+                    ${rows}
+
+                </table>
+
             </div>
+
+
+            <div class="result-summary">
+
+
+                <div class="summary-box">
+
+                    <b>
+                        Total Marks
+                    </b>
+
+                    ${totalMaximum}
+
+                </div>
+
+
+                <div class="summary-box">
+
+                    <b>
+                        Obtained Marks
+                    </b>
+
+                    ${totalObtained}
+
+                </div>
+
+
+                <div class="summary-box">
+
+                    <b>
+                        Percentage
+                    </b>
+
+                    ${percentage}%
+
+                </div>
+
+
+                <div class="summary-box">
+
+                    <b>
+                        Result
+                    </b>
+
+                    <span
+                        class="${
+                            result === "PASS"
+                            ? "pass"
+                            : "fail"
+                        }"
+                    >
+                        ${result}
+                    </span>
+
+                </div>
+
+
+            </div>
+
+
+            <div
+                style="
+                text-align:center;
+                padding:15px;
+                border-top:1px solid #ddd;
+                "
+            >
+
+                <b>
+                    Overall Grade:
+                    ${overallGrade}
+                </b>
+
+            </div>
+
 
         </div>
 
@@ -1186,10 +1421,9 @@ function showResult(student){
 function searchStudent(){
 
     var roll =
-        document.getElementById("searchRoll").value.trim();
-
-    var box =
-        document.getElementById("searchResult");
+        document.getElementById(
+            "searchRoll"
+        ).value.trim();
 
 
     var student =
@@ -1200,10 +1434,18 @@ function searchStudent(){
         });
 
 
+    var box =
+        document.getElementById(
+            "searchResult"
+        );
+
+
     if(!student){
 
         box.innerHTML =
-            '<div class="status error">Student not found.</div>';
+        '<div class="status error">' +
+        'Student not found.' +
+        '</div>';
 
         return;
 
@@ -1216,25 +1458,31 @@ function searchStudent(){
 
             <div class="student-profile">
 
-                <img
-                    src="${student.photo}"
-                    class="student-photo"
-                    onerror="this.src='https://via.placeholder.com/300x300.png?text=Student'"
+                <h2>
+                    ${student.name}
+                </h2>
+
+                <p>
+                    <b>Father:</b>
+                    ${student.father}
+                </p>
+
+                <p>
+                    <b>Roll:</b>
+                    ${student.roll}
+                </p>
+
+                <p>
+                    <b>Class:</b>
+                    ${student.className}
+                </p>
+
+                <button
+                    class="btn"
+                    onclick="showResult(students[${students.indexOf(student)}])"
                 >
-
-                <h2>${student.name}</h2>
-
-                <p>
-                    <b>Father:</b> ${student.father}
-                </p>
-
-                <p>
-                    <b>Roll:</b> ${student.roll}
-                </p>
-
-                <p>
-                    <b>Class:</b> ${student.className}
-                </p>
+                    View Result
+                </button>
 
             </div>
 
@@ -1252,10 +1500,15 @@ function searchStudent(){
 function adminLogin(){
 
     var username =
-        document.getElementById("adminUsername").value.trim();
+        document.getElementById(
+            "adminUsername"
+        ).value.trim();
+
 
     var password =
-        document.getElementById("adminPassword").value.trim();
+        document.getElementById(
+            "adminPassword"
+        ).value.trim();
 
 
     if(
@@ -1267,18 +1520,26 @@ function adminLogin(){
         .getElementById("adminLoginBox")
         .classList.add("hidden");
 
+
         document
         .getElementById("adminPanel")
         .classList.remove("hidden");
+
 
         renderAdminStudents();
 
         renderAdminNotices();
 
-    }else{
+    }
 
-        document.getElementById("adminMessage").innerHTML =
-            '<div class="status error">Invalid Admin Login</div>';
+    else{
+
+        document.getElementById(
+            "adminMessage"
+        ).innerHTML =
+        '<div class="status error">' +
+        'Invalid Admin Login' +
+        '</div>';
 
     }
 
@@ -1295,6 +1556,7 @@ function adminLogout(){
     .getElementById("adminPanel")
     .classList.add("hidden");
 
+
     document
     .getElementById("adminLoginBox")
     .classList.remove("hidden");
@@ -1309,25 +1571,39 @@ function adminLogout(){
 function addStudent(){
 
     var name =
-        document.getElementById("newName").value.trim();
+        document.getElementById(
+            "newName"
+        ).value.trim();
+
 
     var father =
-        document.getElementById("newFather").value.trim();
+        document.getElementById(
+            "newFather"
+        ).value.trim();
+
 
     var roll =
-        document.getElementById("newRoll").value.trim();
+        document.getElementById(
+            "newRoll"
+        ).value.trim();
+
 
     var className =
-        document.getElementById("newClass").value.trim();
+        document.getElementById(
+            "newClass"
+        ).value.trim();
+
 
     var password =
-        document.getElementById("newPassword").value.trim();
+        document.getElementById(
+            "newPassword"
+        ).value.trim();
 
-    var photo =
-        document.getElementById("newPhoto").value.trim();
 
-    var subjectsText =
-        document.getElementById("newSubjects").value.trim();
+    var photoInput =
+        document.getElementById(
+            "newPhoto"
+        );
 
 
     if(
@@ -1338,8 +1614,12 @@ function addStudent(){
         !password
     ){
 
-        document.getElementById("addStudentMessage").innerHTML =
-            '<div class="status error">Please fill all required fields.</div>';
+        document.getElementById(
+            "addStudentMessage"
+        ).innerHTML =
+        '<div class="status error">' +
+        'Please fill all required fields.' +
+        '</div>';
 
         return;
 
@@ -1356,32 +1636,134 @@ function addStudent(){
 
     if(exists){
 
-        document.getElementById("addStudentMessage").innerHTML =
-            '<div class="status error">This Roll Number already exists.</div>';
+        document.getElementById(
+            "addStudentMessage"
+        ).innerHTML =
+        '<div class="status error">' +
+        'This Roll Number already exists.' +
+        '</div>';
 
         return;
 
     }
 
 
-    var subjects =
-        subjectsText
-        ? subjectsText.split(",").map(function(x){
+    if(
+        photoInput.files &&
+        photoInput.files.length > 0
+    ){
 
-            return x.trim();
-
-        })
-        : ["Urdu","English","Mathematics","Islamiat"];
-
-
-    var marks = {};
+        var reader =
+            new FileReader();
 
 
-    subjects.forEach(function(subject){
+        reader.onload =
+            function(e){
 
-        marks[subject] = 0;
+                createStudent(
+                    e.target.result
+                );
 
-    });
+            };
+
+
+        reader.readAsDataURL(
+            photoInput.files[0]
+        );
+
+    }
+
+    else{
+
+        createStudent("");
+
+    }
+
+}
+
+
+/* ================================
+   CREATE STUDENT
+================================ */
+
+function createStudent(photo){
+
+    var name =
+        document.getElementById(
+            "newName"
+        ).value.trim();
+
+
+    var father =
+        document.getElementById(
+            "newFather"
+        ).value.trim();
+
+
+    var roll =
+        document.getElementById(
+            "newRoll"
+        ).value.trim();
+
+
+    var className =
+        document.getElementById(
+            "newClass"
+        ).value.trim();
+
+
+    var password =
+        document.getElementById(
+            "newPassword"
+        ).value.trim();
+
+
+    var englishMax =
+        Number(
+            document.getElementById(
+                "englishMax"
+            ).value
+        ) || 100;
+
+
+    var englishObt =
+        Number(
+            document.getElementById(
+                "englishObt"
+            ).value
+        ) || 0;
+
+
+    var urduMax =
+        Number(
+            document.getElementById(
+                "urduMax"
+            ).value
+        ) || 100;
+
+
+    var urduObt =
+        Number(
+            document.getElementById(
+                "urduObt"
+            ).value
+        ) || 0;
+
+
+    var mathMax =
+        Number(
+            document.getElementById(
+                "mathMax"
+            ).value
+        ) || 100;
+
+
+    var mathObt =
+        Number(
+            document.getElementById(
+                "mathObt"
+            ).value
+        ) || 0;
 
 
     students.push({
@@ -1396,13 +1778,32 @@ function addStudent(){
 
         password:password,
 
-        photo:
-            photo ||
-            "https://via.placeholder.com/300x300.png?text=Student",
+        photo:photo,
 
-        subjects:subjects,
+        subjects:[
+            "English",
+            "Urdu",
+            "Mathematics"
+        ],
 
-        marks:marks
+        marks:{
+
+            English:{
+                max:englishMax,
+                obtained:englishObt
+            },
+
+            Urdu:{
+                max:urduMax,
+                obtained:urduObt
+            },
+
+            Mathematics:{
+                max:mathMax,
+                obtained:mathObt
+            }
+
+        }
 
     });
 
@@ -1412,17 +1813,42 @@ function addStudent(){
     renderAdminStudents();
 
 
-    document.getElementById("addStudentMessage").innerHTML =
-        '<div class="status success">Student Added Successfully ✓</div>';
+    document.getElementById(
+        "addStudentMessage"
+    ).innerHTML =
+    '<div class="status success">' +
+    'Student Added Successfully ✓' +
+    '</div>';
 
 
-    document.getElementById("newName").value="";
-    document.getElementById("newFather").value="";
-    document.getElementById("newRoll").value="";
-    document.getElementById("newClass").value="";
-    document.getElementById("newPassword").value="";
-    document.getElementById("newPhoto").value="";
-    document.getElementById("newSubjects").value="";
+    document.getElementById(
+        "newName"
+    ).value = "";
+
+
+    document.getElementById(
+        "newFather"
+    ).value = "";
+
+
+    document.getElementById(
+        "newRoll"
+    ).value = "";
+
+
+    document.getElementById(
+        "newClass"
+    ).value = "";
+
+
+    document.getElementById(
+        "newPassword"
+    ).value = "";
+
+
+    document.getElementById(
+        "newPhoto"
+    ).value = "";
 
 }
 
@@ -1434,70 +1860,74 @@ function addStudent(){
 function renderAdminStudents(){
 
     var box =
-        document.getElementById("adminStudentList");
-
-
-    if(students.length === 0){
-
-        box.innerHTML =
-            "<p>No students available.</p>";
-
-        return;
-
-    }
+        document.getElementById(
+            "adminStudentList"
+        );
 
 
     var html = "";
 
 
-    students.forEach(function(student,index){
+    students.forEach(
+        function(student,index){
 
-        html += `
+            var photo =
+                student.photo ||
+                "https://via.placeholder.com/100?text=Student";
 
-            <div class="admin-student">
 
-                <img
-                    src="${student.photo}"
-                    onerror="this.src='https://via.placeholder.com/100?text=Student'"
-                >
+            html += `
 
-                <div>
+                <div class="admin-student">
 
-                    <b>${student.name}</b>
+                    <img
+                        src="${photo}"
+                    >
 
-                    <br>
+                    <div>
 
-                    Roll: ${student.roll}
+                        <b>
+                            ${student.name}
+                        </b>
 
-                    <br>
+                        <br>
 
-                    Class: ${student.className}
+                        Roll:
+                        ${student.roll}
+
+                        <br>
+
+                        Class:
+                        ${student.className}
+
+                    </div>
+
+
+                    <div class="admin-actions">
+
+                        <button
+                            class="btn"
+                            onclick="editStudent(${index})"
+                        >
+                            Edit
+                        </button>
+
+
+                        <button
+                            class="btn btn-danger"
+                            onclick="deleteStudent(${index})"
+                        >
+                            Delete
+                        </button>
+
+                    </div>
 
                 </div>
 
-                <div class="admin-actions">
+            `;
 
-                    <button
-                        class="btn"
-                        onclick="editStudent(${index})"
-                    >
-                        Edit
-                    </button>
-
-                    <button
-                        class="btn btn-danger"
-                        onclick="deleteStudent(${index})"
-                    >
-                        Delete
-                    </button>
-
-                </div>
-
-            </div>
-
-        `;
-
-    });
+        }
+    );
 
 
     box.innerHTML = html;
@@ -1516,40 +1946,52 @@ function editStudent(index){
 
 
     var name =
-        prompt("Student Name:",student.name);
+        prompt(
+            "Student Name:",
+            student.name
+        );
+
 
     if(name === null) return;
 
 
     var father =
-        prompt("Father Name:",student.father);
+        prompt(
+            "Father Name:",
+            student.father
+        );
+
 
     if(father === null) return;
 
 
     var className =
-        prompt("Class:",student.className);
+        prompt(
+            "Class:",
+            student.className
+        );
+
 
     if(className === null) return;
 
 
     var password =
-        prompt("Student Password:",student.password);
+        prompt(
+            "Student Password:",
+            student.password
+        );
+
 
     if(password === null) return;
 
 
-    var photo =
-        prompt("Photo URL:",student.photo);
-
-    if(photo === null) return;
-
-
     student.name = name;
+
     student.father = father;
+
     student.className = className;
+
     student.password = password;
-    student.photo = photo;
 
 
     saveStudents();
@@ -1557,7 +1999,9 @@ function editStudent(index){
     renderAdminStudents();
 
 
-    alert("Student information updated successfully.");
+    alert(
+        "Student information updated successfully."
+    );
 
 }
 
@@ -1572,15 +2016,17 @@ function deleteStudent(index){
         students[index];
 
 
-    var confirmDelete =
-        confirm(
+    if(
+        !confirm(
             "Delete " +
             student.name +
             " permanently?"
-        );
+        )
+    ){
 
+        return;
 
-    if(!confirmDelete) return;
+    }
 
 
     students.splice(index,1);
@@ -1589,7 +2035,48 @@ function deleteStudent(index){
 
     renderAdminStudents();
 
-    alert("Student deleted successfully.");
+}
+
+
+/* ================================
+   DISPLAY NOTICES
+================================ */
+
+function renderNotices(){
+
+    var box =
+        document.getElementById(
+            "noticeList"
+        );
+
+
+    var html = "";
+
+
+    notices.forEach(
+        function(notice){
+
+            html += `
+
+                <div class="notice">
+
+                    <h3>
+                        ${notice.title}
+                    </h3>
+
+                    <p>
+                        ${notice.text}
+                    </p>
+
+                </div>
+
+            `;
+
+        }
+    );
+
+
+    box.innerHTML = html;
 
 }
 
@@ -1601,15 +2088,22 @@ function deleteStudent(index){
 function addNotice(){
 
     var title =
-        document.getElementById("newNoticeTitle").value.trim();
+        document.getElementById(
+            "newNoticeTitle"
+        ).value.trim();
+
 
     var text =
-        document.getElementById("newNoticeText").value.trim();
+        document.getElementById(
+            "newNoticeText"
+        ).value.trim();
 
 
     if(!title || !text){
 
-        alert("Please enter notice title and text.");
+        alert(
+            "Please enter notice title and text."
+        );
 
         return;
 
@@ -1632,48 +2126,14 @@ function addNotice(){
     renderAdminNotices();
 
 
-    document.getElementById("newNoticeTitle").value="";
-
-    document.getElementById("newNoticeText").value="";
-
-}
+    document.getElementById(
+        "newNoticeTitle"
+    ).value = "";
 
 
-/* ================================
-   DISPLAY NOTICES
-================================ */
-
-function renderNotices(){
-
-    var box =
-        document.getElementById("noticeList");
-
-
-    var html = "";
-
-
-    notices.forEach(function(notice){
-
-        html += `
-
-            <div class="notice">
-
-                <h3>
-                    ${notice.title}
-                </h3>
-
-                <p>
-                    ${notice.text}
-                </p>
-
-            </div>
-
-        `;
-
-    });
-
-
-    box.innerHTML = html;
+    document.getElementById(
+        "newNoticeText"
+    ).value = "";
 
 }
 
@@ -1685,38 +2145,42 @@ function renderNotices(){
 function renderAdminNotices(){
 
     var box =
-        document.getElementById("adminNoticeList");
+        document.getElementById(
+            "adminNoticeList"
+        );
 
 
     var html = "";
 
 
-    notices.forEach(function(notice,index){
+    notices.forEach(
+        function(notice,index){
 
-        html += `
+            html += `
 
-            <div class="notice">
+                <div class="notice">
 
-                <h3>
-                    ${notice.title}
-                </h3>
+                    <h3>
+                        ${notice.title}
+                    </h3>
 
-                <p>
-                    ${notice.text}
-                </p>
+                    <p>
+                        ${notice.text}
+                    </p>
 
-                <button
-                    class="btn btn-danger"
-                    onclick="deleteNotice(${index})"
-                >
-                    Delete Notice
-                </button>
+                    <button
+                        class="btn btn-danger"
+                        onclick="deleteNotice(${index})"
+                    >
+                        Delete Notice
+                    </button>
 
-            </div>
+                </div>
 
-        `;
+            `;
 
-    });
+        }
+    );
 
 
     box.innerHTML = html;
@@ -1730,7 +2194,11 @@ function renderAdminNotices(){
 
 function deleteNotice(index){
 
-    if(!confirm("Delete this notice?")){
+    if(
+        !confirm(
+            "Delete this notice?"
+        )
+    ){
 
         return;
 
