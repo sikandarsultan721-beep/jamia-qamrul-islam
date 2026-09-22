@@ -1,0 +1,2186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jamia Qamrul Islam</title>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0;font-family:Arial,Helvetica,sans-serif}
+body{background:#f3f5f1;color:#18251d}
+
+header{
+background:linear-gradient(135deg,#063b2b,#0b6248,#063b2b);
+color:#fff;padding:18px 15px;border-bottom:4px solid #d4af37;
+box-shadow:0 4px 18px rgba(0,0,0,.25)
+}
+
+.header-inner{
+max-width:1100px;margin:auto;display:flex;align-items:center;
+justify-content:space-between;gap:15px
+}
+
+.logo-box{
+width:68px;height:68px;border:2px solid #d4af37;border-radius:50%;
+display:flex;align-items:center;justify-content:center;
+background:#052d21;overflow:hidden;flex-shrink:0
+}
+
+.logo-box img{width:100%;height:100%;object-fit:cover}
+
+.brand h1{font-size:25px;color:#f5d76e}
+.brand p{font-size:12px;margin-top:4px;color:#fff}
+
+nav{
+max-width:1100px;margin:0 auto;display:flex;
+flex-wrap:wrap;gap:8px;padding-top:15px
+}
+
+nav button{
+border:1px solid rgba(255,255,255,.25);
+background:rgba(255,255,255,.08);color:#fff;
+padding:10px 15px;border-radius:8px;cursor:pointer
+}
+
+nav button:hover{background:#d4af37;color:#073827}
+
+.container{max-width:1100px;margin:auto;padding:20px 15px}
+
+.hero{
+background:linear-gradient(135deg,#fff,#edf4ef);
+border:1px solid #d7dfd9;border-left:5px solid #0a6347;
+border-radius:15px;padding:28px 20px;margin-bottom:20px;
+box-shadow:0 5px 20px rgba(0,0,0,.07)
+}
+
+.hero h2{color:#07553d;margin-bottom:8px;font-size:28px}
+.hero p{color:#555}
+
+.section{display:none}
+.section.active{display:block}
+
+.card{
+background:#fff;border-radius:15px;padding:22px;margin-bottom:20px;
+box-shadow:0 5px 22px rgba(0,0,0,.08);
+border:1px solid #e0e5e1
+}
+
+.card h2,.card h3{color:#07553d;margin-bottom:15px}
+
+input,select{
+width:100%;padding:13px;border:1px solid #cdd6d0;
+border-radius:8px;margin:6px 0 12px;font-size:15px;outline:none
+}
+
+input:focus,select:focus{
+border-color:#0a7654;
+box-shadow:0 0 0 2px rgba(10,118,84,.1)
+}
+
+button.primary{
+background:linear-gradient(135deg,#07553d,#0a7654);
+color:#fff;border:none;padding:12px 20px;
+border-radius:8px;cursor:pointer;font-weight:bold
+}
+
+button.gold{
+background:linear-gradient(135deg,#b88a18,#e0bd50);
+color:#172318;border:none;padding:12px 20px;
+border-radius:8px;cursor:pointer;font-weight:bold
+}
+
+button.danger{
+background:#a52b2b;color:#fff;border:none;
+padding:8px 12px;border-radius:7px;cursor:pointer
+}
+
+.message{
+margin-top:10px;padding:10px;border-radius:7px;display:none
+}
+
+.success{background:#e6f5eb;color:#146238}
+.error{background:#fde8e8;color:#a32626}
+
+.info-grid{
+display:grid;grid-template-columns:repeat(2,1fr);gap:15px
+}
+
+/* ================= PROFESSIONAL IMAGE SLIDER ================= */
+
+.slider-card{
+padding:14px;
+background:linear-gradient(135deg,#fff,#f3f7f3);
+border:1px solid #d7c477
+}
+
+.slider-title{
+text-align:center;color:#07553d;font-size:21px;
+font-weight:bold;margin:4px 0 12px
+}
+
+.slider-subtitle{
+text-align:center;color:#777;font-size:13px;margin-bottom:12px
+}
+
+.slider{
+position:relative;width:100%;height:430px;
+border-radius:14px;overflow:hidden;background:#073827;
+border:3px solid #c7a43a;
+box-shadow:0 8px 25px rgba(0,0,0,.16)
+}
+
+.slide{
+position:absolute;inset:0;opacity:0;
+transition:opacity 1s ease
+}
+
+.slide.active{opacity:1}
+
+.slide img{
+width:100%;height:100%;object-fit:cover;display:block
+}
+
+.slider-caption{
+position:absolute;left:0;right:0;bottom:0;
+padding:12px 15px;color:#fff;text-align:center;
+background:linear-gradient(transparent,rgba(0,0,0,.8));
+font-weight:bold
+}
+
+.slider-dots{
+display:flex;justify-content:center;gap:7px;margin-top:10px
+}
+
+.slider-dot{
+width:9px;height:9px;border-radius:50%;
+background:#c9c9c9;cursor:pointer
+}
+
+.slider-dot.active{
+background:#b88a18;transform:scale(1.2)
+}
+
+/* ================= RESULT CARD ================= */
+
+.result-wrap{display:none}
+
+.result-actions{
+display:flex;flex-wrap:wrap;gap:10px;margin-bottom:18px
+}
+
+.result-card{
+width:100%;max-width:900px;margin:auto;background:#fff;
+border:7px solid #07553d;outline:2px solid #c7a43a;
+box-shadow:0 10px 35px rgba(0,0,0,.18);
+position:relative;overflow:hidden
+}
+
+.result-top{
+background:linear-gradient(135deg,#063b2b,#07553d,#0b7654);
+color:#fff;padding:25px;border-bottom:5px solid #d4af37;
+position:relative
+}
+
+.result-top:after{
+content:"";position:absolute;left:18px;right:18px;
+bottom:8px;height:1px;background:#e2c35d
+}
+
+.result-title{text-align:center}
+
+.result-title .small{
+color:#e8cf72;font-size:13px;
+letter-spacing:2px;font-weight:bold
+}
+
+.result-title h1{
+font-size:30px;margin:7px 0;color:#fff4bd;
+letter-spacing:.5px
+}
+
+.result-title p{font-size:13px;color:#fff}
+
+.result-body{padding:25px}
+
+.student-head{
+display:grid;grid-template-columns:1fr 150px;
+gap:20px;align-items:start;margin-bottom:22px
+}
+
+.student-info{
+border:2px solid #d1b04b;border-radius:10px;overflow:hidden
+}
+
+.student-info-row{
+display:grid;grid-template-columns:150px 1fr;
+border-bottom:1px solid #dfe3df
+}
+
+.student-info-row:last-child{border-bottom:0}
+
+.student-info-row strong{
+background:#edf4ef;color:#07553d;padding:11px
+}
+
+.student-info-row span{
+padding:11px;font-weight:bold;color:#222
+}
+
+.photo-box{
+width:150px;height:175px;border:4px solid #c7a43a;
+border-radius:10px;background:#eef1ed;overflow:hidden;
+display:flex;align-items:center;justify-content:center;
+color:#777;font-size:12px;text-align:center
+}
+
+.photo-box img{
+width:100%;height:100%;object-fit:cover
+}
+
+.marks-title{
+background:#07553d;color:#f7df79;padding:11px 15px;
+font-size:17px;font-weight:bold;border-radius:8px 8px 0 0
+}
+
+.marks-table{
+width:100%;border-collapse:collapse;
+border:2px solid #07553d;margin-bottom:20px
+}
+
+.marks-table th{
+background:#d5b451;color:#132319;
+padding:12px 8px;border:1px solid #96751c;font-size:14px
+}
+
+.marks-table td{
+padding:13px 8px;border:1px solid #bfc8c2;
+text-align:center;font-weight:bold;color:#151515;font-size:16px
+}
+
+.marks-table td:first-child{
+text-align:left;color:#07553d
+}
+
+.summary{
+display:grid;grid-template-columns:repeat(4,1fr);
+gap:10px;margin:20px 0
+}
+
+.summary-box{
+border:2px solid #c8a63e;border-radius:9px;
+padding:12px 5px;text-align:center;background:#fbfaf3
+}
+
+.summary-box label{
+display:block;color:#07553d;font-size:11px;
+font-weight:bold;margin-bottom:5px
+}
+
+.summary-box strong{
+display:block;font-size:20px;color:#111
+}
+
+.status{
+padding:7px 15px;border-radius:20px;
+display:inline-block;background:#dff2e5;color:#116134
+}
+
+.signatures{
+display:grid;grid-template-columns:repeat(3,1fr);
+gap:25px;margin-top:40px
+}
+
+.signature{
+text-align:center;padding-top:25px;
+border-top:1px solid #555;color:#333;font-size:12px
+}
+
+.result-footer{
+background:#07553d;color:#fff;text-align:center;
+padding:10px;font-size:11px;border-top:4px solid #d4af37
+}
+
+/* ================= ADMIN ================= */
+
+.student-list{overflow-x:auto}
+
+.student-list table{
+width:100%;border-collapse:collapse
+}
+
+.student-list th,.student-list td{
+border:1px solid #d5ddd7;padding:9px;
+text-align:left;white-space:nowrap
+}
+
+.student-list th{
+background:#07553d;color:#fff
+}
+
+.notice{
+border-left:5px solid #d1ac3c;background:#f9faf6;
+padding:14px;border-radius:7px;margin-bottom:10px
+}
+
+.file-note{
+font-size:12px;color:#777;
+margin-top:-5px;margin-bottom:10px
+}
+
+/* ================= MOBILE ================= */
+
+@media(max-width:650px){
+
+.header-inner{align-items:center}
+
+.brand h1{font-size:20px}
+
+.info-grid{grid-template-columns:1fr}
+
+.slider{height:250px}
+
+.result-body{padding:12px}
+
+.student-head{
+grid-template-columns:1fr 110px
+}
+
+.photo-box{
+width:110px;height:135px
+}
+
+.student-info-row{
+grid-template-columns:105px 1fr
+}
+
+.student-info-row strong,
+.student-info-row span{
+padding:8px;font-size:12px
+}
+
+.result-title h1{font-size:22px}
+
+.summary{
+grid-template-columns:repeat(2,1fr)
+}
+
+.signatures{
+grid-template-columns:1fr;gap:35px
+}
+
+.marks-table th,
+.marks-table td{
+font-size:12px;padding:9px 4px
+}
+
+}
+</style>
+</head>
+
+<body>
+
+<header>
+
+<div class="header-inner">
+
+<div class="logo-box">
+<img src="file_000000007ddc820895dc145b76a9dd1c.png"
+alt="Jamia Qamrul Islam Logo">
+</div>
+
+<div class="brand">
+<h1>Jamia Qamrul Islam</h1>
+<p>Islamic Education • Knowledge • Character</p>
+</div>
+
+</div>
+
+<nav>
+<button onclick="showSection('home')">Home</button>
+<button onclick="showSection('result')">Student Result</button>
+<button onclick="showSection('admin')">Admin</button>
+<button onclick="showSection('notice')">Notice</button>
+</nav>
+
+</header>
+
+
+<main class="container">
+
+
+<!-- ================= HOME ================= -->
+
+<section id="home" class="section active">
+
+<div class="hero">
+<h2>Welcome to Jamia Qamrul Islam</h2>
+<p>Official Student Result & Information Portal</p>
+</div>
+
+
+<!-- AUTOMATIC SLIDER -->
+
+<div class="card slider-card">
+
+<div class="slider-title">
+Jamia Qamrul Islam Activities
+</div>
+
+<div class="slider-subtitle">
+Education • Islamic Activities • Campus Life
+</div>
+
+<div class="slider" id="campusSlider">
+
+<div class="slide active">
+<img src="file_0000000043bc8206851260d941647475.png"
+alt="Jamia Qamrul Islam Welcome">
+</div>
+
+<div class="slide">
+<img src="file_00000000026c81fa87b581f453c21317.png"
+alt="Morning Assembly">
+</div>
+
+<div class="slide">
+<img src="file_000000004c7481fab59275616a66d25b.png"
+alt="Jamia Qamrul Islam Courses">
+</div>
+
+<div class="slide">
+<img src="file_0000000058e4720bbfb64c62c0661282.png"
+alt="Madrasa Schedule">
+</div>
+
+<div class="slider-caption" id="sliderCaption">
+Welcome to Jamia Qamrul Islam
+</div>
+
+</div>
+
+<div class="slider-dots" id="sliderDots"></div>
+
+</div>
+
+
+<!-- STUDENT RESULT -->
+
+<div class="card">
+
+<h2>Student Result</h2>
+
+<p style="margin-bottom:15px;color:#666">
+Enter your Roll Number to view your result.
+</p>
+
+<input id="homeRoll"
+type="text"
+placeholder="Enter Roll Number">
+
+<button class="primary"
+onclick="openResultFromHome()">
+View Result
+</button>
+
+<div id="homeMessage" class="message"></div>
+
+</div>
+
+
+<div class="card">
+
+<h3>Jamia Qamrul Islam</h3>
+
+<p style="line-height:1.8;color:#555">
+Welcome to the official online portal of Jamia Qamrul Islam.
+Students and parents can conveniently check academic results
+using the student's Roll Number.
+</p>
+
+</div>
+
+</section>
+
+
+<!-- ================= RESULT LOGIN ================= -->
+
+<section id="result" class="section">
+
+<div class="card" id="resultLogin">
+
+<h2>Student Result Portal</h2>
+
+<p style="color:#666;margin-bottom:15px">
+Please enter your Roll Number.
+</p>
+
+<input id="resultRoll"
+type="text"
+placeholder="Roll Number">
+
+<button class="primary"
+onclick="studentLogin()">
+View Result
+</button>
+
+<div id="resultMessage" class="message"></div>
+
+</div>
+
+
+<div id="resultArea" class="result-wrap">
+
+<div class="result-actions">
+
+<button class="gold"
+onclick="downloadPDF()">
+📄 Download Result PDF
+</button>
+
+<button class="primary"
+onclick="printResult()">
+🖨 Print Result
+</button>
+
+<button class="danger"
+onclick="logoutResult()">
+Logout
+</button>
+
+</div>
+
+
+<div id="resultCard" class="result-card">
+
+<div class="result-top">
+
+<div class="result-title">
+
+<div class="small">
+OFFICIAL ACADEMIC RESULT
+</div>
+
+<h1>
+JAMIA QAMRUL ISLAM
+</h1>
+
+<p>
+Student Examination Result Card
+</p>
+
+</div>
+
+</div>
+
+
+<div class="result-body">
+
+<div class="student-head">
+
+<div class="student-info">
+
+<div class="student-info-row">
+<strong>Student Name</strong>
+<span id="rName">—</span>
+</div>
+
+<div class="student-info-row">
+<strong>Father Name</strong>
+<span id="rFather">—</span>
+</div>
+
+<div class="student-info-row">
+<strong>Roll Number</strong>
+<span id="rRoll">—</span>
+</div>
+
+<div class="student-info-row">
+<strong>Class</strong>
+<span id="rClass">—</span>
+</div>
+
+</div>
+
+
+<div class="photo-box">
+
+<img id="rPhoto"
+src=""
+style="display:none">
+
+<span id="noPhoto">
+STUDENT<br>PHOTO
+</span>
+
+</div>
+
+</div>
+
+
+<div class="marks-title">
+SUBJECT-WISE MARKS
+</div>
+
+
+<table class="marks-table">
+
+<thead>
+
+<tr>
+<th>Subject</th>
+<th>Maximum Marks</th>
+<th>Obtained Marks</th>
+<th>Percentage</th>
+</tr>
+
+</thead>
+
+<tbody id="marksBody"></tbody>
+
+</table>
+
+
+<div class="summary">
+
+<div class="summary-box">
+<label>TOTAL MARKS</label>
+<strong id="rTotal">0</strong>
+</div>
+
+<div class="summary-box">
+<label>OBTAINED</label>
+<strong id="rObtained">0</strong>
+</div>
+
+<div class="summary-box">
+<label>PERCENTAGE</label>
+<strong id="rPercentage">0%</strong>
+</div>
+
+<div class="summary-box">
+<label>GRADE</label>
+<strong id="rGrade">—</strong>
+</div>
+
+</div>
+
+
+<div style="text-align:center;margin:10px 0 25px">
+
+<span class="status" id="rStatus">
+PASS
+</span>
+
+</div>
+
+
+<div class="signatures">
+
+<div class="signature">
+Class Teacher
+</div>
+
+<div class="signature">
+Principal
+</div>
+
+<div class="signature">
+Official Stamp
+</div>
+
+</div>
+
+</div>
+
+
+<div class="result-footer">
+Jamia Qamrul Islam • Official Student Result Portal
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- ================= ADMIN ================= -->
+
+<section id="admin" class="section">
+
+
+<div class="card" id="adminLoginBox">
+
+<h2>Admin Login</h2>
+
+<input id="adminUser"
+type="text"
+placeholder="Username">
+
+<input id="adminPass"
+type="password"
+placeholder="Password">
+
+<button class="primary"
+onclick="adminLogin()">
+Login
+</button>
+
+<div id="adminMessage" class="message"></div>
+
+</div>
+
+
+<div id="adminPanel" style="display:none">
+
+
+<div class="card">
+
+<h2>Add Student</h2>
+
+
+<div class="info-grid">
+
+<div>
+<label>Student Name</label>
+<input id="sName"
+type="text"
+placeholder="Student Name">
+</div>
+
+
+<div>
+<label>Father Name</label>
+<input id="sFather"
+type="text"
+placeholder="Father Name">
+</div>
+
+
+<div>
+<label>Roll Number</label>
+<input id="sRoll"
+type="text"
+placeholder="Roll Number">
+</div>
+
+
+<div>
+
+<label>Class</label>
+
+<select id="sClass">
+
+<option>Primary</option>
+<option>Middle</option>
+<option>Secondary</option>
+
+</select>
+
+</div>
+
+</div>
+
+
+<label>Student Photo</label>
+
+<input id="sPhoto"
+type="file"
+accept="image/*">
+
+<p class="file-note">
+JPG/PNG photo recommended.
+</p>
+
+
+<h3 style="margin-top:15px">
+Marks
+</h3>
+
+
+<div class="info-grid">
+
+
+<div>
+
+<label>English - Maximum</label>
+
+<input id="engMax"
+type="number"
+value="100">
+
+<label>English - Obtained</label>
+
+<input id="engObt"
+type="number"
+value="0">
+
+</div>
+
+
+<div>
+
+<label>Urdu - Maximum</label>
+
+<input id="urduMax"
+type="number"
+value="100">
+
+<label>Urdu - Obtained</label>
+
+<input id="urduObt"
+type="number"
+value="0">
+
+</div>
+
+
+<div>
+
+<label>Mathematics - Maximum</label>
+
+<input id="mathMax"
+type="number"
+value="100">
+
+<label>Mathematics - Obtained</label>
+
+<input id="mathObt"
+type="number"
+value="0">
+
+</div>
+
+
+</div>
+
+
+<button class="gold"
+onclick="addStudent()">
+Save Student
+</button>
+
+<div id="saveMessage" class="message"></div>
+
+</div>
+
+
+<div class="card">
+
+<h2>Student Records</h2>
+
+<div class="student-list">
+
+<table>
+
+<thead>
+
+<tr>
+<th>Name</th>
+<th>Roll</th>
+<th>Class</th>
+<th>Action</th>
+</tr>
+
+</thead>
+
+<tbody id="studentList"></tbody>
+
+</table>
+
+</div>
+
+</div>
+
+
+<div class="card">
+
+<button class="danger"
+onclick="adminLogout()">
+Admin Logout
+</button>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- ================= NOTICE ================= -->
+
+<section id="notice" class="section">
+
+<div class="card">
+
+<h2>Notice Board</h2>
+
+<div id="noticeList">
+
+<div class="notice">
+Welcome to Jamia Qamrul Islam official student portal.
+</div>
+
+<div class="notice">
+Students can check their results using their Roll Number.
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+
+</main>
+
+
+<script>
+
+/* ================= DATA ================= */
+
+const defaultStudent={
+name:"Muhammad Ahmad",
+father:"Muhammad Ali",
+roll:"1001",
+className:"Middle",
+photo:"",
+marks:{
+English:{max:100,obtained:78},
+Urdu:{max:100,obtained:85},
+Mathematics:{max:100,obtained:82}
+}
+};
+
+
+/* ================= STORAGE ================= */
+
+function getStudents(){
+
+let data=localStorage.getItem("jamiaStudents");
+
+if(!data){
+
+localStorage.setItem(
+"jamiaStudents",
+JSON.stringify([defaultStudent])
+);
+
+return[defaultStudent];
+
+}
+
+try{
+
+let students=JSON.parse(data);
+
+if(!Array.isArray(students))
+students=[defaultStudent];
+
+return students.map(normalizeStudent);
+
+}catch(e){
+
+localStorage.setItem(
+"jamiaStudents",
+JSON.stringify([defaultStudent])
+);
+
+return[defaultStudent];
+
+}
+
+}
+
+
+function normalizeStudent(s){
+
+if(!s)return defaultStudent;
+
+return{
+
+name:s.name||"",
+father:s.father||"",
+roll:String(s.roll||""),
+className:s.className||s.class||"Middle",
+photo:s.photo||"",
+
+marks:{
+
+English:
+normalizeMark(s.marks?.English),
+
+Urdu:
+normalizeMark(s.marks?.Urdu),
+
+Mathematics:
+normalizeMark(
+s.marks?.Mathematics||
+s.marks?.Math
+)
+
+}
+
+};
+
+}
+
+
+function normalizeMark(m){
+
+if(typeof m==="number"){
+
+return{
+max:100,
+obtained:m
+};
+
+}
+
+return{
+
+max:Number(m?.max??100),
+
+obtained:Number(
+m?.obtained??
+m?.marks??
+m?.score??
+0
+)
+
+};
+
+}
+
+
+function saveStudents(students){
+
+localStorage.setItem(
+"jamiaStudents",
+JSON.stringify(students)
+);
+
+}
+
+
+/* ================= NAVIGATION ================= */
+
+function showSection(id){
+
+document.querySelectorAll(".section")
+.forEach(s=>s.classList.remove("active"));
+
+document.getElementById(id)
+.classList.add("active");
+
+window.scrollTo({
+top:0,
+behavior:"smooth"
+});
+
+}
+
+
+/* ================= MESSAGE ================= */
+
+function showMessage(id,text,type){
+
+const box=document.getElementById(id);
+
+box.textContent=text;
+box.className="message "+type;
+box.style.display="block";
+
+}
+
+
+/* ================= HOME LOGIN ================= */
+
+function openResultFromHome(){
+
+const roll=document
+.getElementById("homeRoll")
+.value.trim();
+
+if(!roll){
+
+showMessage(
+"homeMessage",
+"Please enter Roll Number.",
+"error"
+);
+
+return;
+
+}
+
+showSection("result");
+
+document.getElementById("resultRoll")
+.value=roll;
+
+studentLogin();
+
+}
+
+
+/* ================= STUDENT LOGIN ================= */
+
+function studentLogin(){
+
+const roll=document
+.getElementById("resultRoll")
+.value.trim();
+
+if(!roll){
+
+showMessage(
+"resultMessage",
+"Please enter Roll Number.",
+"error"
+);
+
+return;
+
+}
+
+const student=getStudents().find(
+s=>String(s.roll).toLowerCase()===
+roll.toLowerCase()
+);
+
+if(!student){
+
+showMessage(
+"resultMessage",
+"Student record not found. Please check the Roll Number.",
+"error"
+);
+
+return;
+
+}
+
+document.getElementById("resultLogin")
+.style.display="none";
+
+document.getElementById("resultArea")
+.style.display="block";
+
+renderResult(student);
+
+window.scrollTo({
+top:0,
+behavior:"smooth"
+});
+
+}
+
+
+/* ================= RESULT ================= */
+
+function renderResult(student){
+
+document.getElementById("rName")
+.textContent=student.name;
+
+document.getElementById("rFather")
+.textContent=student.father;
+
+document.getElementById("rRoll")
+.textContent=student.roll;
+
+document.getElementById("rClass")
+.textContent=student.className;
+
+
+const photo=document.getElementById("rPhoto");
+
+const noPhoto=document.getElementById("noPhoto");
+
+
+if(student.photo){
+
+photo.src=student.photo;
+
+photo.style.display="block";
+
+noPhoto.style.display="none";
+
+}else{
+
+photo.removeAttribute("src");
+
+photo.style.display="none";
+
+noPhoto.style.display="block";
+
+}
+
+
+const tbody=document.getElementById("marksBody");
+
+tbody.innerHTML="";
+
+let total=0;
+let obtained=0;
+
+
+Object.keys(student.marks)
+.forEach(subject=>{
+
+const mark=normalizeMark(
+student.marks[subject]
+);
+
+const max=mark.max;
+const obt=mark.obtained;
+
+total+=max;
+obtained+=obt;
+
+const percent=max>0
+?((obt/max)*100).toFixed(1)
+:"0.0";
+
+
+const row=document.createElement("tr");
+
+row.innerHTML=`
+
+<td>${escapeHTML(subject)}</td>
+
+<td>${max}</td>
+
+<td>${obt}</td>
+
+<td>${percent}%</td>
+
+`;
+
+tbody.appendChild(row);
+
+});
+
+
+const percentage=total>0
+?(obtained/total)*100
+:0;
+
+
+document.getElementById("rTotal")
+.textContent=total;
+
+document.getElementById("rObtained")
+.textContent=obtained;
+
+document.getElementById("rPercentage")
+.textContent=
+percentage.toFixed(2)+"%";
+
+document.getElementById("rGrade")
+.textContent=
+getGrade(percentage);
+
+
+const status=document.getElementById("rStatus");
+
+
+if(percentage>=40){
+
+status.textContent="PASS";
+
+status.style.background="#dff2e5";
+
+status.style.color="#116134";
+
+}else{
+
+status.textContent="FAIL";
+
+status.style.background="#fde0e0";
+
+status.style.color="#9d2222";
+
+}
+
+}
+
+
+function getGrade(p){
+
+if(p>=90)return"A+";
+if(p>=80)return"A";
+if(p>=70)return"B+";
+if(p>=60)return"B";
+if(p>=50)return"C";
+if(p>=40)return"D";
+
+return"F";
+
+}
+
+
+function escapeHTML(value){
+
+return String(value)
+
+.replace(/&/g,"&amp;")
+.replace(/</g,"&lt;")
+.replace(/>/g,"&gt;")
+.replace(/"/g,"&quot;")
+.replace(/'/g,"&#039;");
+
+}
+
+
+/* ================= RESULT LOGOUT ================= */
+
+function logoutResult(){
+
+document.getElementById("resultArea")
+.style.display="none";
+
+document.getElementById("resultLogin")
+.style.display="block";
+
+document.getElementById("resultRoll")
+.value="";
+
+window.scrollTo({
+top:0,
+behavior:"smooth"
+});
+
+}
+
+
+/* ================= PDF ================= */
+
+async function downloadPDF(){
+
+const card=document.getElementById("resultCard");
+
+if(!card)return;
+
+const btn=event?.target;
+
+if(btn){
+
+btn.disabled=true;
+btn.textContent="Creating PDF...";
+
+}
+
+try{
+
+const canvas=await html2canvas(
+card,
+{
+scale:2,
+useCORS:true,
+backgroundColor:"#ffffff",
+logging:false
+}
+);
+
+
+const imgData=
+canvas.toDataURL("image/jpeg",.96);
+
+
+const{jsPDF}=window.jspdf;
+
+
+const pdf=new jsPDF({
+
+orientation:"portrait",
+unit:"mm",
+format:"a4"
+
+});
+
+
+const pageWidth=210;
+const pageHeight=297;
+
+const margin=8;
+
+const availableWidth=
+pageWidth-(margin*2);
+
+const ratio=
+canvas.height/canvas.width;
+
+
+let imgWidth=availableWidth;
+
+let imgHeight=
+imgWidth*ratio;
+
+
+if(imgHeight>
+pageHeight-(margin*2)){
+
+imgHeight=
+pageHeight-(margin*2);
+
+imgWidth=
+imgHeight/ratio;
+
+}
+
+
+const x=
+(pageWidth-imgWidth)/2;
+
+const y=
+(pageHeight-imgHeight)/2;
+
+
+pdf.addImage(
+imgData,
+"JPEG",
+x,
+y,
+imgWidth,
+imgHeight
+);
+
+
+const roll=
+document.getElementById("rRoll")
+.textContent;
+
+
+pdf.save(
+"Jamia-Qamrul-Islam-Result-"+
+roll+".pdf"
+);
+
+
+}catch(error){
+
+alert(
+"PDF could not be created. Please try again."
+);
+
+}finally{
+
+if(btn){
+
+btn.disabled=false;
+
+btn.textContent=
+"📄 Download Result PDF";
+
+}
+
+}
+
+}
+
+
+/* ================= PRINT ================= */
+
+function printResult(){
+
+const card=
+document.getElementById("resultCard");
+
+
+const w=window.open(
+"",
+"_blank",
+"width=1000,height=900"
+);
+
+
+w.document.write(`
+
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<title>
+Jamia Qamrul Islam Result
+</title>
+
+<style>
+
+body{
+margin:0;
+padding:15px;
+background:white;
+font-family:Arial,sans-serif
+}
+
+${getResultStylesForPrint()}
+
+</style>
+
+</head>
+
+<body>
+
+${card.outerHTML}
+
+</body>
+
+</html>
+
+`);
+
+
+w.document.close();
+
+
+setTimeout(()=>{
+
+w.focus();
+w.print();
+
+},700);
+
+}
+
+
+function getResultStylesForPrint(){
+
+return`
+
+.result-card{
+width:100%;
+max-width:900px;
+margin:auto;
+background:#fff;
+border:7px solid #07553d;
+outline:2px solid #c7a43a;
+overflow:hidden
+}
+
+.result-top{
+background:#07553d;
+color:white;
+padding:25px;
+border-bottom:5px solid #d4af37
+}
+
+.result-title{text-align:center}
+
+.result-title .small{
+color:#e8cf72;
+font-size:13px;
+letter-spacing:2px
+}
+
+.result-title h1{
+font-size:30px;
+color:#fff4bd
+}
+
+.result-title p{
+font-size:13px
+}
+
+.result-body{
+padding:25px
+}
+
+.student-head{
+display:grid;
+grid-template-columns:1fr 150px;
+gap:20px
+}
+
+.student-info{
+border:2px solid #d1b04b
+}
+
+.student-info-row{
+display:grid;
+grid-template-columns:150px 1fr;
+border-bottom:1px solid #dfe3df
+}
+
+.student-info-row strong{
+background:#edf4ef;
+color:#07553d;
+padding:11px
+}
+
+.student-info-row span{
+padding:11px;
+font-weight:bold
+}
+
+.photo-box{
+width:150px;
+height:175px;
+border:4px solid #c7a43a;
+overflow:hidden;
+display:flex;
+align-items:center;
+justify-content:center
+}
+
+.photo-box img{
+width:100%;
+height:100%;
+object-fit:cover
+}
+
+.marks-title{
+background:#07553d;
+color:#f7df79;
+padding:11px;
+font-weight:bold
+}
+
+.marks-table{
+width:100%;
+border-collapse:collapse
+}
+
+.marks-table th{
+background:#d5b451;
+padding:12px;
+border:1px solid #96751c
+}
+
+.marks-table td{
+padding:13px;
+border:1px solid #bfc8c2;
+text-align:center;
+font-weight:bold
+}
+
+.summary{
+display:grid;
+grid-template-columns:repeat(4,1fr);
+gap:10px;
+margin:20px 0
+}
+
+.summary-box{
+border:2px solid #c8a63e;
+padding:12px;
+text-align:center
+}
+
+.summary-box label{
+display:block;
+color:#07553d;
+font-size:11px
+}
+
+.summary-box strong{
+font-size:20px
+}
+
+.status{
+padding:7px 15px;
+border-radius:20px
+}
+
+.signatures{
+display:grid;
+grid-template-columns:repeat(3,1fr);
+gap:25px;
+margin-top:40px
+}
+
+.signature{
+text-align:center;
+padding-top:25px;
+border-top:1px solid #555
+}
+
+.result-footer{
+background:#07553d;
+color:white;
+text-align:center;
+padding:10px
+}
+
+`;
+
+}
+
+
+/* ================= ADMIN LOGIN ================= */
+
+function adminLogin(){
+
+const user=
+document.getElementById("adminUser")
+.value.trim();
+
+const pass=
+document.getElementById("adminPass")
+.value;
+
+
+if(user==="admin" && pass==="1234"){
+
+document.getElementById("adminLoginBox")
+.style.display="none";
+
+document.getElementById("adminPanel")
+.style.display="block";
+
+loadStudentList();
+
+}else{
+
+showMessage(
+"adminMessage",
+"Incorrect username or password.",
+"error"
+);
+
+}
+
+}
+
+
+function adminLogout(){
+
+document.getElementById("adminPanel")
+.style.display="none";
+
+document.getElementById("adminLoginBox")
+.style.display="block";
+
+document.getElementById("adminUser")
+.value="";
+
+document.getElementById("adminPass")
+.value="";
+
+}
+
+
+/* ================= ADD STUDENT ================= */
+
+function addStudent(){
+
+const name=
+document.getElementById("sName")
+.value.trim();
+
+const father=
+document.getElementById("sFather")
+.value.trim();
+
+const roll=
+document.getElementById("sRoll")
+.value.trim();
+
+const className=
+document.getElementById("sClass")
+.value;
+
+
+if(!name||!father||!roll){
+
+showMessage(
+"saveMessage",
+"Please fill Student Name, Father Name and Roll Number.",
+"error"
+);
+
+return;
+
+}
+
+
+let students=getStudents();
+
+
+if(students.some(
+s=>String(s.roll).toLowerCase()===
+roll.toLowerCase()
+)){
+
+showMessage(
+"saveMessage",
+"This Roll Number already exists.",
+"error"
+);
+
+return;
+
+}
+
+
+const photoInput=
+document.getElementById("sPhoto");
+
+
+const student={
+
+name:name,
+
+father:father,
+
+roll:roll,
+
+className:className,
+
+photo:"",
+
+marks:{
+
+English:{
+max:Number(
+document.getElementById("engMax").value
+)||100,
+
+obtained:Number(
+document.getElementById("engObt").value
+)||0
+},
+
+Urdu:{
+max:Number(
+document.getElementById("urduMax").value
+)||100,
+
+obtained:Number(
+document.getElementById("urduObt").value
+)||0
+},
+
+Mathematics:{
+max:Number(
+document.getElementById("mathMax").value
+)||100,
+
+obtained:Number(
+document.getElementById("mathObt").value
+)||0
+}
+
+}
+
+};
+
+
+if(photoInput.files.length>0){
+
+const reader=new FileReader();
+
+
+reader.onload=function(e){
+
+student.photo=e.target.result;
+
+students.push(student);
+
+saveStudents(students);
+
+clearStudentForm();
+
+loadStudentList();
+
+showMessage(
+"saveMessage",
+"Student saved successfully.",
+"success"
+);
+
+};
+
+
+reader.readAsDataURL(
+photoInput.files[0]
+);
+
+
+}else{
+
+students.push(student);
+
+saveStudents(students);
+
+clearStudentForm();
+
+loadStudentList();
+
+showMessage(
+"saveMessage",
+"Student saved successfully.",
+"success"
+);
+
+}
+
+}
+
+
+/* ================= STUDENT LIST ================= */
+
+function loadStudentList(){
+
+const tbody=
+document.getElementById("studentList");
+
+tbody.innerHTML="";
+
+
+getStudents().forEach(
+(student,index)=>{
+
+const row=
+document.createElement("tr");
+
+
+row.innerHTML=`
+
+<td>
+${escapeHTML(student.name)}
+</td>
+
+<td>
+${escapeHTML(student.roll)}
+</td>
+
+<td>
+${escapeHTML(student.className)}
+</td>
+
+<td>
+
+<button
+class="danger"
+onclick="deleteStudent(${index})">
+
+Delete
+
+</button>
+
+</td>
+
+`;
+
+
+tbody.appendChild(row);
+
+});
+
+}
+
+
+/* ================= DELETE ================= */
+
+function deleteStudent(index){
+
+if(!confirm(
+"Are you sure you want to delete this student?"
+))return;
+
+
+const students=getStudents();
+
+students.splice(index,1);
+
+saveStudents(students);
+
+loadStudentList();
+
+}
+
+
+/* ================= CLEAR FORM ================= */
+
+function clearStudentForm(){
+
+document.getElementById("sName").value="";
+
+document.getElementById("sFather").value="";
+
+document.getElementById("sRoll").value="";
+
+document.getElementById("sPhoto").value="";
+
+document.getElementById("engMax").value=100;
+
+document.getElementById("engObt").value=0;
+
+document.getElementById("urduMax").value=100;
+
+document.getElementById("urduObt").value=0;
+
+document.getElementById("mathMax").value=100;
+
+document.getElementById("mathObt").value=0;
+
+}
+
+
+/* ================= AUTOMATIC IMAGE SLIDER ================= */
+
+const slides=[
+...document.querySelectorAll(".slide")
+];
+
+const dotsBox=
+document.getElementById("sliderDots");
+
+const caption=
+document.getElementById("sliderCaption");
+
+
+const captions=[
+
+"Welcome to Jamia Qamrul Islam",
+
+"Morning Assembly",
+
+"Jamia Qamrul Islam Courses",
+
+"Madrasa Schedule"
+
+];
+
+
+let currentSlide=0;
+
+
+slides.forEach((s,i)=>{
+
+const d=
+document.createElement("span");
+
+d.className=
+"slider-dot"+
+(i===0?" active":"");
+
+d.onclick=()=>{
+showSlide(i)
+};
+
+dotsBox.appendChild(d);
+
+});
+
+
+function showSlide(i){
+
+currentSlide=
+(i+slides.length)%slides.length;
+
+
+slides.forEach(
+(s,n)=>
+s.classList.toggle(
+"active",
+n===currentSlide
+)
+);
+
+
+document
+.querySelectorAll(".slider-dot")
+.forEach(
+(d,n)=>
+d.classList.toggle(
+"active",
+n===currentSlide
+)
+);
+
+
+caption.textContent=
+captions[currentSlide];
+
+}
+
+
+setInterval(
+()=>{
+showSlide(currentSlide+1)
+},
+4000
+);
+
+
+/* ================= START ================= */
+
+getStudents();
+
+const SUPABASE_URL = "https://fjwanngswvbahkqiaufn.supabase.co";
+const SUPABASE_KEY = "sb_publishable_jVL5UnGwjoNYSdSZrNaKAg_9Zjot0Iu
+
+async function getStudentFromSupabase(roll){
+  const response = await fetch(
+    `${SUPABASE_URL}/rest/v1/rpc/get_student_result`,
+    {
+      method: "POST",
+      headers: {
+        apikey: SUPABASE_KEY,
+        Authorization: `Bearer ${SUPABASE_KEY}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({p_roll: roll})
+    }
+  );
+
+  if(!response.ok) throw new Error(await response.text());
+
+  const rows = await response.json();
+  if(!rows.length) return null;
+
+  const s = rows[0];
+
+  return normalizeStudent({
+    name: s.name,
+    father: s.father,
+    roll: s.roll,
+    className: s.class,
+    photo: "",
+    marks: {
+      English: {max:100, obtained:Number(s.english || 0)},
+      Urdu: {max:100, obtained:Number(s.urdu || 0)},
+      Mathematics: {max:100, obtained:Number(s.math || 0)}
+    }
+  });
+}
+
+async function studentLogin(){
+  const roll = document.getElementById("resultRoll").value.trim();
+
+  if(!roll){
+    showMessage("resultMessage","براہِ کرم Roll Number لکھیں۔","error");
+    return;
+  }
+
+  showMessage("resultMessage","Result تلاش کیا جا رہا ہے...","success");
+
+  try{
+    const student = await getStudentFromSupabase(roll);
+
+    if(!student){
+      showMessage("resultMessage","اس Roll Number کا Result نہیں ملا۔","error");
+      return;
+    }
+
+    document.getElementById("resultLogin").style.display = "none";
+    document.getElementById("resultArea").style.display = "block";
+
+    renderResult(student);
+
+  }catch(error){
+    console.error(error);
+    showMessage("resultMessage","Supabase سے Result نہیں مل رہا۔","error");
+  }
+  }</script>
+
+</body>
+</html>
