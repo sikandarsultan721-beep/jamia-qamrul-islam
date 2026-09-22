@@ -2115,7 +2115,72 @@ showSlide(currentSlide+1)
 
 getStudents();
 
-</script>
+const SUPABASE_URL = "https://fjwanngswvbahkqiaufn.supabase.co";
+const SUPABASE_KEY = "sb_publishable_jVL5UnGwjoNYSdSZrNaKAg_9Zjot0Iu
+
+async function getStudentFromSupabase(roll){
+  const response = await fetch(
+    `${SUPABASE_URL}/rest/v1/rpc/get_student_result`,
+    {
+      method: "POST",
+      headers: {
+        apikey: SUPABASE_KEY,
+        Authorization: `Bearer ${SUPABASE_KEY}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({p_roll: roll})
+    }
+  );
+
+  if(!response.ok) throw new Error(await response.text());
+
+  const rows = await response.json();
+  if(!rows.length) return null;
+
+  const s = rows[0];
+
+  return normalizeStudent({
+    name: s.name,
+    father: s.father,
+    roll: s.roll,
+    className: s.class,
+    photo: "",
+    marks: {
+      English: {max:100, obtained:Number(s.english || 0)},
+      Urdu: {max:100, obtained:Number(s.urdu || 0)},
+      Mathematics: {max:100, obtained:Number(s.math || 0)}
+    }
+  });
+}
+
+async function studentLogin(){
+  const roll = document.getElementById("resultRoll").value.trim();
+
+  if(!roll){
+    showMessage("resultMessage","براہِ کرم Roll Number لکھیں۔","error");
+    return;
+  }
+
+  showMessage("resultMessage","Result تلاش کیا جا رہا ہے...","success");
+
+  try{
+    const student = await getStudentFromSupabase(roll);
+
+    if(!student){
+      showMessage("resultMessage","اس Roll Number کا Result نہیں ملا۔","error");
+      return;
+    }
+
+    document.getElementById("resultLogin").style.display = "none";
+    document.getElementById("resultArea").style.display = "block";
+
+    renderResult(student);
+
+  }catch(error){
+    console.error(error);
+    showMessage("resultMessage","Supabase سے Result نہیں مل رہا۔","error");
+  }
+  }</script>
 
 </body>
 </html>
