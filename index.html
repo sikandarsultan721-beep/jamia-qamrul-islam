@@ -2110,7 +2110,7 @@ async function getStudentFromSupabase(roll){
     father: s.father,
     roll: s.roll,
     className: s.class,
-    photo: "",
+    photo: s.photo_url || "",
     marks: {
       English: {
         max: 100,
