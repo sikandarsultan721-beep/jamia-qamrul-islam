@@ -774,9 +774,16 @@ placeholder="Roll Number">
 
 <select id="sClass">
 
-<option>Primary</option>
-<option>Middle</option>
-<option>Secondary</option>
+<option>1</option>
+<option>2</option>
+<option>3</option>
+<option>4</option>
+<option>5</option>
+<option>6</option>
+<option>7</option>
+<option>8</option>
+<option>9</option>
+<option>10</option>
 
 </select>
 
@@ -1715,7 +1722,7 @@ document.getElementById("adminPass")
 
 /* ================= ADD STUDENT ================= */
 
-function addStudent(){
+async function addStudent(){
 
 const name=
 document.getElementById("sName")
@@ -1747,17 +1754,17 @@ return;
 }
 
 
-let students=getStudents();
+try{
 
+/* ===== CHECK DUPLICATE ROLL IN SUPABASE ===== */
 
-if(students.some(
-s=>String(s.roll).toLowerCase()===
-roll.toLowerCase()
-)){
+const existing=await getStudentFromSupabase(roll);
+
+if(existing){
 
 showMessage(
 "saveMessage",
-"This Roll Number already exists.",
+"This Roll Number already exists in Supabase.",
 "error"
 );
 
@@ -1766,104 +1773,141 @@ return;
 }
 
 
+/* ===== GET PHOTO ===== */
+
 const photoInput=
 document.getElementById("sPhoto");
 
+let photoUrl="";
 
-const student={
 
-name:name,
-
-father:father,
-
-roll:roll,
-
-className:className,
-
-photo:"",
-
-marks:{
-
-English:{
-max:Number(
-document.getElementById("engMax").value
-)||100,
-
-obtained:Number(
-document.getElementById("engObt").value
-)||0
-},
-
-Urdu:{
-max:Number(
-document.getElementById("urduMax").value
-)||100,
-
-obtained:Number(
-document.getElementById("urduObt").value
-)||0
-},
-
-Mathematics:{
-max:Number(
-document.getElementById("mathMax").value
-)||100,
-
-obtained:Number(
-document.getElementById("mathObt").value
-)||0
-}
-
-}
-
-};
-
+/* ===== UPLOAD PHOTO TO SUPABASE STORAGE ===== */
 
 if(photoInput.files.length>0){
 
-const reader=new FileReader();
+const file=photoInput.files[0];
 
-
-reader.onload=function(e){
-
-student.photo=e.target.result;
-
-students.push(student);
-
-saveStudents(students);
-
-clearStudentForm();
-
-loadStudentList();
+if(!file.type.startsWith("image/")){
 
 showMessage(
 "saveMessage",
-"Student saved successfully.",
-"success"
+"Please select a valid image file.",
+"error"
 );
 
-};
+return;
+
+}
+
+const originalExt=
+(file.name.split(".").pop()||"jpg")
+.toLowerCase()
+.replace(/[^a-z0-9]/g,"");
+
+const ext=originalExt||"jpg";
+
+const safeRoll=roll.replace(
+/[^a-zA-Z0-9_-]/g,
+"_"
+);
+
+const path=
+"students/"+
+ safeRoll+"-"+
+ Date.now()+"."+
+ ext;
 
 
-reader.readAsDataURL(
-photoInput.files[0]
+const uploadResponse=await fetch(
+`${SUPABASE_URL}/storage/v1/object/student-photos/${path}`,
+{
+method:"POST",
+headers:{
+apikey:SUPABASE_KEY,
+Authorization:`Bearer ${SUPABASE_KEY}`,
+"Content-Type":file.type,
+"x-upsert":"true"
+},
+body:file
+}
 );
 
 
-}else{
+if(!uploadResponse.ok){
 
-students.push(student);
+throw new Error(
+"Photo upload failed: "+
+await uploadResponse.text()
+);
 
-saveStudents(students);
+}
+
+
+photoUrl=
+`${SUPABASE_URL}/storage/v1/object/public/student-photos/${path}`;
+
+}
+
+
+/* ===== SAVE STUDENT IN SUPABASE ===== */
+
+const saveResponse=await fetch(
+`${SUPABASE_URL}/rest/v1/rpc/admin_add_student`,
+{
+method:"POST",
+headers:{
+apikey:SUPABASE_KEY,
+Authorization:`Bearer ${SUPABASE_KEY}`,
+"Content-Type":"application/json"
+},
+body:JSON.stringify({
+p_name:name,
+p_father_name:father,
+p_roll:roll,
+p_class:className,
+p_english:String(
+Number(document.getElementById("engObt").value)||0
+),
+p_urdu:String(
+Number(document.getElementById("urduObt").value)||0
+),
+p_math:String(
+Number(document.getElementById("mathObt").value)||0
+),
+p_quran:"",
+p_namaz:"",
+p_photo_url:photoUrl
+})
+}
+);
+
+
+if(!saveResponse.ok){
+
+throw new Error(
+"Student save failed: "+
+await saveResponse.text()
+);
+
+}
+
 
 clearStudentForm();
 
-loadStudentList();
+showMessage(
+"saveMessage",
+"Student saved successfully in Supabase.",
+"success"
+);
+
+}catch(error){
+
+console.error(error);
 
 showMessage(
 "saveMessage",
-"Student saved successfully.",
-"success"
+"Student save failed. Please try again.",
+"error"
 );
 
 }
