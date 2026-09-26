@@ -1906,7 +1906,7 @@ console.error(error);
 
 showMessage(
 "saveMessage",
-"Student save failed. Please try again.",
+"Student save failed: " + (error && error.message ? error.message : "Unknown error"),
 "error"
 );
 
