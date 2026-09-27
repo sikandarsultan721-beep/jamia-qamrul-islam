@@ -50,14 +50,39 @@ nav button:hover{background:#d4af37;color:#073827}
 .container{max-width:1100px;margin:auto;padding:20px 15px}
 
 .hero{
-background:linear-gradient(135deg,#fff,#edf4ef);
-border:1px solid #d7dfd9;border-left:5px solid #0a6347;
-border-radius:15px;padding:28px 20px;margin-bottom:20px;
-box-shadow:0 5px 20px rgba(0,0,0,.07)
+position:relative;overflow:hidden;min-height:360px;display:flex;flex-direction:column;
+align-items:center;justify-content:center;text-align:center;
+border:1px solid #d7c477;border-radius:15px;padding:45px 20px 42px;margin-bottom:20px;
+box-shadow:0 8px 28px rgba(0,0,0,.14);
+background:
+linear-gradient(180deg,rgba(4,28,48,.22),rgba(4,28,48,.62)),
+linear-gradient(180deg,#78b5d7 0%,#c7e2ec 52%,#537c72 53%,#183f35 100%);
 }
 
-.hero h2{color:#07553d;margin-bottom:8px;font-size:28px}
-.hero p{color:#555}
+.hero:before{
+content:"";position:absolute;inset:0;pointer-events:none;opacity:.98;
+background:
+radial-gradient(ellipse at 50% 73%,rgba(245,218,145,.72) 0 2.5%,transparent 2.8%),
+radial-gradient(ellipse at 50% 78%,#f4f0dc 0 9%,transparent 9.3%),
+radial-gradient(ellipse at 30% 82%,#e9eadc 0 7%,transparent 7.3%),
+radial-gradient(ellipse at 70% 82%,#e9eadc 0 7%,transparent 7.3%),
+linear-gradient(90deg,transparent 0 25%,rgba(239,240,224,.95) 25% 27%,transparent 27% 73%,rgba(239,240,224,.95) 73% 75%,transparent 75%),
+linear-gradient(90deg,transparent 0 18%,rgba(230,232,216,.96) 18% 20%,transparent 20% 80%,rgba(230,232,216,.96) 80% 82%,transparent 82%);
+filter:drop-shadow(0 5px 6px rgba(0,0,0,.18));
+}
+
+.hero:after{
+content:"";position:absolute;left:0;right:0;bottom:0;height:45%;pointer-events:none;
+background:
+linear-gradient(180deg,transparent,rgba(2,24,20,.72)),
+radial-gradient(ellipse at 50% 100%,rgba(9,31,27,.95) 0 35%,transparent 36%);
+}
+
+.hero .hero-content{position:relative;z-index:2;max-width:850px;color:#fff}
+.hero-bismillah{font-family:serif;font-size:clamp(28px,4vw,46px);font-weight:700;line-height:1.5;color:#fff8df;text-shadow:0 2px 8px rgba(0,0,0,.7);margin-bottom:10px}
+.hero h2{color:#f6d878;margin-bottom:9px;font-size:clamp(25px,4vw,38px);text-shadow:0 2px 8px rgba(0,0,0,.75);letter-spacing:.3px}
+.hero p{color:#fff;font-size:clamp(13px,2vw,17px);text-shadow:0 2px 6px rgba(0,0,0,.75)}
+.hero-divider{width:min(360px,75%);height:2px;background:linear-gradient(90deg,transparent,#e7c65f,transparent);margin:4px auto 12px}
 
 .section{display:none}
 .section.active{display:block}
@@ -334,6 +359,11 @@ margin-top:-5px;margin-bottom:10px
 
 @media(max-width:650px){
 
+.hero{min-height:300px;padding:34px 14px 36px}
+.hero-bismillah{font-size:27px}
+.hero h2{font-size:25px}
+.hero p{font-size:13px}
+
 .header-inner{align-items:center}
 
 .brand h1{font-size:20px}
@@ -420,8 +450,12 @@ alt="Jamia Qamrul Islam Logo">
 <section id="home" class="section active">
 
 <div class="hero">
-<h2>Welcome to Jamia Qamrul Islam</h2>
-<p>Official Student Result & Information Portal</p>
+<div class="hero-content">
+<div class="hero-bismillah" dir="rtl">بِسْمِ اللّٰهِ الرَّحْمٰنِ الرَّحِيْمِ</div>
+<div class="hero-divider"></div>
+<h2>جامعہ قمر الاسلام</h2>
+<p>Islamic Education • Knowledge • Character</p>
+</div>
 </div>
 
 
