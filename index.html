@@ -378,43 +378,9 @@ font-size:12px;padding:9px 4px
 
 }
 
-
-/* ================= VIP BLUE + GOLD PROFESSIONAL THEME ================= */
-body{background:#eef2f8;color:#172033}
-header{background:linear-gradient(135deg,#071b3a,#123d78,#071b3a);border-bottom-color:#d8b24c;box-shadow:0 6px 24px rgba(5,20,50,.28)}
-.logo-box{border-color:#e0bd5a;background:#06152e}
-.brand h1{color:#f5d77a}
-nav button{border-color:rgba(255,255,255,.30);background:rgba(255,255,255,.09)}
-nav button:hover{background:#d8b24c;color:#071b3a}
-.hero{background:linear-gradient(135deg,#ffffff,#e9f0fa);border-color:#d2dce9;border-left-color:#174b91;box-shadow:0 7px 25px rgba(12,43,88,.10)}
-.hero h2{color:#123f7b}
-.card{background:linear-gradient(145deg,#ffffff,#f7f9fc);border-color:#d7dfeb;box-shadow:0 7px 26px rgba(10,35,75,.10)}
-.card h2,.card h3{color:#123f7b}
-input,select{border-color:#c7d2e1;background:#fff}
-input:focus,select:focus{border-color:#245da4;box-shadow:0 0 0 2px rgba(36,93,164,.12)}
-button.primary{background:linear-gradient(135deg,#123f7b,#2164b5);box-shadow:0 4px 12px rgba(18,63,123,.22)}
-button.gold{background:linear-gradient(135deg,#b58a24,#e1bf58,#b58a24);color:#10203a;box-shadow:0 4px 12px rgba(160,120,25,.20)}
-button.danger{background:linear-gradient(135deg,#a22b38,#c4424f)}
-.slider-card{background:linear-gradient(135deg,#ffffff,#edf3fb);border-color:#d6b65a}
-.slider-title{color:#123f7b}
-.slider{background:#071b3a;border-color:#d2ae45;box-shadow:0 9px 28px rgba(8,31,66,.22)}
-.slider-dot.active{background:#d2ae45}
-.result-card{border-color:#123f7b;outline-color:#d2ae45;box-shadow:0 12px 38px rgba(8,31,66,.22)}
-.result-top{background:linear-gradient(135deg,#071b3a,#123f7b,#1d5ca5);border-bottom-color:#e0bd5a}
-.result-title .small{color:#e7cf76}
-.result-title h1{color:#fff3bd}
-.student-info{border-color:#d2ae45}
-.student-info-row strong{background:#e9f0f8;color:#123f7b}
-.marks-title{background:#123f7b;color:#f5d77a}
-.marks-table{border-color:#123f7b}
-.marks-table th{background:#d7b653;color:#172033;border-color:#9b7920}
-.marks-table td:first-child{color:#123f7b}
-.summary-box{border-color:#d0ad48;background:#fbfaf4}
-.summary-box label{color:#123f7b}
-.result-footer{background:#123f7b;border-top-color:#e0bd5a}
-.student-list th{background:#123f7b}
-.notice{border-left-color:#d0ad48;background:#f7f9fc}
-.photo-box{border-color:#d0ad48;background:#edf2f8}
+.subject-control{display:flex;align-items:center;gap:8px;margin:10px 0 6px;font-weight:700}
+.subject-control input{width:18px;height:18px}
+.subject-box{border:1px solid #d6c28b;border-radius:12px;padding:12px;margin-bottom:12px;background:rgba(255,255,255,.96)}
 </style>
 </head>
 
@@ -812,9 +778,16 @@ placeholder="Roll Number">
 
 <select id="sClass">
 
-<option>Primary</option>
-<option>Middle</option>
-<option>Secondary</option>
+<option>1</option>
+<option>2</option>
+<option>3</option>
+<option>4</option>
+<option>5</option>
+<option>6</option>
+<option>7</option>
+<option>8</option>
+<option>9</option>
+<option>10</option>
 
 </select>
 
@@ -835,66 +808,44 @@ JPG/PNG photo recommended.
 
 
 <h3 style="margin-top:15px">
-Marks
+Marks & Subjects
 </h3>
 
+<p class="file-note">Tick a subject to include it in this student's result.</p>
 
 <div class="info-grid">
 
-
-<div>
-
-<label>English - Maximum</label>
-
-<input id="engMax"
-type="number"
-value="100">
-
-<label>English - Obtained</label>
-
-<input id="engObt"
-type="number"
-value="0">
-
+<div class="subject-box">
+<label class="subject-control"><input type="checkbox" id="engOn" checked> English</label>
+<label>Maximum</label><input id="engMax" type="number" value="100">
+<label>Obtained</label><input id="engObt" type="number" value="0">
 </div>
 
-
-<div>
-
-<label>Urdu - Maximum</label>
-
-<input id="urduMax"
-type="number"
-value="100">
-
-<label>Urdu - Obtained</label>
-
-<input id="urduObt"
-type="number"
-value="0">
-
+<div class="subject-box">
+<label class="subject-control"><input type="checkbox" id="urduOn" checked> Urdu</label>
+<label>Maximum</label><input id="urduMax" type="number" value="100">
+<label>Obtained</label><input id="urduObt" type="number" value="0">
 </div>
 
-
-<div>
-
-<label>Mathematics - Maximum</label>
-
-<input id="mathMax"
-type="number"
-value="100">
-
-<label>Mathematics - Obtained</label>
-
-<input id="mathObt"
-type="number"
-value="0">
-
+<div class="subject-box">
+<label class="subject-control"><input type="checkbox" id="mathOn" checked> Mathematics</label>
+<label>Maximum</label><input id="mathMax" type="number" value="100">
+<label>Obtained</label><input id="mathObt" type="number" value="0">
 </div>
 
-
+<div class="subject-box">
+<label class="subject-control"><input type="checkbox" id="quranOn"> Quran</label>
+<label>Maximum</label><input id="quranMax" type="number" value="100">
+<label>Obtained</label><input id="quranObt" type="number" value="0">
 </div>
 
+<div class="subject-box">
+<label class="subject-control"><input type="checkbox" id="namazOn"> Namaz</label>
+<label>Maximum</label><input id="namazMax" type="number" value="100">
+<label>Obtained</label><input id="namazObt" type="number" value="0">
+</div>
+
+</div>
 
 <button class="gold"
 onclick="addStudent()">
@@ -929,32 +880,6 @@ Save Student
 
 </table>
 
-</div>
-
-</div>
-
-
-<div class="card">
-
-<h2>Slider Photos</h2>
-
-<p style="color:#666;margin-bottom:12px">Add or remove photos shown on the home slider.</p>
-
-<input id="sliderPhotoInput" type="file" accept="image/*">
-
-<input id="sliderPhotoTitle" type="text" placeholder="Photo title">
-
-<button class="gold" onclick="addSliderPhoto()">
-➕ Add Slider Photo
-</button>
-
-<div id="sliderMessage" class="message"></div>
-
-<div class="student-list" style="margin-top:15px">
-<table>
-<thead><tr><th>Photo</th><th>Title</th><th>Action</th></tr></thead>
-<tbody id="sliderPhotoList"></tbody>
-</table>
 </div>
 
 </div>
@@ -1073,19 +998,11 @@ className:s.className||s.class||"Middle",
 photo:s.photo||"",
 
 marks:{
-
-English:
-normalizeMark(s.marks?.English),
-
-Urdu:
-normalizeMark(s.marks?.Urdu),
-
-Mathematics:
-normalizeMark(
-s.marks?.Mathematics||
-s.marks?.Math
-)
-
+English: normalizeMark(s.marks?.English),
+Urdu: normalizeMark(s.marks?.Urdu),
+Mathematics: normalizeMark(s.marks?.Mathematics||s.marks?.Math),
+Quran: normalizeMark(s.marks?.Quran),
+Namaz: normalizeMark(s.marks?.Namaz)
 }
 
 };
@@ -1243,9 +1160,9 @@ let obtained=0;
 Object.keys(student.marks)
 .forEach(subject=>{
 
-const mark=normalizeMark(
-student.marks[subject]
-);
+if(student.marks[subject] === null || student.marks[subject] === undefined || student.marks[subject] === "") return;
+
+const mark=normalizeMark(student.marks[subject]);
 
 const max=mark.max;
 const obt=mark.obtained;
@@ -1777,179 +1694,266 @@ document.getElementById("adminPass")
 }
 
 
-/* ================= SUPABASE STUDENT ADMIN ================= */
-
-let editingStudentRoll = "";
-
-async function uploadStudentPhoto(file, roll){
-  if(!file) return "";
-  const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g,"_");
-  const path = `${roll}-${Date.now()}-${safeName}`;
-  const response = await fetch(
-    `${SUPABASE_URL}/storage/v1/object/student-photos/${encodeURIComponent(path)}`,
-    {
-      method:"POST",
-      headers:{
-        apikey:SUPABASE_KEY,
-        Authorization:`Bearer ${SUPABASE_KEY}`,
-        "Content-Type":file.type || "application/octet-stream",
-        "x-upsert":"true"
-      },
-      body:file
-    }
-  );
-  if(!response.ok) throw new Error("Photo upload failed: "+await response.text());
-  return `${SUPABASE_URL}/storage/v1/object/public/student-photos/${path}`;
-}
+/* ================= ADD STUDENT ================= */
 
 async function addStudent(){
-  const name=document.getElementById("sName").value.trim();
-  const father=document.getElementById("sFather").value.trim();
-  const roll=document.getElementById("sRoll").value.trim();
-  const className=document.getElementById("sClass").value;
 
-  if(!name||!father||!roll){
-    showMessage("saveMessage","Please fill Student Name, Father Name and Roll Number.","error");
-    return;
-  }
+const name=
+document.getElementById("sName")
+.value.trim();
 
-  if(editingStudentRoll){
-    await updateStudent();
-    return;
-  }
+const father=
+document.getElementById("sFather")
+.value.trim();
 
-  try{
-    const photoInput=document.getElementById("sPhoto");
-    let photoUrl="";
-    if(photoInput.files.length>0){
-      photoUrl=await uploadStudentPhoto(photoInput.files[0],roll);
-    }
+const roll=
+document.getElementById("sRoll")
+.value.trim();
 
-    const response=await fetch(`${SUPABASE_URL}/rest/v1/rpc/admin_add_student`,{
-      method:"POST",
-      headers:{apikey:SUPABASE_KEY,Authorization:`Bearer ${SUPABASE_KEY}`,"Content-Type":"application/json"},
-      body:JSON.stringify({
-        p_name:name,p_father_name:father,p_roll:roll,p_class:className,
-        p_english:String(Number(document.getElementById("engObt").value)||0),
-        p_urdu:String(Number(document.getElementById("urduObt").value)||0),
-        p_math:String(Number(document.getElementById("mathObt").value)||0),
-        p_quran:"",p_namaz:"",p_photo_url:photoUrl
-      })
-    });
-    if(!response.ok) throw new Error(await response.text());
+const className=
+document.getElementById("sClass")
+.value;
 
-    clearStudentForm();
-    showMessage("saveMessage","Student saved in Database successfully.","success");
-    await loadStudentList();
-  }catch(error){
-    console.error(error);
-    showMessage("saveMessage","Student save failed: "+(error.message||"Unknown error"),"error");
-  }
+
+if(!name||!father||!roll){
+
+showMessage(
+"saveMessage",
+"Please fill Student Name, Father Name and Roll Number.",
+"error"
+);
+
+return;
+
 }
 
-async function loadStudentList(){
-  const tbody=document.getElementById("studentList");
-  tbody.innerHTML="<tr><td colspan='4'>Loading...</td></tr>";
-  try{
-    const response=await fetch(`${SUPABASE_URL}/rest/v1/rpc/admin_list_students`,{
-      method:"POST",
-      headers:{apikey:SUPABASE_KEY,Authorization:`Bearer ${SUPABASE_KEY}`,"Content-Type":"application/json"}
-    });
-    if(!response.ok) throw new Error(await response.text());
-    const students=await response.json();
-    tbody.innerHTML="";
-    if(!Array.isArray(students)||students.length===0){
-      tbody.innerHTML="<tr><td colspan='4'>No students found.</td></tr>";
-      return;
-    }
-    students.forEach(student=>{
-      const row=document.createElement("tr");
-      row.innerHTML=`
-        <td>${escapeHTML(student.name||"")}</td>
-        <td>${escapeHTML(student.roll||"")}</td>
-        <td>${escapeHTML(student.class_name||"")}</td>
-        <td>
-          <button class="gold" onclick='editStudent(${JSON.stringify(student).replace(/'/g,"&#39;")})'>Edit</button>
-          <button class="danger" onclick='deleteStudent(${JSON.stringify(student.roll||"")})'>Delete</button>
-        </td>`;
-      tbody.appendChild(row);
-    });
-  }catch(error){
-    console.error(error);
-    tbody.innerHTML="<tr><td colspan='4'>Could not load Database records.</td></tr>";
-  }
+
+try{
+
+/* ===== CHECK DUPLICATE ROLL IN SUPABASE ===== */
+
+const existing=await getStudentFromSupabase(roll);
+
+if(existing){
+
+showMessage(
+"saveMessage",
+"This Roll Number already exists in Supabase.",
+"error"
+);
+
+return;
+
 }
 
-function editStudent(student){
-  editingStudentRoll=String(student.roll||"");
-  document.getElementById("sName").value=student.name||"";
-  document.getElementById("sFather").value=student.father_name||"";
-  document.getElementById("sRoll").value=student.roll||"";
-  document.getElementById("sClass").value=student.class_name||"Middle";
-  document.getElementById("engObt").value=student.english||0;
-  document.getElementById("urduObt").value=student.urdu||0;
-  document.getElementById("mathObt").value=student.math||0;
-  document.getElementById("sPhoto").value="";
-  document.querySelector('button[onclick="addStudent()"]')?.replaceChildren(document.createTextNode("Update Student"));
-  showMessage("saveMessage","Edit mode: changes کریں اور Update Student دبائیں۔","success");
-  window.scrollTo({top:0,behavior:"smooth"});
+
+/* ===== GET PHOTO ===== */
+
+const photoInput=
+document.getElementById("sPhoto");
+
+let photoUrl="";
+
+
+/* ===== UPLOAD PHOTO TO SUPABASE STORAGE ===== */
+
+if(photoInput.files.length>0){
+
+const file=photoInput.files[0];
+
+if(!file.type.startsWith("image/")){
+
+showMessage(
+"saveMessage",
+"Please select a valid image file.",
+"error"
+);
+
+return;
+
 }
 
-async function updateStudent(){
-  const originalRoll=editingStudentRoll;
-  const name=document.getElementById("sName").value.trim();
-  const father=document.getElementById("sFather").value.trim();
-  const roll=document.getElementById("sRoll").value.trim();
-  const className=document.getElementById("sClass").value;
-  if(!name||!father||!roll){showMessage("saveMessage","Please fill required fields.","error");return;}
-  try{
-    let photoUrl="";
-    const photoInput=document.getElementById("sPhoto");
-    if(photoInput.files.length>0) photoUrl=await uploadStudentPhoto(photoInput.files[0],roll);
-    const response=await fetch(`${SUPABASE_URL}/rest/v1/rpc/admin_update_student`,{
-      method:"POST",
-      headers:{apikey:SUPABASE_KEY,Authorization:`Bearer ${SUPABASE_KEY}`,"Content-Type":"application/json"},
-      body:JSON.stringify({
-        p_original_roll:originalRoll,p_name:name,p_father_name:father,p_roll:roll,p_class:className,
-        p_english:String(Number(document.getElementById("engObt").value)||0),
-        p_urdu:String(Number(document.getElementById("urduObt").value)||0),
-        p_math:String(Number(document.getElementById("mathObt").value)||0),
-        p_photo_url:photoUrl
-      })
-    });
-    if(!response.ok) throw new Error(await response.text());
-    editingStudentRoll="";
-    clearStudentForm();
-    document.querySelector('button[onclick="addStudent()"]')?.replaceChildren(document.createTextNode("Save Student"));
-    showMessage("saveMessage","Student updated in Database successfully.","success");
-    await loadStudentList();
-  }catch(error){
-    console.error(error);
-    showMessage("saveMessage","Student update failed: "+(error.message||"Unknown error"),"error");
-  }
+const originalExt=
+(file.name.split(".").pop()||"jpg")
+.toLowerCase()
+.replace(/[^a-z0-9]/g,"");
+
+const ext=originalExt||"jpg";
+
+const safeRoll=roll.replace(
+/[^a-zA-Z0-9_-]/g,
+"_"
+);
+
+const path=
+safeRoll+"-"+
+ Date.now()+"."+
+ ext;
+
+
+const uploadResponse=await fetch(
+`${SUPABASE_URL}/storage/v1/object/student-photos/${path}`,
+{
+method:"POST",
+headers:{
+apikey:SUPABASE_KEY,
+Authorization:`Bearer ${SUPABASE_KEY}`,
+"Content-Type":file.type,
+"x-upsert":"true"
+},
+body:file
+}
+);
+
+
+if(!uploadResponse.ok){
+
+throw new Error(
+"Photo upload failed: "+
+await uploadResponse.text()
+);
+
 }
 
-async function deleteStudent(roll){
-  if(!confirm("Are you sure you want to delete this student from Database?")) return;
-  try{
-    const response=await fetch(`${SUPABASE_URL}/rest/v1/rpc/admin_delete_student`,{
-      method:"POST",
-      headers:{apikey:SUPABASE_KEY,Authorization:`Bearer ${SUPABASE_KEY}`,"Content-Type":"application/json"},
-      body:JSON.stringify({p_roll:String(roll)})
-    });
-    if(!response.ok) throw new Error(await response.text());
-    if(editingStudentRoll===String(roll)){
-      editingStudentRoll="";
-      clearStudentForm();
-      document.querySelector('button[onclick="addStudent()"]')?.replaceChildren(document.createTextNode("Save Student"));
-    }
-    showMessage("saveMessage","Student deleted from Database.","success");
-    await loadStudentList();
-  }catch(error){
-    console.error(error);
-    showMessage("saveMessage","Student delete failed: "+(error.message||"Unknown error"),"error");
-  }
+
+photoUrl=
+`${SUPABASE_URL}/storage/v1/object/public/student-photos/${path}`;
+
 }
+
+
+/* ===== SAVE STUDENT IN SUPABASE ===== */
+
+const saveResponse=await fetch(
+`${SUPABASE_URL}/rest/v1/rpc/admin_add_student`,
+{
+method:"POST",
+headers:{
+apikey:SUPABASE_KEY,
+Authorization:`Bearer ${SUPABASE_KEY}`,
+"Content-Type":"application/json"
+},
+body:JSON.stringify({
+p_name:name,
+p_father_name:father,
+p_roll:roll,
+p_class:className,
+p_english:document.getElementById("engOn").checked ? String(Number(document.getElementById("engObt").value)||0) : "",
+p_urdu:document.getElementById("urduOn").checked ? String(Number(document.getElementById("urduObt").value)||0) : "",
+p_math:document.getElementById("mathOn").checked ? String(Number(document.getElementById("mathObt").value)||0) : "",
+p_quran:document.getElementById("quranOn").checked ? String(Number(document.getElementById("quranObt").value)||0) : "",
+p_namaz:document.getElementById("namazOn").checked ? String(Number(document.getElementById("namazObt").value)||0) : "",
+p_photo_url:photoUrl
+})
+}
+);
+
+
+if(!saveResponse.ok){
+
+throw new Error(
+"Student save failed: "+
+await saveResponse.text()
+);
+
+}
+
+
+clearStudentForm();
+
+showMessage(
+"saveMessage",
+"Student saved successfully in Supabase.",
+"success"
+);
+
+}catch(error){
+
+console.error(error);
+
+showMessage(
+"saveMessage",
+"Student save failed: " + (error && error.message ? error.message : "Unknown error"),
+"error"
+);
+
+}
+
+}
+
+
+/* ================= STUDENT LIST ================= */
+
+function loadStudentList(){
+
+const tbody=
+document.getElementById("studentList");
+
+tbody.innerHTML="";
+
+
+getStudents().forEach(
+(student,index)=>{
+
+const row=
+document.createElement("tr");
+
+
+row.innerHTML=`
+
+<td>
+${escapeHTML(student.name)}
+</td>
+
+<td>
+${escapeHTML(student.roll)}
+</td>
+
+<td>
+${escapeHTML(student.className)}
+</td>
+
+<td>
+
+<button
+class="danger"
+onclick="deleteStudent(${index})">
+
+Delete
+
+</button>
+
+</td>
+
+`;
+
+
+tbody.appendChild(row);
+
+});
+
+}
+
+
+/* ================= DELETE ================= */
+
+function deleteStudent(index){
+
+if(!confirm(
+"Are you sure you want to delete this student?"
+))return;
+
+
+const students=getStudents();
+
+students.splice(index,1);
+
+saveStudents(students);
+
+loadStudentList();
+
+}
+
 
 /* ================= CLEAR FORM ================= */
 
@@ -1974,126 +1978,103 @@ document.getElementById("urduObt").value=0;
 document.getElementById("mathMax").value=100;
 
 document.getElementById("mathObt").value=0;
+document.getElementById("quranObt").value=0;
+document.getElementById("namazObt").value=0;
+document.getElementById("engOn").checked=true;
+document.getElementById("urduOn").checked=true;
+document.getElementById("mathOn").checked=true;
+document.getElementById("quranOn").checked=false;
+document.getElementById("namazOn").checked=false;
 
 }
 
 
-/* ================= IMAGE SLIDER ================= */
+/* ================= AUTOMATIC IMAGE SLIDER ================= */
+
+const slides=[
+...document.querySelectorAll(".slide")
+];
+
+const dotsBox=
+document.getElementById("sliderDots");
+
+const caption=
+document.getElementById("sliderCaption");
+
+
+const captions=[
+
+"Welcome to Jamia Qamrul Islam",
+
+"Morning Assembly",
+
+"Jamia Qamrul Islam Courses",
+
+"Madrasa Schedule"
+
+];
+
 
 let currentSlide=0;
-let sliderTimer=null;
 
-function setupSlider(){
-  const dotsBox=document.getElementById("sliderDots");
-  if(!dotsBox)return;
-  dotsBox.innerHTML="";
-  const slides=[...document.querySelectorAll("#campusSlider .slide")];
-  const captions=[...slides].map(s=>s.dataset.caption||s.querySelector("img")?.alt||"Jamia Qamrul Islam");
-  slides.forEach((s,i)=>{
-    const d=document.createElement("span");
-    d.className="slider-dot"+(i===0?" active":"");
-    d.onclick=()=>showSlide(i);
-    dotsBox.appendChild(d);
-  });
-  currentSlide=0;
-  showSlide(0);
-  if(sliderTimer)clearInterval(sliderTimer);
-  if(slides.length>1){sliderTimer=setInterval(()=>showSlide(currentSlide+1),4000);}
-}
+
+slides.forEach((s,i)=>{
+
+const d=
+document.createElement("span");
+
+d.className=
+"slider-dot"+
+(i===0?" active":"");
+
+d.onclick=()=>{
+showSlide(i)
+};
+
+dotsBox.appendChild(d);
+
+});
+
 
 function showSlide(i){
-  const slides=[...document.querySelectorAll("#campusSlider .slide")];
-  if(!slides.length)return;
-  currentSlide=(i+slides.length)%slides.length;
-  slides.forEach((s,n)=>s.classList.toggle("active",n===currentSlide));
-  document.querySelectorAll(".slider-dot").forEach((d,n)=>d.classList.toggle("active",n===currentSlide));
-  const caption=document.getElementById("sliderCaption");
-  if(caption)caption.textContent=slides[currentSlide].dataset.caption||slides[currentSlide].querySelector("img")?.alt||"Jamia Qamrul Islam";
+
+currentSlide=
+(i+slides.length)%slides.length;
+
+
+slides.forEach(
+(s,n)=>
+s.classList.toggle(
+"active",
+n===currentSlide
+)
+);
+
+
+document
+.querySelectorAll(".slider-dot")
+.forEach(
+(d,n)=>
+d.classList.toggle(
+"active",
+n===currentSlide
+)
+);
+
+
+caption.textContent=
+captions[currentSlide];
+
 }
 
-async function loadSliderPhotos(){
-  try{
-    const response=await fetch(`${SUPABASE_URL}/rest/v1/slider_images?select=id,title,image_url,storage_path,sort_order&order=sort_order.asc,created_at.asc`,{
-      headers:{apikey:SUPABASE_KEY,Authorization:`Bearer ${SUPABASE_KEY}`}
-    });
-    if(!response.ok)throw new Error(await response.text());
-    const rows=await response.json();
-    const slider=document.getElementById("campusSlider");
-    if(!slider||!rows.length){setupSlider();return;}
-    slider.querySelectorAll(".slide").forEach(x=>x.remove());
-    const caption=document.getElementById("sliderCaption");
-    rows.forEach((item,i)=>{
-      const div=document.createElement("div");
-      div.className="slide"+(i===0?" active":"");
-      div.dataset.caption=item.title||"Jamia Qamrul Islam";
-      const img=document.createElement("img");
-      img.src=item.image_url;
-      img.alt=item.title||"Jamia Qamrul Islam";
-      div.appendChild(img);
-      slider.insertBefore(div,caption);
-    });
-    setupSlider();
-  }catch(e){
-    console.warn("Slider database not loaded:",e);
-    setupSlider();
-  }
-}
 
-async function loadSliderAdmin(){
-  const tbody=document.getElementById("sliderPhotoList");
-  if(!tbody)return;
-  tbody.innerHTML="<tr><td colspan=3>Loading...</td></tr>";
-  try{
-    const response=await fetch(`${SUPABASE_URL}/rest/v1/slider_images?select=id,title,image_url,storage_path&order=sort_order.asc,created_at.asc`,{headers:{apikey:SUPABASE_KEY,Authorization:`Bearer ${SUPABASE_KEY}`}});
-    if(!response.ok)throw new Error(await response.text());
-    const rows=await response.json();
-    tbody.innerHTML="";
-    rows.forEach(item=>{
-      const tr=document.createElement("tr");
-      tr.innerHTML=`<td><img src="${escapeHTML(item.image_url)}" style="width:70px;height:45px;object-fit:cover;border-radius:5px"></td><td>${escapeHTML(item.title||"")}</td><td><button class="danger" onclick="deleteSliderPhoto(${item.id},${JSON.stringify(item.storage_path)})">Delete</button></td>`;
-      tbody.appendChild(tr);
-    });
-    if(!rows.length)tbody.innerHTML="<tr><td colspan=3>No slider photos added yet.</td></tr>";
-  }catch(e){
-    tbody.innerHTML="<tr><td colspan=3>Slider list could not load.</td></tr>";
-    console.error(e);
-  }
-}
+setInterval(
+()=>{
+showSlide(currentSlide+1)
+},
+4000
+);
 
-async function addSliderPhoto(){
-  const input=document.getElementById("sliderPhotoInput");
-  const title=(document.getElementById("sliderPhotoTitle").value||"").trim();
-  if(!input||!input.files.length){showMessage("sliderMessage","Please select a photo first.","error");return;}
-  const file=input.files[0];
-  const ext=(file.name.split(".").pop()||"jpg").toLowerCase();
-  const path=`${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
-  try{
-    showMessage("sliderMessage","Uploading photo...","success");
-    const up=await fetch(`${SUPABASE_URL}/storage/v1/object/slider-images/${encodeURIComponent(path)}`,{method:"POST",headers:{apikey:SUPABASE_KEY,Authorization:`Bearer ${SUPABASE_KEY}`,"Content-Type":file.type||"image/jpeg","x-upsert":"false"},body:file});
-    if(!up.ok)throw new Error(await up.text());
-    const imageUrl=`${SUPABASE_URL}/storage/v1/object/public/slider-images/${path}`;
-    const list=await fetch(`${SUPABASE_URL}/rest/v1/slider_images`,{method:"GET",headers:{apikey:SUPABASE_KEY,Authorization:`Bearer ${SUPABASE_KEY}`,Prefer:"return=representation"}});
-    const existing=await list.json();
-    const sortOrder=Array.isArray(existing)?existing.length:0;
-    const ins=await fetch(`${SUPABASE_URL}/rest/v1/slider_images`,{method:"POST",headers:{apikey:SUPABASE_KEY,Authorization:`Bearer ${SUPABASE_KEY}`,"Content-Type":"application/json",Prefer:"return=minimal"},body:JSON.stringify({title:title||file.name,image_url:imageUrl,storage_path:path,sort_order:sortOrder})});
-    if(!ins.ok)throw new Error(await ins.text());
-    input.value="";document.getElementById("sliderPhotoTitle").value="";
-    showMessage("sliderMessage","Slider photo added successfully.","success");
-    await loadSliderPhotos();await loadSliderAdmin();
-  }catch(e){console.error(e);showMessage("sliderMessage","Slider photo could not be added.","error");}
-}
-
-async function deleteSliderPhoto(id,path){
-  if(!confirm("Delete this slider photo?"))return;
-  try{
-    const del=await fetch(`${SUPABASE_URL}/rest/v1/slider_images?id=eq.${id}`,{method:"DELETE",headers:{apikey:SUPABASE_KEY,Authorization:`Bearer ${SUPABASE_KEY}`}});
-    if(!del.ok)throw new Error(await del.text());
-    const obj=await fetch(`${SUPABASE_URL}/storage/v1/object/slider-images/${encodeURIComponent(path)}`,{method:"DELETE",headers:{apikey:SUPABASE_KEY,Authorization:`Bearer ${SUPABASE_KEY}`}});
-    if(!obj.ok)console.warn(await obj.text());
-    showMessage("sliderMessage","Slider photo deleted.","success");
-    await loadSliderPhotos();await loadSliderAdmin();
-  }catch(e){console.error(e);showMessage("sliderMessage","Slider photo could not be deleted.","error");}
-}
 
 /* ================= START ================= */
 
@@ -2144,23 +2125,16 @@ async function getStudentFromSupabase(roll){
 
   return normalizeStudent({
     name: s.name,
-    father: s.father_name || "",
+    father: s.father_name || s.father || "",
     roll: s.roll,
     className: s.class,
     photo: s.photo_url || "",
     marks: {
-      English: {
-        max: 100,
-        obtained: Number(s.english || 0)
-      },
-      Urdu: {
-        max: 100,
-        obtained: Number(s.urdu || 0)
-      },
-      Mathematics: {
-        max: 100,
-        obtained: Number(s.math || 0)
-      }
+      English: s.english === null || s.english === "" ? null : {max:100, obtained:Number(s.english)},
+      Urdu: s.urdu === null || s.urdu === "" ? null : {max:100, obtained:Number(s.urdu)},
+      Mathematics: s.math === null || s.math === "" ? null : {max:100, obtained:Number(s.math)},
+      Quran: s.quran === null || s.quran === "" ? null : {max:100, obtained:Number(s.quran)},
+      Namaz: s.namaz === null || s.namaz === "" ? null : {max:100, obtained:Number(s.namaz)}
     }
   });
 }
@@ -2217,15 +2191,6 @@ async function studentLogin(){
     );
   }
 }
-
-setupSlider();
-loadSliderPhotos();
-
-document.addEventListener("click",function(e){
-  if(e.target.closest("button") && e.target.closest("#adminPanel")){
-    setTimeout(loadSliderAdmin,200);
-  }
-});
 </script>
 
 </body>
