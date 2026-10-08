@@ -59,7 +59,7 @@ button.danger{background:#a52b2b;color:#fff;border:none;padding:8px 12px;border-
 
 <body>
 
-<div class="top-strip"><div class="top-strip-inner"><span>✉ jamiaqamrulislam@gmail.com</span><span>☎ +92 300 1234567</span><span>⌖ Islamabad, Pakistan</span></div></div>
+<div class="top-strip"><div class="top-strip-inner"><span>✉ jamiaqamrulislam@gmail.com</span><span>☎ 03224603296</span><span>⌖ Lahore, Pakistan</span></div></div>
 
 <header>
 
@@ -99,11 +99,7 @@ alt="Jamia Qamrul Islam Logo">
 <div class="hero-badge">Welcome to Jamia Qamrul Islam</div>
 <h2>Islamic Education • Knowledge • Character</h2>
 <p>Official student portal for academic results, notices and Jamia information.</p>
-<div class="hero-actions">
-<button onclick="showSection('admin')">Admin</button>
-<button onclick="showSection('result')">Student Result</button>
-<button onclick="showSection('notice')">Notice</button>
-</div>
+
 </div>
 </div>
 
@@ -1767,112 +1763,172 @@ getStudents();
 /* ================= SUPABASE RESULT SYSTEM ================= */
 
 const SUPABASE_URL = "https://fjwanngswvbahkqiaufn.supabase.co";
-
-/*
-  IMPORTANT:
-  The publishable/anon key in the original file is incomplete.
-  Do not guess it. Paste the real publishable key from this same
-  Supabase project here when we connect the live database.
-*/
 const SUPABASE_KEY = "sb_publishable_jVL5UnGwjoNYSdSZrNaKAg_9Zjot0Iu";
 
-async function getStudentFromSupabase(roll){
-
-  if(!SUPABASE_KEY || SUPABASE_KEY.includes("PASTE_YOUR")){
-    throw new Error("Supabase publishable key is not set.");
+function firstValue(obj, names, fallback=""){
+  for(const name of names){
+    const value=obj?.[name];
+    if(value!==undefined && value!==null && value!=="") return value;
   }
+  return fallback;
+}
 
-  const response = await fetch(
-    `${SUPABASE_URL}/rest/v1/rpc/get_student_result`,
-    {
-      method: "POST",
-      headers: {
-        apikey: SUPABASE_KEY,
-        Authorization: `Bearer ${SUPABASE_KEY}`,
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({p_roll: roll})
-    }
-  );
+function firstNumber(obj, names, fallback=0){
+  const v=firstValue(obj,names,null);
+  const n=Number(v);
+  return Number.isFinite(n) ? n : fallback;
+}
 
-  if(!response.ok){
-    throw new Error(await response.text());
-  }
+function firstEnabled(obj, names, fallback){
+  const v=firstValue(obj,names,null);
+  if(v===null) return fallback;
+  if(typeof v === "boolean") return v;
+  if(v===0 || v==="0" || String(v).toLowerCase()==="false" || String(v).toLowerCase()==="off") return false;
+  if(v===1 || v==="1" || String(v).toLowerCase()==="true" || String(v).toLowerCase()==="on") return true;
+  return fallback;
+}
 
-  const rows = await response.json();
-
-  if(!Array.isArray(rows) || rows.length===0){
-    return null;
-  }
-
-  const s = rows[0];
+function mapSupabaseStudent(s){
+  const quranValue=firstValue(s,["quran","quran_marks","quran_obtained","quranobtained"],null);
+  const namazValue=firstValue(s,["namaz","namaz_marks","namaz_obtained","namazobtained"],null);
 
   return normalizeStudent({
-    name: s.name,
-    father: s.father_name || s.father || "",
-    roll: s.roll,
-    className: s.class,
-    photo: s.photo_url || "",
-    marks: {
-      English: {max: 100, obtained: Number(s.english ?? 0), enabled: s.english_enabled ?? s.englishEnabled ?? true},
-      Urdu: {max: 100, obtained: Number(s.urdu ?? 0), enabled: s.urdu_enabled ?? s.urduEnabled ?? true},
-      Mathematics: {max: 100, obtained: Number(s.math ?? 0), enabled: s.math_enabled ?? s.mathEnabled ?? true},
-      Quran: {max: 100, obtained: Number(s.quran ?? s.quran_marks ?? 0), enabled: s.quran_enabled ?? s.quranEnabled ?? (s.quran != null || s.quran_marks != null)},
-      Namaz: {max: 100, obtained: Number(s.namaz ?? s.namaz_marks ?? 0), enabled: s.namaz_enabled ?? s.namazEnabled ?? (s.namaz != null || s.namaz_marks != null)}
+    name:firstValue(s,["name","student_name","studentName"]),
+    father:firstValue(s,["father","father_name","fatherName"]),
+    roll:firstValue(s,["roll","roll_number","rollNumber"]),
+    className:firstValue(s,["class","class_name","className"]),
+    photo:firstValue(s,["photo","photo_url","photoUrl"],""),
+    marks:{
+      English:{
+        max:firstNumber(s,["english_max","english_max_marks","englishMax"],100),
+        obtained:firstNumber(s,["english","english_marks","english_obtained","englishObtained"]),
+        enabled:firstEnabled(s,["english_enabled","englishEnabled"],true)
+      },
+      Urdu:{
+        max:firstNumber(s,["urdu_max","urdu_max_marks","urduMax"],100),
+        obtained:firstNumber(s,["urdu","urdu_marks","urdu_obtained","urduObtained"]),
+        enabled:firstEnabled(s,["urdu_enabled","urduEnabled"],true)
+      },
+      Mathematics:{
+        max:firstNumber(s,["math_max","mathematics_max","mathMax"],100),
+        obtained:firstNumber(s,["math","mathematics","math_marks","mathematics_marks","math_obtained","mathematics_obtained"]),
+        enabled:firstEnabled(s,["math_enabled","mathematics_enabled","mathEnabled","mathematicsEnabled"],true)
+      },
+      Quran:{
+        max:firstNumber(s,["quran_max","quran_max_marks","quranMax"],100),
+        obtained:quranValue===null ? 0 : Number(quranValue)||0,
+        enabled:firstEnabled(s,["quran_enabled","quranEnabled"],quranValue!==null)
+      },
+      Namaz:{
+        max:firstNumber(s,["namaz_max","namaz_max_marks","namazMax"],100),
+        obtained:namazValue===null ? 0 : Number(namazValue)||0,
+        enabled:firstEnabled(s,["namaz_enabled","namazEnabled"],namazValue!==null)
+      }
     }
   });
+}
+
+async function callResultRPC(payload){
+  const response=await fetch(`${SUPABASE_URL}/rest/v1/rpc/get_student_result`,{
+    method:"POST",
+    headers:{
+      apikey:SUPABASE_KEY,
+      Authorization:`Bearer ${SUPABASE_KEY}`,
+      "Content-Type":"application/json",
+      Accept:"application/json"
+    },
+    body:JSON.stringify(payload)
+  });
+
+  const text=await response.text();
+  let data=null;
+  try{ data=text ? JSON.parse(text) : null; }catch(_){ data=null; }
+
+  if(!response.ok){
+    const error=new Error(text || `Supabase HTTP ${response.status}`);
+    error.status=response.status;
+    throw error;
+  }
+  return data;
+}
+
+async function getStudentFromSupabase(roll){
+  if(!SUPABASE_URL || !SUPABASE_KEY){
+    throw new Error("Supabase configuration is missing.");
+  }
+
+  /* Keep the original RPC first, then try common parameter names only if
+     the existing function rejects the first parameter name. */
+  const payloads=[
+    {p_roll:roll},
+    {roll:roll},
+    {roll_number:roll}
+  ];
+
+  let lastError=null;
+  for(const payload of payloads){
+    try{
+      const data=await callResultRPC(payload);
+      const rows=Array.isArray(data) ? data : (data?.rows || data?.data || (data ? [data] : []));
+      if(!rows.length) return null;
+      return mapSupabaseStudent(rows[0]);
+    }catch(error){
+      lastError=error;
+      /* A parameter mismatch is safe to retry with the next name. */
+      if(error.status!==400 && error.status!==404 && error.status!==422) break;
+    }
+  }
+  throw lastError || new Error("Supabase Result request failed.");
 }
 
 /* ================= STUDENT LOGIN ================= */
 
 async function studentLogin(){
 
-  const roll =
-    document.getElementById("resultRoll").value.trim();
+  const roll=document.getElementById("resultRoll").value.trim();
 
   if(!roll){
-    showMessage(
-      "resultMessage",
-      "براہِ کرم Roll Number لکھیں۔",
-      "error"
-    );
+    showMessage("resultMessage","براہِ کرم Roll Number لکھیں۔","error");
     return;
   }
 
-  showMessage(
-    "resultMessage",
-    "Result تلاش کیا جا رہا ہے...",
-    "success"
-  );
+  showMessage("resultMessage","Result تلاش کیا جا رہا ہے...","success");
+
+  /* LocalStorage remains the original local/admin system. */
+  const localStudents=getStudents();
+  const localStudent=localStudents.find(s=>String(s.roll).trim().toLowerCase()===roll.toLowerCase());
+
+  if(localStudent){
+    document.getElementById("resultLogin").style.display="none";
+    document.getElementById("resultArea").style.display="block";
+    renderResult(normalizeStudent(localStudent));
+    return;
+  }
 
   try{
-
-    const student =
-      await getStudentFromSupabase(roll);
+    const student=await getStudentFromSupabase(roll);
 
     if(!student){
-      showMessage(
-        "resultMessage",
-        "اس Roll Number کا Result نہیں ملا۔",
-        "error"
-      );
+      showMessage("resultMessage","اس Roll Number کا Result نہیں ملا۔","error");
       return;
     }
 
-    document.getElementById("resultLogin").style.display = "none";
-    document.getElementById("resultArea").style.display = "block";
+    /* Cache a successful online result locally so a repeat lookup on the
+       same device does not depend on a second request. */
+    try{
+      const current=getStudents();
+      const without=current.filter(s=>String(s.roll)!==String(student.roll));
+      without.push(student);
+      saveStudents(without);
+    }catch(_){ }
 
+    document.getElementById("resultLogin").style.display="none";
+    document.getElementById("resultArea").style.display="block";
     renderResult(student);
 
   }catch(error){
-
-    console.error(error);
-
-    showMessage(
-      "resultMessage",
-      "Supabase سے Result نہیں مل رہا۔ پہلے Supabase Key درست کریں۔",
-      "error"
-    );
+    console.error("Supabase Result error:",error);
+    showMessage("resultMessage","Result database سے حاصل نہیں ہو سکا۔ براہِ کرم دوبارہ کوشش کریں۔","error");
   }
 }
 </script>
