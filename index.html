@@ -20,8 +20,8 @@ header{background:#fff;color:#12372e;border-bottom:1px solid #dfe7e3;box-shadow:
 .brand h1{font-size:27px;color:#0b4438;font-family:Georgia,serif}
 .brand p{font-size:13px;margin-top:5px;color:#52665f}
 nav{max-width:1250px;margin:auto;display:flex;flex-wrap:wrap;gap:8px;padding:0 0 12px}
-nav button{border:0;background:transparent;color:#18352c;padding:10px 15px;border-radius:4px;cursor:pointer;font-weight:600}
-nav button:hover{background:#e7f3ee;color:#07553d}
+nav button{border:1px solid #cddfd7;background:#f8fbf9;color:#18352c;padding:10px 15px;border-radius:7px;cursor:pointer;font-weight:600;box-shadow:0 2px 6px rgba(0,0,0,.08)}
+nav button:hover{background:#e7f3ee;color:#07553d;border-color:#9fc8b7}
 .container{max-width:1250px;margin:auto;padding:22px 15px}
 .hero{position:relative;min-height:330px;border-radius:18px;overflow:hidden;margin-bottom:22px;background:linear-gradient(90deg,rgba(3,42,32,.90),rgba(3,42,32,.58)),url('file_0000000043bc8206851260d941647475.png') center/cover;display:flex;align-items:center;padding:38px}
 .hero-content{max-width:610px;color:#fff}
@@ -229,7 +229,7 @@ View Result
 <div class="result-actions">
 
 <button class="gold"
-onclick="downloadPDF()">
+onclick="downloadPDF(this)">
 📄 Download Result PDF
 </button>
 
@@ -467,9 +467,16 @@ placeholder="Roll Number">
 
 <select id="sClass">
 
-<option>Primary</option>
-<option>Middle</option>
-<option>Secondary</option>
+<option>1</option>
+<option>2</option>
+<option>3</option>
+<option>4</option>
+<option>5</option>
+<option>6</option>
+<option>7</option>
+<option>8</option>
+<option>9</option>
+<option>10</option>
 
 </select>
 
@@ -660,7 +667,7 @@ const defaultStudent={
 name:"Muhammad Ahmad",
 father:"Muhammad Ali",
 roll:"1001",
-className:"Middle",
+className:"1",
 photo:"",
 marks:{
 English:{max:100,obtained:78,enabled:true},
@@ -721,7 +728,7 @@ return{
 name:s.name||"",
 father:s.father||"",
 roll:String(s.roll||""),
-className:s.className||s.class||"Middle",
+className:s.className||s.class||"1",
 photo:s.photo||"",
 
 marks:{
@@ -1022,13 +1029,11 @@ behavior:"smooth"
 
 /* ================= PDF ================= */
 
-async function downloadPDF(){
+async function downloadPDF(btn){
 
 const card=document.getElementById("resultCard");
 
 if(!card)return;
-
-const btn=event?.target;
 
 if(btn){
 
