@@ -1809,10 +1809,10 @@ async function getStudentFromSupabase(roll){
 
   return normalizeStudent({
     name: s.name,
-    father: s.father,
+    father: s.father_name || s.father || "",
     roll: s.roll,
     className: s.class,
-    photo: "",
+    photo: s.photo_url || "",
     marks: {
       English: {max: 100, obtained: Number(s.english ?? 0), enabled: s.english_enabled ?? s.englishEnabled ?? true},
       Urdu: {max: 100, obtained: Number(s.urdu ?? 0), enabled: s.urdu_enabled ?? s.urduEnabled ?? true},
