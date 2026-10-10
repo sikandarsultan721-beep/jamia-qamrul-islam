@@ -1718,7 +1718,7 @@ async function getStudentFromSupabase(roll){
     throw new Error("Supabase configuration is missing.");
   }
 
-  /* Try the existing RPC with common roll-number parameter names. */
+  /* First try the result RPC already configured for this project. */
   const payloads=[
     {p_roll:roll},
     {p_roll_number:roll},
@@ -1768,7 +1768,40 @@ async function getStudentFromSupabase(roll){
       if(error.status!==400 && error.status!==404 && error.status!==422) break;
     }
   }
-  throw lastError || new Error("Supabase Result request failed.");
+  /*
+   * If the RPC is missing or its parameter name changed, try read-only
+   * PostgREST lookups against the usual student/result table and roll fields.
+   * This does not write to the database or change the page design.
+   */
+  const tables=["students","student_results","results","student","student_result"];
+  const rollFields=["roll","roll_number","roll_no","student_roll","rollnumber"];
+  let tableErrors=[];
+  for(const table of tables){
+    for(const field of rollFields){
+      try{
+        const url=`${SUPABASE_URL}/rest/v1/${table}?select=*&${field}=eq.${encodeURIComponent(roll)}&limit=1`;
+        const response=await fetch(url,{method:"GET",headers:{apikey:SUPABASE_KEY,Authorization:`Bearer ${SUPABASE_KEY}`,Accept:"application/json"}});
+        const body=await response.text();
+        let rows=null;
+        try{rows=body?JSON.parse(body):null;}catch(_){rows=null;}
+        if(!response.ok){
+          tableErrors.push(`${table}.${field}: HTTP ${response.status}`);
+          continue;
+        }
+        if(Array.isArray(rows) && rows.length){
+          const row=rows[0];
+          const merged={...row,...(row.student&&typeof row.student==="object"?row.student:{}),...(row.result&&typeof row.result==="object"?row.result:{}),...(row.marks&&typeof row.marks==="object"?row.marks:{})};
+          const student=mapSupabaseStudent(merged);
+          if(student.roll && String(student.roll).trim().toLowerCase()===String(roll).trim().toLowerCase()) return student;
+        }
+      }catch(error){tableErrors.push(`${table}.${field}: ${error.message||"network error"}`);}
+    }
+  }
+  if(lastError){
+    lastError.message += " | Direct read fallback tried common tables/roll columns: " + tableErrors.slice(-5).join("; ");
+    throw lastError;
+  }
+  return null;
 }
 
 /* ================= STUDENT LOGIN ================= */
