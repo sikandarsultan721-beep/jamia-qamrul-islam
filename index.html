@@ -640,22 +640,6 @@ Admin Logout
 
 /* ================= DATA ================= */
 
-const defaultStudent={
-name:"Muhammad Ahmad",
-father:"Muhammad Ali",
-roll:"1001",
-className:"1",
-photo:"",
-marks:{
-English:{max:100,obtained:78,enabled:true},
-Urdu:{max:100,obtained:85,enabled:true},
-Mathematics:{max:100,obtained:82,enabled:true},
-Quran:{max:100,obtained:0,enabled:false},
-Namaz:{max:100,obtained:0,enabled:false}
-}
-};
-
-
 /* ================= STORAGE ================= */
 
 function getStudents(){
@@ -663,34 +647,24 @@ function getStudents(){
 let data=localStorage.getItem("jamiaStudents");
 
 if(!data){
-
-localStorage.setItem(
-"jamiaStudents",
-JSON.stringify([defaultStudent])
-);
-
-return[defaultStudent];
-
+localStorage.setItem("jamiaStudents",JSON.stringify([]));
+return [];
 }
 
 try{
-
 let students=JSON.parse(data);
+if(!Array.isArray(students)) students=[];
 
-if(!Array.isArray(students))
-students=[defaultStudent];
-
-return students.map(normalizeStudent);
-
+/* Remove only the old automatically-created demo student (Ahmed / 1001).
+   Keep every other student record unchanged. */
+const cleaned=students.filter(s=>!(s && String(s.roll||"").trim()==="1001" && String(s.name||"").trim()==="Muhammad Ahmad" && String(s.father||"").trim()==="Muhammad Ali"));
+if(cleaned.length!==students.length){
+localStorage.setItem("jamiaStudents",JSON.stringify(cleaned));
+}
+return cleaned.map(normalizeStudent);
 }catch(e){
-
-localStorage.setItem(
-"jamiaStudents",
-JSON.stringify([defaultStudent])
-);
-
-return[defaultStudent];
-
+localStorage.setItem("jamiaStudents",JSON.stringify([]));
+return [];
 }
 
 }
@@ -698,7 +672,7 @@ return[defaultStudent];
 
 function normalizeStudent(s){
 
-if(!s)return defaultStudent;
+if(!s)s={};
 
 return{
 
@@ -1744,24 +1718,53 @@ async function getStudentFromSupabase(roll){
     throw new Error("Supabase configuration is missing.");
   }
 
-  /* Keep the original RPC first, then try common parameter names only if
-     the existing function rejects the first parameter name. */
+  /* Try the existing RPC with common roll-number parameter names. */
   const payloads=[
     {p_roll:roll},
+    {p_roll_number:roll},
+    {p_roll_no:roll},
     {roll:roll},
-    {roll_number:roll}
+    {roll_number:roll},
+    {roll_no:roll},
+    {student_roll:roll}
   ];
 
   let lastError=null;
   for(const payload of payloads){
     try{
       const data=await callResultRPC(payload);
-      const rows=Array.isArray(data) ? data : (data?.rows || data?.data || (data ? [data] : []));
+      let rows=[];
+      if(Array.isArray(data)) rows=data;
+      else if(data && typeof data==="object"){
+        if(Array.isArray(data.rows)) rows=data.rows;
+        else if(Array.isArray(data.data)) rows=data.data;
+        else if(Array.isArray(data.results)) rows=data.results;
+        else if(data.student && typeof data.student==="object") rows=[{...data,...data.student}];
+        else if(data.result && typeof data.result==="object") rows=[{...data,...data.result}];
+        else if(data.data && typeof data.data==="object") rows=[{...data,...data.data}];
+        else rows=[data];
+      }
       if(!rows.length) return null;
-      return mapSupabaseStudent(rows[0]);
+
+      const row=rows[0];
+      /* Some RPCs return a nested student object alongside result/marks. */
+      const merged=row && typeof row==="object" ? {
+        ...row,
+        ...(row.student && typeof row.student==="object" ? row.student : {}),
+        ...(row.result && typeof row.result==="object" ? row.result : {}),
+        ...(row.marks && typeof row.marks==="object" ? row.marks : {})
+      } : row;
+      const student=mapSupabaseStudent(merged);
+      if(!student.roll){
+        throw new Error("Supabase RPC returned a record without a recognized roll-number field.");
+      }
+      if(String(student.roll).trim().toLowerCase()!==String(roll).trim().toLowerCase()){
+        throw new Error("Supabase RPC returned a record for a different roll number.");
+      }
+      return student;
     }catch(error){
       lastError=error;
-      /* A parameter mismatch is safe to retry with the next name. */
+      /* Retry parameter-name/schema mismatches; stop for auth/network errors. */
       if(error.status!==400 && error.status!==404 && error.status!==422) break;
     }
   }
@@ -1779,32 +1782,22 @@ async function studentLogin(){
     return;
   }
 
-  showMessage("resultMessage","Result تلاش کیا جا رہا ہے...","success");
+  showMessage("resultMessage","آن لائن ڈیٹا بیس سے Result تلاش کیا جا رہا ہے...","success");
 
-  /* LocalStorage remains the original local/admin system. */
-  const localStudents=getStudents();
-  const localStudent=localStudents.find(s=>String(s.roll).trim().toLowerCase()===roll.toLowerCase());
-
-  if(localStudent){
-    document.getElementById("resultLogin").style.display="none";
-    document.getElementById("resultArea").style.display="block";
-    renderResult(normalizeStudent(localStudent));
-    return;
-  }
-
+  /* Public result lookup must use the shared database. LocalStorage is
+     device-specific and must never be presented as the online result. */
   try{
     const student=await getStudentFromSupabase(roll);
 
     if(!student){
-      showMessage("resultMessage","اس Roll Number کا Result نہیں ملا۔","error");
+      showMessage("resultMessage","اس Roll Number کا آن لائن Result نہیں ملا۔ Roll Number چیک کریں یا انتظامیہ سے رابطہ کریں۔","error");
       return;
     }
 
-    /* Cache a successful online result locally so a repeat lookup on the
-       same device does not depend on a second request. */
+    /* Cache the verified remote record for the existing local/admin workflow. */
     try{
       const current=getStudents();
-      const without=current.filter(s=>String(s.roll)!==String(student.roll));
+      const without=current.filter(s=>String(s.roll).trim().toLowerCase()!==String(student.roll).trim().toLowerCase());
       without.push(student);
       saveStudents(without);
     }catch(_){ }
@@ -1812,10 +1805,10 @@ async function studentLogin(){
     document.getElementById("resultLogin").style.display="none";
     document.getElementById("resultArea").style.display="block";
     renderResult(student);
-
   }catch(error){
     console.error("Supabase Result error:",error);
-    showMessage("resultMessage","Result database سے حاصل نہیں ہو سکا۔ براہِ کرم دوبارہ کوشش کریں۔","error");
+    const status=error && error.status ? ` (HTTP ${error.status})` : "";
+    showMessage("resultMessage",`آن لائن ڈیٹا بیس سے رابطہ نہیں ہو سکا${status}۔ یہ مقامی Result نہیں ہے؛ انتظامیہ کو Supabase کی اجازت، RPC فنکشن اور نیٹ ورک کنکشن چیک کرنا ہوگا۔`,"error");
   }
 }
 
