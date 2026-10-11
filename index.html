@@ -1563,6 +1563,14 @@ getStudents();
 const SUPABASE_URL = "https://fjwanngswvbahkqiaufn.supabase.co";
 const SUPABASE_KEY = "sb_publishable_jVL5UnGwjoNYSdSZrNaKAg_9Zjot0Iu";
 
+/* Supabase publishable keys (sb_publishable_...) belong in the apikey header.
+   They are NOT JWTs and must not be sent as Authorization: Bearer tokens.
+   Legacy anon JWT keys (eyJ...) may also be used as Bearer tokens. */
+function supabaseHeaders(extra={}){
+  const headers={apikey:SUPABASE_KEY,...extra};
+  if(String(SUPABASE_KEY).startsWith("eyJ")) headers.Authorization=`Bearer ${SUPABASE_KEY}`;
+  return headers;
+}
 
 /* Save Student to the same Supabase project used by public result search.
    Discover exposed columns first so we do not blindly send unknown field names. */
@@ -1573,7 +1581,7 @@ function normalizedColumnName(value){
 async function getStudentApiColumns(){
   const response=await fetch(`${SUPABASE_URL}/rest/v1/`,{
     method:"GET",
-    headers:{apikey:SUPABASE_KEY,Authorization:`Bearer ${SUPABASE_KEY}`,Accept:"application/openapi+json"}
+    headers:supabaseHeaders({Accept:"application/openapi+json"})
   });
   if(!response.ok) throw new Error(`Could not inspect Supabase API schema (HTTP ${response.status}).`);
   const spec=await response.json();
@@ -1651,7 +1659,7 @@ function buildSupabaseStudentPayload(student, properties){
 async function supabaseWrite(url, method, payload){
   const response=await fetch(url,{
     method,
-    headers:{apikey:SUPABASE_KEY,Authorization:`Bearer ${SUPABASE_KEY}`,"Content-Type":"application/json",Accept:"application/json",Prefer:"return=representation"},
+    headers:supabaseHeaders({"Content-Type":"application/json",Accept:"application/json",Prefer:"return=representation"}),
     body:JSON.stringify(payload)
   });
   const body=await response.text();
@@ -1744,12 +1752,10 @@ function mapSupabaseStudent(s){
 async function callResultRPC(payload){
   const response=await fetch(`${SUPABASE_URL}/rest/v1/rpc/get_student_result`,{
     method:"POST",
-    headers:{
-      apikey:SUPABASE_KEY,
-      Authorization:`Bearer ${SUPABASE_KEY}`,
+    headers:supabaseHeaders({
       "Content-Type":"application/json",
       Accept:"application/json"
-    },
+    }),
     body:JSON.stringify(payload)
   });
 
@@ -1832,7 +1838,7 @@ async function getStudentFromSupabase(roll){
     for(const field of rollFields){
       try{
         const url=`${SUPABASE_URL}/rest/v1/${table}?select=*&${field}=eq.${encodeURIComponent(roll)}&limit=1`;
-        const response=await fetch(url,{method:"GET",headers:{apikey:SUPABASE_KEY,Authorization:`Bearer ${SUPABASE_KEY}`,Accept:"application/json"}});
+        const response=await fetch(url,{method:"GET",headers:supabaseHeaders({Accept:"application/json"})});
         const body=await response.text();
         let rows=null;
         try{rows=body?JSON.parse(body):null;}catch(_){rows=null;}
