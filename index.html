@@ -1291,135 +1291,72 @@ document.getElementById("adminPass")
 
 /* ================= ADD STUDENT ================= */
 
-function addStudent(){
+async function addStudent(){
 
-const name=
-document.getElementById("sName")
-.value.trim();
-
-const father=
-document.getElementById("sFather")
-.value.trim();
-
-const roll=
-document.getElementById("sRoll")
-.value.trim();
-
-const className=
-document.getElementById("sClass")
-.value;
-
+const name=(document.getElementById("sName").value||"").trim();
+const father=(document.getElementById("sFather").value||"").trim();
+const roll=(document.getElementById("sRoll").value||"").trim();
+const className=document.getElementById("sClass").value;
 
 if(!name||!father||!roll){
-
-showMessage(
-"saveMessage",
-"Please fill Student Name, Father Name and Roll Number.",
-"error"
-);
-
-return;
-
+  showMessage("saveMessage","Please fill Student Name, Father Name and Roll Number.","error");
+  return;
 }
-
 
 let students=getStudents();
-
-
-if(students.some(
-s=>String(s.roll).toLowerCase()===
-roll.toLowerCase()
-)){
-
-showMessage(
-"saveMessage",
-"This Roll Number already exists.",
-"error"
-);
-
-return;
-
+if(students.some(s=>String(s.roll).toLowerCase()===roll.toLowerCase())){
+  showMessage("saveMessage","This Roll Number already exists in this browser. Open the existing record to edit it.","error");
+  return;
 }
 
-
-const photoInput=
-document.getElementById("sPhoto");
-
-
+const photoInput=document.getElementById("sPhoto");
 const student={
+  name, father, roll, className, photo:"",
+  marks:{
+    English:{max:Number(document.getElementById("engMax").value)||100,obtained:Number(document.getElementById("engObt").value)||0,enabled:document.getElementById("engEnabled").checked},
+    Urdu:{max:Number(document.getElementById("urduMax").value)||100,obtained:Number(document.getElementById("urduObt").value)||0,enabled:document.getElementById("urduEnabled").checked},
+    Mathematics:{max:Number(document.getElementById("mathMax").value)||100,obtained:Number(document.getElementById("mathObt").value)||0,enabled:document.getElementById("mathEnabled").checked},
+    Quran:{max:Number(document.getElementById("quranMax").value)||100,obtained:Number(document.getElementById("quranObt").value)||0,enabled:document.getElementById("quranEnabled").checked},
+    Namaz:{max:Number(document.getElementById("namazMax").value)||100,obtained:Number(document.getElementById("namazObt").value)||0,enabled:document.getElementById("namazEnabled").checked}
+  }
+};
 
-name:name,
-
-father:father,
-
-roll:roll,
-
-className:className,
-
-photo:"",
-
-marks:{
-English:{max:Number(document.getElementById("engMax").value)||100,obtained:Number(document.getElementById("engObt").value)||0,enabled:document.getElementById("engEnabled").checked},
-Urdu:{max:Number(document.getElementById("urduMax").value)||100,obtained:Number(document.getElementById("urduObt").value)||0,enabled:document.getElementById("urduEnabled").checked},
-Mathematics:{max:Number(document.getElementById("mathMax").value)||100,obtained:Number(document.getElementById("mathObt").value)||0,enabled:document.getElementById("mathEnabled").checked},
-Quran:{max:Number(document.getElementById("quranMax").value)||100,obtained:Number(document.getElementById("quranObt").value)||0,enabled:document.getElementById("quranEnabled").checked},
-Namaz:{max:Number(document.getElementById("namazMax").value)||100,obtained:Number(document.getElementById("namazObt").value)||0,enabled:document.getElementById("namazEnabled").checked}
+try{
+  if(photoInput && photoInput.files && photoInput.files.length){
+    student.photo=await new Promise((resolve,reject)=>{
+      const reader=new FileReader();
+      reader.onload=e=>resolve(String(e.target.result||""));
+      reader.onerror=()=>reject(new Error("Student photo could not be read."));
+      reader.readAsDataURL(photoInput.files[0]);
+    });
+  }
+}catch(e){
+  showMessage("saveMessage",e.message||"Student photo could not be read.","error");
+  return;
 }
 
-};
+let onlineSaved=false;
+let onlineError="";
+try{
+  await saveStudentToSupabase(student);
+  onlineSaved=true;
+}catch(error){
+  onlineError=error && error.message ? error.message : "Supabase connection failed.";
+  console.error("Supabase Save Student error:",error);
+}
 
-
-if(photoInput.files.length>0){
-
-const reader=new FileReader();
-
-
-reader.onload=function(e){
-
-student.photo=e.target.result;
-
+/* Keep the existing browser copy for the current admin/edit workflow. */
 students.push(student);
-
 saveStudents(students);
-
 clearStudentForm();
-
 loadStudentList();
 
-showMessage(
-"saveMessage",
-"Student saved successfully.",
-"success"
-);
-
-};
-
-
-reader.readAsDataURL(
-photoInput.files[0]
-);
-
-
+if(onlineSaved){
+  showMessage("saveMessage","Student saved to the online database and this device successfully.","success");
 }else{
-
-students.push(student);
-
-saveStudents(students);
-
-clearStudentForm();
-
-loadStudentList();
-
-showMessage(
-"saveMessage",
-"Student saved successfully.",
-"success"
-);
-
+  showMessage("saveMessage","This student was saved on this device, BUT NOT confirmed online. Supabase says: "+onlineError,"error");
 }
-
 }
-
 
 /* ================= STUDENT LIST ================= */
 
@@ -1626,6 +1563,121 @@ getStudents();
 const SUPABASE_URL = "https://fjwanngswvbahkqiaufn.supabase.co";
 const SUPABASE_KEY = "sb_publishable_jVL5UnGwjoNYSdSZrNaKAg_9Zjot0Iu";
 
+
+/* Save Student to the same Supabase project used by public result search.
+   Discover exposed columns first so we do not blindly send unknown field names. */
+function normalizedColumnName(value){
+  return String(value||"").toLowerCase().replace(/[^a-z0-9]/g,"");
+}
+
+async function getStudentApiColumns(){
+  const response=await fetch(`${SUPABASE_URL}/rest/v1/`,{
+    method:"GET",
+    headers:{apikey:SUPABASE_KEY,Authorization:`Bearer ${SUPABASE_KEY}`,Accept:"application/openapi+json"}
+  });
+  if(!response.ok) throw new Error(`Could not inspect Supabase API schema (HTTP ${response.status}).`);
+  const spec=await response.json();
+  let schema=null;
+  const defs=spec.definitions||spec.components?.schemas||{};
+  for(const [key,value] of Object.entries(defs)){
+    if(normalizedColumnName(key)==="student" && value && value.properties){schema=value;break;}
+  }
+  if(!schema){
+    const path=spec.paths?.["/student"]||spec.paths?.["/student/"];
+    const postSchema=path?.post?.requestBody?.content?.["application/json"]?.schema;
+    const ref=postSchema?.$ref;
+    if(ref){const key=ref.split("/").pop();schema=defs[key]||null;}
+    if(!schema && postSchema?.properties) schema=postSchema;
+  }
+  if(!schema || !schema.properties) throw new Error("Supabase API did not expose the columns for the student table.");
+  return schema.properties;
+}
+
+function buildSupabaseStudentPayload(student, properties){
+  const marks=student.marks||{};
+  const values={
+    name:student.name, student_name:student.name,
+    father_name:student.father, father:student.father,
+    roll_number:student.roll, roll:student.roll, roll_no:student.roll,
+    class:student.className, class_name:student.className,
+    english:marks.English?.obtained??0, english_marks:marks.English?.obtained??0,
+    math:marks.Mathematics?.obtained??0, mathematics:marks.Mathematics?.obtained??0, math_marks:marks.Mathematics?.obtained??0,
+    urdu:marks.Urdu?.obtained??0, urdu_marks:marks.Urdu?.obtained??0,
+    quran:marks.Quran?.obtained??0, quran_pak:marks.Quran?.obtained??0, quranpak:marks.Quran?.obtained??0, quran_marks:marks.Quran?.obtained??0,
+    namaz:marks.Namaz?.obtained??0, namaz_marks:marks.Namaz?.obtained??0,
+    picture:student.photo||null, photo:student.photo||null, photo_url:student.photo||null,
+    english_enabled:!!marks.English?.enabled, urdu_enabled:!!marks.Urdu?.enabled,
+    math_enabled:!!marks.Mathematics?.enabled, mathematics_enabled:!!marks.Mathematics?.enabled,
+    quran_enabled:!!marks.Quran?.enabled, namaz_enabled:!!marks.Namaz?.enabled,
+    english_max:marks.English?.max??100, urdu_max:marks.Urdu?.max??100,
+    math_max:marks.Mathematics?.max??100, quran_max:marks.Quran?.max??100, namaz_max:marks.Namaz?.max??100,
+    selector:JSON.stringify({English:!!marks.English?.enabled,Urdu:!!marks.Urdu?.enabled,Math:!!marks.Mathematics?.enabled,Quran:!!marks.Quran?.enabled,Namaz:!!marks.Namaz?.enabled}),
+    selecter:JSON.stringify({English:!!marks.English?.enabled,Urdu:!!marks.Urdu?.enabled,Math:!!marks.Mathematics?.enabled,Quran:!!marks.Quran?.enabled,Namaz:!!marks.Namaz?.enabled})
+  };
+  const payload={};
+  const normalizedToActual=new Map(Object.keys(properties).map(key=>[normalizedColumnName(key),key]));
+  const aliases={
+    name:["name","student_name"], father_name:["father_name","father"], roll_number:["roll_number","roll","roll_no"],
+    class_name:["class_name","class"], english:["english","english_marks"], math:["math","mathematics","math_marks"],
+    urdu:["urdu","urdu_marks"], quran:["quran","quran_pak","quran_marks","quranpak"], namaz:["namaz","namaz_marks"],
+    picture:["picture","photo","photo_url"], english_enabled:["english_enabled"], urdu_enabled:["urdu_enabled"],
+    math_enabled:["math_enabled","mathematics_enabled"], quran_enabled:["quran_enabled"], namaz_enabled:["namaz_enabled"],
+    english_max:["english_max"], urdu_max:["urdu_max"], math_max:["math_max"], quran_max:["quran_max"], namaz_max:["namaz_max"],
+  };
+  for(const [target,candidates] of Object.entries(aliases)){
+    for(const candidate of candidates){
+      const actual=normalizedToActual.get(normalizedColumnName(candidate));
+      if(actual && Object.prototype.hasOwnProperty.call(values,candidate)){payload[actual]=values[candidate];break;}
+    }
+  }
+  /* If the database has a selector/selecter column, store the subject toggles
+     in the format appropriate for its discovered type. */
+  const selectorActual=normalizedToActual.get("selector")||normalizedToActual.get("selecter");
+  if(selectorActual){
+    const selectorType=String(properties[selectorActual]?.type||"").toLowerCase();
+    const enabled={English:!!marks.English?.enabled,Urdu:!!marks.Urdu?.enabled,Math:!!marks.Mathematics?.enabled,Quran:!!marks.Quran?.enabled,Namaz:!!marks.Namaz?.enabled};
+    if(selectorType==="object"||selectorType==="array") payload[selectorActual]=enabled;
+    else if(selectorType==="string") payload[selectorActual]=JSON.stringify(enabled);
+  }
+  const hasRoll=Object.keys(payload).some(key=>["rollnumber","roll","rollno"].includes(normalizedColumnName(key)));
+  const hasName=Object.keys(payload).some(key=>["name","studentname"].includes(normalizedColumnName(key)));
+  const hasFather=Object.keys(payload).some(key=>["fathername","father"].includes(normalizedColumnName(key)));
+  if(!hasRoll || !hasName || !hasFather){
+    throw new Error("The online student table does not expose the required name, father_name, and roll_number columns.");
+  }
+  return payload;
+}
+
+async function supabaseWrite(url, method, payload){
+  const response=await fetch(url,{
+    method,
+    headers:{apikey:SUPABASE_KEY,Authorization:`Bearer ${SUPABASE_KEY}`,"Content-Type":"application/json",Accept:"application/json",Prefer:"return=representation"},
+    body:JSON.stringify(payload)
+  });
+  const body=await response.text();
+  let data=null;try{data=body?JSON.parse(body):null;}catch(_){data=null;}
+  if(!response.ok){
+    let detail=body||`HTTP ${response.status}`;
+    try{const parsed=JSON.parse(body);detail=parsed.message||parsed.details||parsed.hint||detail;}catch(_){}
+    throw new Error(`Supabase ${method} failed (HTTP ${response.status}): ${detail}`);
+  }
+  return data;
+}
+
+async function saveStudentToSupabase(student){
+  const properties=await getStudentApiColumns();
+  const payload=buildSupabaseStudentPayload(student,properties);
+  const rollColumn=Object.keys(payload).find(key=>["rollnumber","roll","rollno"].includes(normalizedColumnName(key)));
+  const filter=`${encodeURIComponent(rollColumn)}=eq.${encodeURIComponent(student.roll)}`;
+  /* Update the same roll number if it already exists; otherwise insert a new row. */
+  const updateUrl=`${SUPABASE_URL}/rest/v1/student?${filter}`;
+  const updated=await supabaseWrite(updateUrl,"PATCH",payload);
+  if(Array.isArray(updated) && updated.length) return updated[0];
+  const inserted=await supabaseWrite(`${SUPABASE_URL}/rest/v1/student`,"POST",payload);
+  if(Array.isArray(inserted) && inserted.length) return inserted[0];
+  return inserted;
+}
+
 function firstValue(obj, names, fallback=""){
   for(const name of names){
     const value=obj?.[name];
@@ -1650,15 +1702,15 @@ function firstEnabled(obj, names, fallback){
 }
 
 function mapSupabaseStudent(s){
-  const quranValue=firstValue(s,["quran","quran_marks","quran_obtained","quranobtained"],null);
-  const namazValue=firstValue(s,["namaz","namaz_marks","namaz_obtained","namazobtained"],null);
+  const quranValue=firstValue(s,["quran","quran_pak","Quran Pak","quran_marks","quran_obtained","quranobtained"],null);
+  const namazValue=firstValue(s,["namaz","Namaz","namaz_marks","namaz_obtained","namazobtained"],null);
 
   return normalizeStudent({
     name:firstValue(s,["name","student_name","studentName"]),
     father:firstValue(s,["father","father_name","fatherName"]),
     roll:firstValue(s,["roll","roll_number","rollNumber"]),
     className:firstValue(s,["class","class_name","className"]),
-    photo:firstValue(s,["photo","photo_url","photoUrl"],""),
+    photo:firstValue(s,["photo","photo_url","photoUrl","picture","student_picture"],""),
     marks:{
       English:{
         max:firstNumber(s,["english_max","english_max_marks","englishMax"],100),
