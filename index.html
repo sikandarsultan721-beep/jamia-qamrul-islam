@@ -1572,88 +1572,23 @@ function supabaseHeaders(extra={}){
   return headers;
 }
 
-/* Save Student to the same Supabase project used by public result search.
-   Discover exposed columns first so we do not blindly send unknown field names. */
-function normalizedColumnName(value){
-  return String(value||"").toLowerCase().replace(/[^a-z0-9]/g,"");
-}
-
-async function getStudentApiColumns(){
-  const response=await fetch(`${SUPABASE_URL}/rest/v1/`,{
-    method:"GET",
-    headers:supabaseHeaders({Accept:"application/openapi+json"})
-  });
-  if(!response.ok) throw new Error(`Could not inspect Supabase API schema (HTTP ${response.status}).`);
-  const spec=await response.json();
-  let schema=null;
-  const defs=spec.definitions||spec.components?.schemas||{};
-  for(const [key,value] of Object.entries(defs)){
-    if(normalizedColumnName(key)==="student" && value && value.properties){schema=value;break;}
-  }
-  if(!schema){
-    const path=spec.paths?.["/student"]||spec.paths?.["/student/"];
-    const postSchema=path?.post?.requestBody?.content?.["application/json"]?.schema;
-    const ref=postSchema?.$ref;
-    if(ref){const key=ref.split("/").pop();schema=defs[key]||null;}
-    if(!schema && postSchema?.properties) schema=postSchema;
-  }
-  if(!schema || !schema.properties) throw new Error("Supabase API did not expose the columns for the student table.");
-  return schema.properties;
-}
-
-function buildSupabaseStudentPayload(student, properties){
+/* Save to the existing case-sensitive public."Student" table.
+   Do not inspect the root OpenAPI endpoint (it can return 401 for publishable keys).
+   Subject values are NULL when their tick-box is off, so disabled subjects are not shown. */
+function buildSupabaseStudentPayload(student){
   const marks=student.marks||{};
-  const values={
-    name:student.name, student_name:student.name,
-    father_name:student.father, father:student.father,
-    roll_number:student.roll, roll:student.roll, roll_no:student.roll,
-    class:student.className, class_name:student.className,
-    english:marks.English?.obtained??0, english_marks:marks.English?.obtained??0,
-    math:marks.Mathematics?.obtained??0, mathematics:marks.Mathematics?.obtained??0, math_marks:marks.Mathematics?.obtained??0,
-    urdu:marks.Urdu?.obtained??0, urdu_marks:marks.Urdu?.obtained??0,
-    quran:marks.Quran?.obtained??0, quran_pak:marks.Quran?.obtained??0, quranpak:marks.Quran?.obtained??0, quran_marks:marks.Quran?.obtained??0,
-    namaz:marks.Namaz?.obtained??0, namaz_marks:marks.Namaz?.obtained??0,
-    picture:student.photo||null, photo:student.photo||null, photo_url:student.photo||null,
-    english_enabled:!!marks.English?.enabled, urdu_enabled:!!marks.Urdu?.enabled,
-    math_enabled:!!marks.Mathematics?.enabled, mathematics_enabled:!!marks.Mathematics?.enabled,
-    quran_enabled:!!marks.Quran?.enabled, namaz_enabled:!!marks.Namaz?.enabled,
-    english_max:marks.English?.max??100, urdu_max:marks.Urdu?.max??100,
-    math_max:marks.Mathematics?.max??100, quran_max:marks.Quran?.max??100, namaz_max:marks.Namaz?.max??100,
-    selector:JSON.stringify({English:!!marks.English?.enabled,Urdu:!!marks.Urdu?.enabled,Math:!!marks.Mathematics?.enabled,Quran:!!marks.Quran?.enabled,Namaz:!!marks.Namaz?.enabled}),
-    selecter:JSON.stringify({English:!!marks.English?.enabled,Urdu:!!marks.Urdu?.enabled,Math:!!marks.Mathematics?.enabled,Quran:!!marks.Quran?.enabled,Namaz:!!marks.Namaz?.enabled})
+  const enabledValue=(subject)=>marks[subject]?.enabled ? String(marks[subject]?.obtained ?? 0) : null;
+  return {
+    "Name": student.name,
+    "Father name": student.father,
+    "roll": String(student.roll),
+    "Class": String(student.className||""),
+    "English": enabledValue("English"),
+    "Urdu": enabledValue("Urdu"),
+    "Math": enabledValue("Mathematics"),
+    "Quran": enabledValue("Quran"),
+    "Namaz": enabledValue("Namaz")
   };
-  const payload={};
-  const normalizedToActual=new Map(Object.keys(properties).map(key=>[normalizedColumnName(key),key]));
-  const aliases={
-    name:["name","student_name"], father_name:["father_name","father"], roll_number:["roll_number","roll","roll_no"],
-    class_name:["class_name","class"], english:["english","english_marks"], math:["math","mathematics","math_marks"],
-    urdu:["urdu","urdu_marks"], quran:["quran","quran_pak","quran_marks","quranpak"], namaz:["namaz","namaz_marks"],
-    picture:["picture","photo","photo_url"], english_enabled:["english_enabled"], urdu_enabled:["urdu_enabled"],
-    math_enabled:["math_enabled","mathematics_enabled"], quran_enabled:["quran_enabled"], namaz_enabled:["namaz_enabled"],
-    english_max:["english_max"], urdu_max:["urdu_max"], math_max:["math_max"], quran_max:["quran_max"], namaz_max:["namaz_max"],
-  };
-  for(const [target,candidates] of Object.entries(aliases)){
-    for(const candidate of candidates){
-      const actual=normalizedToActual.get(normalizedColumnName(candidate));
-      if(actual && Object.prototype.hasOwnProperty.call(values,candidate)){payload[actual]=values[candidate];break;}
-    }
-  }
-  /* If the database has a selector/selecter column, store the subject toggles
-     in the format appropriate for its discovered type. */
-  const selectorActual=normalizedToActual.get("selector")||normalizedToActual.get("selecter");
-  if(selectorActual){
-    const selectorType=String(properties[selectorActual]?.type||"").toLowerCase();
-    const enabled={English:!!marks.English?.enabled,Urdu:!!marks.Urdu?.enabled,Math:!!marks.Mathematics?.enabled,Quran:!!marks.Quran?.enabled,Namaz:!!marks.Namaz?.enabled};
-    if(selectorType==="object"||selectorType==="array") payload[selectorActual]=enabled;
-    else if(selectorType==="string") payload[selectorActual]=JSON.stringify(enabled);
-  }
-  const hasRoll=Object.keys(payload).some(key=>["rollnumber","roll","rollno"].includes(normalizedColumnName(key)));
-  const hasName=Object.keys(payload).some(key=>["name","studentname"].includes(normalizedColumnName(key)));
-  const hasFather=Object.keys(payload).some(key=>["fathername","father"].includes(normalizedColumnName(key)));
-  if(!hasRoll || !hasName || !hasFather){
-    throw new Error("The online student table does not expose the required name, father_name, and roll_number columns.");
-  }
-  return payload;
 }
 
 async function supabaseWrite(url, method, payload){
@@ -1673,15 +1608,13 @@ async function supabaseWrite(url, method, payload){
 }
 
 async function saveStudentToSupabase(student){
-  const properties=await getStudentApiColumns();
-  const payload=buildSupabaseStudentPayload(student,properties);
-  const rollColumn=Object.keys(payload).find(key=>["rollnumber","roll","rollno"].includes(normalizedColumnName(key)));
-  const filter=`${encodeURIComponent(rollColumn)}=eq.${encodeURIComponent(student.roll)}`;
-  /* Update the same roll number if it already exists; otherwise insert a new row. */
-  const updateUrl=`${SUPABASE_URL}/rest/v1/student?${filter}`;
-  const updated=await supabaseWrite(updateUrl,"PATCH",payload);
+  const tableUrl=`${SUPABASE_URL}/rest/v1/Student`;
+  const payload=buildSupabaseStudentPayload(student);
+  const filter=`roll=eq.${encodeURIComponent(String(student.roll))}`;
+  /* Update an existing roll first; insert if no row matched. */
+  const updated=await supabaseWrite(`${tableUrl}?${filter}`,"PATCH",payload);
   if(Array.isArray(updated) && updated.length) return updated[0];
-  const inserted=await supabaseWrite(`${SUPABASE_URL}/rest/v1/student`,"POST",payload);
+  const inserted=await supabaseWrite(tableUrl,"POST",payload);
   if(Array.isArray(inserted) && inserted.length) return inserted[0];
   return inserted;
 }
@@ -1710,41 +1643,23 @@ function firstEnabled(obj, names, fallback){
 }
 
 function mapSupabaseStudent(s){
-  const quranValue=firstValue(s,["quran","quran_pak","Quran Pak","quran_marks","quran_obtained","quranobtained"],null);
-  const namazValue=firstValue(s,["namaz","Namaz","namaz_marks","namaz_obtained","namazobtained"],null);
-
+  const englishValue=firstValue(s,["English","english","english_marks","english_obtained","englishObtained"],null);
+  const urduValue=firstValue(s,["Urdu","urdu","urdu_marks","urdu_obtained","urduObtained"],null);
+  const mathValue=firstValue(s,["Math","math","mathematics","math_marks","mathematics_marks","math_obtained","mathematics_obtained"],null);
+  const quranValue=firstValue(s,["Quran","quran","quran_pak","Quran Pak","quran_marks","quran_obtained","quranobtained"],null);
+  const namazValue=firstValue(s,["Namaz","namaz","namaz_marks","namaz_obtained","namazobtained"],null);
   return normalizeStudent({
-    name:firstValue(s,["name","student_name","studentName"]),
-    father:firstValue(s,["father","father_name","fatherName"]),
+    name:firstValue(s,["Name","name","student_name","studentName"]),
+    father:firstValue(s,["Father name","father","father_name","fatherName"]),
     roll:firstValue(s,["roll","roll_number","rollNumber"]),
-    className:firstValue(s,["class","class_name","className"]),
+    className:firstValue(s,["Class","class","class_name","className"]),
     photo:firstValue(s,["photo","photo_url","photoUrl","picture","student_picture"],""),
     marks:{
-      English:{
-        max:firstNumber(s,["english_max","english_max_marks","englishMax"],100),
-        obtained:firstNumber(s,["english","english_marks","english_obtained","englishObtained"]),
-        enabled:firstEnabled(s,["english_enabled","englishEnabled"],true)
-      },
-      Urdu:{
-        max:firstNumber(s,["urdu_max","urdu_max_marks","urduMax"],100),
-        obtained:firstNumber(s,["urdu","urdu_marks","urdu_obtained","urduObtained"]),
-        enabled:firstEnabled(s,["urdu_enabled","urduEnabled"],true)
-      },
-      Mathematics:{
-        max:firstNumber(s,["math_max","mathematics_max","mathMax"],100),
-        obtained:firstNumber(s,["math","mathematics","math_marks","mathematics_marks","math_obtained","mathematics_obtained"]),
-        enabled:firstEnabled(s,["math_enabled","mathematics_enabled","mathEnabled","mathematicsEnabled"],true)
-      },
-      Quran:{
-        max:firstNumber(s,["quran_max","quran_max_marks","quranMax"],100),
-        obtained:quranValue===null ? 0 : Number(quranValue)||0,
-        enabled:firstEnabled(s,["quran_enabled","quranEnabled"],quranValue!==null)
-      },
-      Namaz:{
-        max:firstNumber(s,["namaz_max","namaz_max_marks","namazMax"],100),
-        obtained:namazValue===null ? 0 : Number(namazValue)||0,
-        enabled:firstEnabled(s,["namaz_enabled","namazEnabled"],namazValue!==null)
-      }
+      English:{max:100,obtained:englishValue===null?0:Number(englishValue)||0,enabled:englishValue!==null},
+      Urdu:{max:100,obtained:urduValue===null?0:Number(urduValue)||0,enabled:urduValue!==null},
+      Mathematics:{max:100,obtained:mathValue===null?0:Number(mathValue)||0,enabled:mathValue!==null},
+      Quran:{max:100,obtained:quranValue===null?0:Number(quranValue)||0,enabled:quranValue!==null},
+      Namaz:{max:100,obtained:namazValue===null?0:Number(namazValue)||0,enabled:namazValue!==null}
     }
   });
 }
@@ -1831,7 +1746,7 @@ async function getStudentFromSupabase(roll){
    * PostgREST lookups against the usual student/result table and roll fields.
    * This does not write to the database or change the page design.
    */
-  const tables=["students","student_results","results","student","student_result"];
+  const tables=["Student","students","student_results","results","student","student_result"];
   const rollFields=["roll","roll_number","roll_no","student_roll","rollnumber"];
   let tableErrors=[];
   for(const table of tables){
