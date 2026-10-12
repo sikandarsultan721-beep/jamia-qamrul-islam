@@ -1592,9 +1592,13 @@ function buildSupabaseStudentPayload(student){
 }
 
 async function supabaseWrite(url, method, payload){
+  /* INSERT must not request a returned row unless an RLS SELECT policy also
+     allows the inserted row to be read. This project currently has an INSERT
+     policy but no SELECT policy listed for public."Student". */
+  const prefer = method === "POST" ? "return=minimal" : "return=representation";
   const response=await fetch(url,{
     method,
-    headers:supabaseHeaders({"Content-Type":"application/json",Accept:"application/json",Prefer:"return=representation"}),
+    headers:supabaseHeaders({"Content-Type":"application/json",Accept:"application/json",Prefer:prefer}),
     body:JSON.stringify(payload)
   });
   const body=await response.text();
@@ -1611,9 +1615,15 @@ async function saveStudentToSupabase(student){
   const tableUrl=`${SUPABASE_URL}/rest/v1/Student`;
   const payload=buildSupabaseStudentPayload(student);
   const filter=`roll=eq.${encodeURIComponent(String(student.roll))}`;
-  /* Update an existing roll first; insert if no row matched. */
-  const updated=await supabaseWrite(`${tableUrl}?${filter}`,"PATCH",payload);
-  if(Array.isArray(updated) && updated.length) return updated[0];
+  /* Try updating an existing record. If RLS denies UPDATE (the current
+     database policy may permit INSERT only), try INSERT instead so a new
+     student is not blocked before the POST request is attempted. */
+  try{
+    const updated=await supabaseWrite(`${tableUrl}?${filter}`,"PATCH",payload);
+    if(Array.isArray(updated) && updated.length) return updated[0];
+  }catch(updateError){
+    console.warn("Supabase UPDATE unavailable; trying INSERT for this roll:",updateError);
+  }
   const inserted=await supabaseWrite(tableUrl,"POST",payload);
   if(Array.isArray(inserted) && inserted.length) return inserted[0];
   return inserted;
@@ -1717,7 +1727,13 @@ async function getStudentFromSupabase(roll){
         else if(data.data && typeof data.data==="object") rows=[{...data,...data.data}];
         else rows=[data];
       }
-      if(!rows.length) return null;
+      /* An empty RPC result does not prove that the shared table has no
+         matching student. Keep trying compatible parameter names, then let
+         the read-only direct-table fallback run below. */
+      if(!rows.length){
+        lastError=new Error("Supabase result function returned no matching record.");
+        continue;
+      }
 
       const row=rows[0];
       /* Some RPCs return a nested student object alongside result/marks. */
