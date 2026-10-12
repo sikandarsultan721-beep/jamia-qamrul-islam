@@ -1611,15 +1611,9 @@ async function saveStudentToSupabase(student){
   const tableUrl=`${SUPABASE_URL}/rest/v1/Student`;
   const payload=buildSupabaseStudentPayload(student);
   const filter=`roll=eq.${encodeURIComponent(String(student.roll))}`;
-  /* Try updating an existing record. If RLS denies UPDATE (the current
-     database policy may permit INSERT only), try INSERT instead so a new
-     student is not blocked before the POST request is attempted. */
-  try{
-    const updated=await supabaseWrite(`${tableUrl}?${filter}`,"PATCH",payload);
-    if(Array.isArray(updated) && updated.length) return updated[0];
-  }catch(updateError){
-    console.warn("Supabase UPDATE unavailable; trying INSERT for this roll:",updateError);
-  }
+  /* Update an existing roll first; insert if no row matched. */
+  const updated=await supabaseWrite(`${tableUrl}?${filter}`,"PATCH",payload);
+  if(Array.isArray(updated) && updated.length) return updated[0];
   const inserted=await supabaseWrite(tableUrl,"POST",payload);
   if(Array.isArray(inserted) && inserted.length) return inserted[0];
   return inserted;
