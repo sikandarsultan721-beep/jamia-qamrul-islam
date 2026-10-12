@@ -397,7 +397,7 @@ PASS
 
 <input id="adminUser"
 type="text"
-placeholder="Username">
+placeholder="Admin email (Supabase Auth)">
 
 <input id="adminPass"
 type="password"
@@ -1238,54 +1238,40 @@ padding:10px
 
 /* ================= ADMIN LOGIN ================= */
 
-function adminLogin(){
-
-const user=
-document.getElementById("adminUser")
-.value.trim();
-
-const pass=
-document.getElementById("adminPass")
-.value;
-
-
-if(user==="admin" && pass==="1234"){
-
-document.getElementById("adminLoginBox")
-.style.display="none";
-
-document.getElementById("adminPanel")
-.style.display="block";
-
-loadStudentList();
-
-}else{
-
-showMessage(
-"adminMessage",
-"Incorrect username or password.",
-"error"
-);
-
+async function adminLogin(){
+  const user=(document.getElementById("adminUser").value||"").trim();
+  const pass=document.getElementById("adminPass").value||"";
+  if(!user || !pass){
+    showMessage("adminMessage","Enter the Supabase admin email and password.","error");
+    return;
+  }
+  try{
+    const response=await fetch(`${SUPABASE_URL}/auth/v1/token?grant_type=password`,{
+      method:"POST",
+      headers:{apikey:SUPABASE_KEY,"Content-Type":"application/json",Accept:"application/json"},
+      body:JSON.stringify({email:user,password:pass})
+    });
+    const body=await response.json().catch(()=>({}));
+    if(!response.ok || !body.access_token) throw new Error(body.msg||body.message||body.error_description||"Sign-in failed. Check the Supabase admin email/password.");
+    window.__jamiaSupabaseAccessToken=body.access_token;
+    window.__jamiaSupabaseRefreshToken=body.refresh_token||"";
+    document.getElementById("adminLoginBox").style.display="none";
+    document.getElementById("adminPanel").style.display="block";
+    showMessage("adminMessage","Admin signed in securely.","success");
+    loadStudentList();
+  }catch(error){
+    window.__jamiaSupabaseAccessToken="";
+    showMessage("adminMessage",error.message||"Admin sign-in failed.","error");
+  }
 }
-
-}
-
 
 function adminLogout(){
-
-document.getElementById("adminPanel")
-.style.display="none";
-
-document.getElementById("adminLoginBox")
-.style.display="block";
-
-document.getElementById("adminUser")
-.value="";
-
-document.getElementById("adminPass")
-.value="";
-
+  window.__jamiaSupabaseAccessToken="";
+  window.__jamiaSupabaseRefreshToken="";
+  document.getElementById("adminPanel").style.display="none";
+  document.getElementById("adminLoginBox").style.display="block";
+  document.getElementById("adminUser").value="";
+  document.getElementById("adminPass").value="";
 }
 
 
@@ -1568,7 +1554,11 @@ const SUPABASE_KEY = "sb_publishable_jVL5UnGwjoNYSdSZrNaKAg_9Zjot0Iu";
    Legacy anon JWT keys (eyJ...) may also be used as Bearer tokens. */
 function supabaseHeaders(extra={}){
   const headers={apikey:SUPABASE_KEY,...extra};
-  if(String(SUPABASE_KEY).startsWith("eyJ")) headers.Authorization=`Bearer ${SUPABASE_KEY}`;
+  if(window.__jamiaSupabaseAccessToken){
+    headers.Authorization=`Bearer ${window.__jamiaSupabaseAccessToken}`;
+  }else if(String(SUPABASE_KEY).startsWith("eyJ")){
+    headers.Authorization=`Bearer ${SUPABASE_KEY}`;
+  }
   return headers;
 }
 
@@ -1611,15 +1601,9 @@ async function saveStudentToSupabase(student){
   const tableUrl=`${SUPABASE_URL}/rest/v1/Student`;
   const payload=buildSupabaseStudentPayload(student);
   const filter=`roll=eq.${encodeURIComponent(String(student.roll))}`;
-  /* Try updating an existing record. If RLS denies UPDATE (the current
-     database policy may permit INSERT only), try INSERT instead so a new
-     student is not blocked before the POST request is attempted. */
-  try{
-    const updated=await supabaseWrite(`${tableUrl}?${filter}`,"PATCH",payload);
-    if(Array.isArray(updated) && updated.length) return updated[0];
-  }catch(updateError){
-    console.warn("Supabase UPDATE unavailable; trying INSERT for this roll:",updateError);
-  }
+  /* Update an existing roll first; insert if no row matched. */
+  const updated=await supabaseWrite(`${tableUrl}?${filter}`,"PATCH",payload);
+  if(Array.isArray(updated) && updated.length) return updated[0];
   const inserted=await supabaseWrite(tableUrl,"POST",payload);
   if(Array.isArray(inserted) && inserted.length) return inserted[0];
   return inserted;
