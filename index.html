@@ -1829,6 +1829,21 @@ async function getStudentFromSupabase(roll){
 
 /* ================= STUDENT LOGIN ================= */
 
+/* Some versions of get_student_result return the marks but omit photo_url.
+   In that case, read only the photo_url column for this roll number. */
+async function fetchStudentPhotoUrl(roll){
+  try{
+    const url=`${SUPABASE_URL}/rest/v1/Student?select=photo_url&roll=eq.${encodeURIComponent(String(roll))}&limit=1`;
+    const response=await fetch(url,{method:"GET",headers:supabaseHeaders({Accept:"application/json"})});
+    if(!response.ok) return "";
+    const rows=await response.json();
+    if(!Array.isArray(rows) || !rows.length) return "";
+    return normalizeStudentPhotoUrl(rows[0].photo_url||"");
+  }catch(_){
+    return "";
+  }
+}
+
 async function studentLogin(){
 
   const roll=document.getElementById("resultRoll").value.trim();
@@ -1848,6 +1863,11 @@ async function studentLogin(){
     if(!student){
       showMessage("resultMessage","اس Roll Number کا آن لائن Result نہیں ملا۔ Roll Number چیک کریں یا انتظامیہ سے رابطہ کریں۔","error");
       return;
+    }
+
+    /* Keep the existing result RPC; supplement only the missing photo URL. */
+    if(!student.photo){
+      student.photo=await fetchStudentPhotoUrl(roll);
     }
 
     /* Cache the verified remote record for the existing local/admin workflow. */
