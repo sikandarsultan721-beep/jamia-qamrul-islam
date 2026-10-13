@@ -836,10 +836,15 @@ const noPhoto=document.getElementById("noPhoto");
 
 if(student.photo){
 
+photo.onerror=()=>{
+  photo.onerror=null;
+  photo.removeAttribute("src");
+  photo.style.display="none";
+  noPhoto.style.display="block";
+  noPhoto.textContent="تصویر دستیاب نہیں";
+};
 photo.src=student.photo;
-
 photo.style.display="block";
-
 noPhoto.style.display="none";
 
 }else{
@@ -848,6 +853,7 @@ photo.removeAttribute("src");
 
 photo.style.display="none";
 
+noPhoto.innerHTML="STUDENT<br>PHOTO";
 noPhoto.style.display="block";
 
 }
@@ -1323,12 +1329,7 @@ const student={
 
 try{
   if(photoInput && photoInput.files && photoInput.files.length){
-    student.photo=await new Promise((resolve,reject)=>{
-      const reader=new FileReader();
-      reader.onload=e=>resolve(String(e.target.result||""));
-      reader.onerror=()=>reject(new Error("Student photo could not be read."));
-      reader.readAsDataURL(photoInput.files[0]);
-    });
+    student.photo=await uploadStudentPhoto(photoInput.files[0],roll);
   }
 }catch(e){
   showMessage("saveMessage",e.message||"Student photo could not be read.","error");
@@ -1572,6 +1573,38 @@ function supabaseHeaders(extra={}){
   return headers;
 }
 
+/* Upload student photos to Storage and return a cross-device URL. */
+async function uploadStudentPhoto(file,roll){
+  if(!file || !file.type || !file.type.startsWith("image/")){
+    throw new Error("براہِ کرم طالب علم کی درست تصویر منتخب کریں۔");
+  }
+  const safeName=String(file.name||"student-photo").replace(/[^a-zA-Z0-9._-]/g,"_");
+  const safeRoll=String(roll).trim().replace(/[^a-zA-Z0-9_-]/g,"_");
+  const path=`${safeRoll}/${Date.now()}-${safeName}`;
+  const encodedPath=path.split("/").map(encodeURIComponent).join("/");
+  const response=await fetch(`${SUPABASE_URL}/storage/v1/object/student-photos/${encodedPath}`,{
+    method:"POST",
+    headers:supabaseHeaders({"Content-Type":file.type,"x-upsert":"true"}),
+    body:file
+  });
+  const body=await response.text();
+  if(!response.ok){
+    let detail=body||`HTTP ${response.status}`;
+    try{const parsed=JSON.parse(body);detail=parsed.message||parsed.error||parsed.error_description||detail;}catch(_){}
+    throw new Error(`Supabase Storage upload failed (HTTP ${response.status}): ${detail}. student-photos bucket کی INSERT اجازت چیک کریں۔`);
+  }
+  return `${SUPABASE_URL}/storage/v1/object/public/student-photos/${encodedPath}`;
+}
+
+function normalizeStudentPhotoUrl(value){
+  const photo=String(value||"").trim();
+  if(!photo) return "";
+  if(/^https?:\/\//i.test(photo) || /^data:image\//i.test(photo)) return photo;
+  const path=photo.replace(/^\/+/,"").replace(/^student-photos\//i,"");
+  const encodedPath=path.split("/").map(encodeURIComponent).join("/");
+  return `${SUPABASE_URL}/storage/v1/object/public/student-photos/${encodedPath}`;
+}
+
 /* Save to the existing case-sensitive public."Student" table.
    Do not inspect the root OpenAPI endpoint (it can return 401 for publishable keys).
    Subject values are NULL when their tick-box is off, so disabled subjects are not shown. */
@@ -1587,7 +1620,8 @@ function buildSupabaseStudentPayload(student){
     "Urdu": enabledValue("Urdu"),
     "Math": enabledValue("Mathematics"),
     "Quran": enabledValue("Quran"),
-    "Namaz": enabledValue("Namaz")
+    "Namaz": enabledValue("Namaz"),
+    ...(student.photo ? {"photo_url":normalizeStudentPhotoUrl(student.photo)} : {})
   };
 }
 
@@ -1663,7 +1697,7 @@ function mapSupabaseStudent(s){
     father:firstValue(s,["Father name","father","father_name","fatherName"]),
     roll:firstValue(s,["roll","roll_number","rollNumber"]),
     className:firstValue(s,["Class","class","class_name","className"]),
-    photo:firstValue(s,["photo","photo_url","photoUrl","picture","student_picture"],""),
+    photo:normalizeStudentPhotoUrl(firstValue(s,["photo_url","photoUrl","photo","picture","student_picture"],"")),
     marks:{
       English:{max:100,obtained:englishValue===null?0:Number(englishValue)||0,enabled:englishValue!==null},
       Urdu:{max:100,obtained:urduValue===null?0:Number(urduValue)||0,enabled:urduValue!==null},
