@@ -642,6 +642,8 @@ Admin Logout
 
 /* ================= STORAGE ================= */
 
+let editingStudentOriginalRoll = null;
+
 function getStudents(){
 
 let data=localStorage.getItem("jamiaStudents");
@@ -1000,18 +1002,54 @@ behavior:"smooth"
 /* ================= PDF ================= */
 
 async function downloadPDF(btn){
-const card=document.getElementById("resultCard"); if(!card)return;
-if(btn){btn.disabled=true;btn.textContent="Creating PDF...";}
-try{
- const canvas=await html2canvas(card,{scale:3,useCORS:true,backgroundColor:"#ffffff",logging:false});
- const imgData=canvas.toDataURL("image/jpeg",.98); const {jsPDF}=window.jspdf;
- const pdf=new jsPDF({orientation:"portrait",unit:"mm",format:"a4",compress:true});
- const pageW=210,pageH=297,margin=5,ratio=canvas.width/canvas.height;
- let w=pageW-2*margin,h=w/ratio;if(h>pageH-2*margin){h=pageH-2*margin;w=h*ratio;}
- pdf.addImage(imgData,"JPEG",(pageW-w)/2,(pageH-h)/2,w,h,undefined,"FAST");
- const roll=document.getElementById("rRoll").textContent||"Student";pdf.save("Jamia-Qamrul-Islam-Result-"+roll+".pdf");
-}catch(e){alert("PDF could not be created. Please try again.");}
-finally{if(btn){btn.disabled=false;btn.textContent="📄 Download Result PDF";}}
+  const card=document.getElementById("resultCard");
+  if(!card) return;
+  if(btn){btn.disabled=true;btn.textContent="Creating PDF...";}
+  let stage=null;
+  try{
+    /* Render a compact A4-proportioned copy so the browser-screen card's
+       tall layout does not make the downloaded PDF look narrow/elongated. */
+    stage=document.createElement("div");
+    stage.style.cssText="position:fixed;left:-12000px;top:0;width:760px;background:#fff;z-index:-1;overflow:visible;";
+    const clone=card.cloneNode(true);
+    clone.style.cssText += ";width:760px;max-width:none;margin:0;box-sizing:border-box;transform:none;box-shadow:none;";
+    stage.appendChild(clone);
+    document.body.appendChild(stage);
+    const compact=document.createElement("style");
+    compact.textContent=`
+      #resultCard, .result-card{width:760px!important;max-width:none!important;margin:0!important;box-sizing:border-box!important;overflow:hidden!important;}
+      .result-top{padding:13px 18px!important;}
+      .result-body{padding:12px 16px!important;}
+      .student-head{gap:12px!important;margin-bottom:12px!important;}
+      .photo-box{width:140px!important;height:150px!important;flex:0 0 140px!important;overflow:hidden!important;}
+      #rPhoto{width:100%!important;height:100%!important;object-fit:contain!important;display:block!important;}
+      .marks-table{margin-bottom:10px!important;}
+      .marks-table th,.marks-table td{padding:6px 5px!important;}
+      .summary{gap:6px!important;margin:10px 0!important;}
+      .summary-box{padding:6px 3px!important;}
+      .result-signatures{margin-top:16px!important;}
+      .result-footer{display:none!important;}
+    `;
+    stage.prepend(compact);
+    await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
+    const canvas=await html2canvas(clone,{scale:2,useCORS:true,backgroundColor:"#ffffff",logging:false,width:760,windowWidth:760});
+    const {jsPDF}=window.jspdf;
+    const pdf=new jsPDF({orientation:"portrait",unit:"mm",format:"a4",compress:true});
+    const pageW=210,pageH=297,margin=5,availableW=pageW-margin*2,availableH=pageH-margin*2;
+    const ratio=canvas.width/canvas.height;
+    let w=availableW,h=w/ratio;
+    if(h>availableH){h=availableH;w=h*ratio;}
+    const imgData=canvas.toDataURL("image/jpeg",.96);
+    pdf.addImage(imgData,"JPEG",(pageW-w)/2,(pageH-h)/2,w,h,undefined,"FAST");
+    const roll=(document.getElementById("rRoll").textContent||"Student").replace(/[^a-zA-Z0-9_-]/g,"_");
+    pdf.save("Jamia-Qamrul-Islam-Result-"+roll+".pdf");
+  }catch(e){
+    console.error("PDF download error:",e);
+    alert("PDF could not be created. Please try again.");
+  }finally{
+    if(stage && stage.parentNode) stage.parentNode.removeChild(stage);
+    if(btn){btn.disabled=false;btn.textContent="📄 Download Result PDF";}
+  }
 }
 
 /* ================= PRINT ================= */
@@ -1298,139 +1336,121 @@ document.getElementById("adminPass")
 /* ================= ADD STUDENT ================= */
 
 async function addStudent(){
-
-const name=(document.getElementById("sName").value||"").trim();
-const father=(document.getElementById("sFather").value||"").trim();
-const roll=(document.getElementById("sRoll").value||"").trim();
-const className=document.getElementById("sClass").value;
-
-if(!name||!father||!roll){
-  showMessage("saveMessage","Please fill Student Name, Father Name and Roll Number.","error");
-  return;
-}
-
-let students=getStudents();
-if(students.some(s=>String(s.roll).toLowerCase()===roll.toLowerCase())){
-  showMessage("saveMessage","This Roll Number already exists in this browser. Open the existing record to edit it.","error");
-  return;
-}
-
-const photoInput=document.getElementById("sPhoto");
-const student={
-  name, father, roll, className, photo:"",
-  marks:{
-    English:{max:Number(document.getElementById("engMax").value)||100,obtained:Number(document.getElementById("engObt").value)||0,enabled:document.getElementById("engEnabled").checked},
-    Urdu:{max:Number(document.getElementById("urduMax").value)||100,obtained:Number(document.getElementById("urduObt").value)||0,enabled:document.getElementById("urduEnabled").checked},
-    Mathematics:{max:Number(document.getElementById("mathMax").value)||100,obtained:Number(document.getElementById("mathObt").value)||0,enabled:document.getElementById("mathEnabled").checked},
-    Quran:{max:Number(document.getElementById("quranMax").value)||100,obtained:Number(document.getElementById("quranObt").value)||0,enabled:document.getElementById("quranEnabled").checked},
-    Namaz:{max:Number(document.getElementById("namazMax").value)||100,obtained:Number(document.getElementById("namazObt").value)||0,enabled:document.getElementById("namazEnabled").checked}
+  const name=(document.getElementById("sName").value||"").trim();
+  const father=(document.getElementById("sFather").value||"").trim();
+  const roll=(document.getElementById("sRoll").value||"").trim();
+  const className=document.getElementById("sClass").value;
+  if(!name||!father||!roll){
+    showMessage("saveMessage","Please fill Student Name, Father Name and Roll Number.","error");
+    return;
   }
-};
-
-try{
-  if(photoInput && photoInput.files && photoInput.files.length){
-    student.photo=await uploadStudentPhoto(photoInput.files[0],roll);
+  const students=getStudents();
+  const isEditing=editingStudentOriginalRoll!==null;
+  if(students.some(s=>String(s.roll).trim().toLowerCase()===roll.toLowerCase() && (!isEditing || String(s.roll).trim().toLowerCase()!==String(editingStudentOriginalRoll).trim().toLowerCase()))){
+    showMessage("saveMessage","This Roll Number already exists on this device. Please edit the existing record instead.","error");
+    return;
   }
-}catch(e){
-  showMessage("saveMessage",e.message||"Student photo could not be read.","error");
-  return;
-}
+  const photoInput=document.getElementById("sPhoto");
+  const existing=isEditing?students.find(s=>String(s.roll).trim().toLowerCase()===String(editingStudentOriginalRoll).trim().toLowerCase()):null;
+  const student={
+    name,father,roll,className,photo:existing?.photo||"",
+    marks:{
+      English:{max:Number(document.getElementById("engMax").value)||100,obtained:Number(document.getElementById("engObt").value)||0,enabled:document.getElementById("engEnabled").checked},
+      Urdu:{max:Number(document.getElementById("urduMax").value)||100,obtained:Number(document.getElementById("urduObt").value)||0,enabled:document.getElementById("urduEnabled").checked},
+      Mathematics:{max:Number(document.getElementById("mathMax").value)||100,obtained:Number(document.getElementById("mathObt").value)||0,enabled:document.getElementById("mathEnabled").checked},
+      Quran:{max:Number(document.getElementById("quranMax").value)||100,obtained:Number(document.getElementById("quranObt").value)||0,enabled:document.getElementById("quranEnabled").checked},
+      Namaz:{max:Number(document.getElementById("namazMax").value)||100,obtained:Number(document.getElementById("namazObt").value)||0,enabled:document.getElementById("namazEnabled").checked}
+    }
+  };
+  try{
+    if(photoInput && photoInput.files && photoInput.files.length){
+      student.photo=await uploadStudentPhoto(photoInput.files[0],roll);
+    }
+  }catch(e){showMessage("saveMessage",e.message||"Student photo could not be read.","error");return;}
 
-let onlineSaved=false;
-let onlineError="";
-try{
-  await saveStudentToSupabase(student);
-  onlineSaved=true;
-}catch(error){
-  onlineError=error && error.message ? error.message : "Supabase connection failed.";
-  console.error("Supabase Save Student error:",error);
-}
+  try{
+    await saveStudentToSupabase(student,isEditing?editingStudentOriginalRoll:null);
+  }catch(error){
+    console.error("Supabase Save Student error:",error);
+    showMessage("saveMessage","Database did not confirm this change. Nothing was changed in the local list. Supabase says: "+(error?.message||"Connection/policy error"),"error");
+    return;
+  }
 
-/* Keep the existing browser copy for the current admin/edit workflow. */
-students.push(student);
-saveStudents(students);
-clearStudentForm();
-loadStudentList();
-
-if(onlineSaved){
-  showMessage("saveMessage","Student saved to the online database and this device successfully.","success");
-}else{
-  showMessage("saveMessage","This student was saved on this device, BUT NOT confirmed online. Supabase says: "+onlineError,"error");
-}
+  if(isEditing){
+    const index=students.findIndex(s=>String(s.roll).trim().toLowerCase()===String(editingStudentOriginalRoll).trim().toLowerCase());
+    if(index>=0) students[index]=student; else students.push(student);
+  }else{
+    students.push(student);
+  }
+  saveStudents(students);
+  editingStudentOriginalRoll=null;
+  const saveBtn=document.querySelector('#adminPanel button.gold[onclick="addStudent()"]');
+  if(saveBtn) saveBtn.textContent="Save Student";
+  clearStudentForm();
+  loadStudentList();
+  showMessage("saveMessage",isEditing?"Student changes updated in the online database and this device.":"Student saved in the online database and this device.","success");
 }
 
 /* ================= STUDENT LIST ================= */
-
 function loadStudentList(){
-
-const tbody=
-document.getElementById("studentList");
-
-tbody.innerHTML="";
-
-
-getStudents().forEach(
-(student,index)=>{
-
-const row=
-document.createElement("tr");
-
-
-row.innerHTML=`
-
-<td>
-${escapeHTML(student.name)}
-</td>
-
-<td>
-${escapeHTML(student.roll)}
-</td>
-
-<td>
-${escapeHTML(student.className)}
-</td>
-
-<td>
-
-<button
-class="danger"
-onclick="deleteStudent(${index})">
-
-Delete
-
-</button>
-
-</td>
-
-`;
-
-
-tbody.appendChild(row);
-
-});
-
+  const tbody=document.getElementById("studentList");
+  tbody.innerHTML="";
+  getStudents().forEach((student,index)=>{
+    const row=document.createElement("tr");
+    row.innerHTML=`
+      <td>${escapeHTML(student.name)}</td>
+      <td>${escapeHTML(student.roll)}</td>
+      <td>${escapeHTML(student.className)}</td>
+      <td><button type="button" onclick="editStudent(${index})">Edit</button>
+      <button type="button" class="danger" onclick="deleteStudent(${index})">Delete</button></td>`;
+    tbody.appendChild(row);
+  });
 }
 
+function editStudent(index){
+  const student=getStudents()[index];
+  if(!student) return;
+  editingStudentOriginalRoll=String(student.roll);
+  document.getElementById("sName").value=student.name||"";
+  document.getElementById("sFather").value=student.father||"";
+  document.getElementById("sRoll").value=student.roll||"";
+  document.getElementById("sClass").value=String(student.className||"1");
+  document.getElementById("sPhoto").value="";
+  const fieldMap={English:["engMax","engObt","engEnabled"],Urdu:["urduMax","urduObt","urduEnabled"],Mathematics:["mathMax","mathObt","mathEnabled"],Quran:["quranMax","quranObt","quranEnabled"],Namaz:["namazMax","namazObt","namazEnabled"]};
+  for(const [subject,ids] of Object.entries(fieldMap)){
+    const mark=student.marks?.[subject]||{max:100,obtained:0,enabled:false};
+    document.getElementById(ids[0]).value=mark.max??100;
+    document.getElementById(ids[1]).value=mark.obtained??0;
+    document.getElementById(ids[2]).checked=mark.enabled!==false;
+  }
+  const saveBtn=document.querySelector('#adminPanel button.gold[onclick="addStudent()"]');
+  if(saveBtn) saveBtn.textContent="Update Student";
+  showMessage("saveMessage","Editing this record. Save Student will update the same database record.","success");
+  document.getElementById("sName").scrollIntoView({behavior:"smooth",block:"center"});
+}
 
 /* ================= DELETE ================= */
-
-function deleteStudent(index){
-
-if(!confirm(
-"Are you sure you want to delete this student?"
-))return;
-
-
-const students=getStudents();
-
-students.splice(index,1);
-
-saveStudents(students);
-
-loadStudentList();
-
+async function deleteStudent(index){
+  const students=getStudents();
+  const student=students[index];
+  if(!student) return;
+  if(!confirm("Delete this student from the online database and this device? This cannot be undone.")) return;
+  try{
+    await deleteStudentFromSupabase(student.roll);
+  }catch(error){
+    console.error("Supabase delete student error:",error);
+    alert("Database did not confirm deletion, so the record was kept on this device. Supabase says: "+(error?.message||"Connection/policy error"));
+    return;
+  }
+  students.splice(index,1);
+  saveStudents(students);
+  loadStudentList();
+  if(editingStudentOriginalRoll!==null && String(editingStudentOriginalRoll)===String(student.roll)){
+    editingStudentOriginalRoll=null;clearStudentForm();
+    const saveBtn=document.querySelector('#adminPanel button.gold[onclick="addStudent()"]');
+    if(saveBtn) saveBtn.textContent="Save Student";
+  }
 }
-
 
 /* ================= CLEAR FORM ================= */
 
@@ -1645,22 +1665,40 @@ async function supabaseWrite(url, method, payload){
   return data;
 }
 
-async function saveStudentToSupabase(student){
+async function saveStudentToSupabase(student,originalRoll=null){
   const tableUrl=`${SUPABASE_URL}/rest/v1/Student`;
   const payload=buildSupabaseStudentPayload(student);
-  const filter=`roll=eq.${encodeURIComponent(String(student.roll))}`;
-  /* Try updating an existing record. If RLS denies UPDATE (the current
-     database policy may permit INSERT only), try INSERT instead so a new
-     student is not blocked before the POST request is attempted. */
-  try{
+  if(originalRoll!==null){
+    const filter=`roll=eq.${encodeURIComponent(String(originalRoll))}`;
+    /* Do not fall back to INSERT if UPDATE fails: that could create duplicates. */
     const updated=await supabaseWrite(`${tableUrl}?${filter}`,"PATCH",payload);
-    if(Array.isArray(updated) && updated.length) return updated[0];
-  }catch(updateError){
-    console.warn("Supabase UPDATE unavailable; trying INSERT for this roll:",updateError);
+    if(!Array.isArray(updated) || updated.length===0){
+      throw new Error("Supabase did not return confirmation for this update. Check Student SELECT/UPDATE RLS policies; local data was not changed.");
+    }
+    return updated[0];
   }
-  const inserted=await supabaseWrite(tableUrl,"POST",payload);
-  if(Array.isArray(inserted) && inserted.length) return inserted[0];
-  return inserted;
+  /* INSERT only. A database UNIQUE constraint on roll is required to prevent
+     duplicates across devices and simultaneous submissions. */
+  return await supabaseWrite(tableUrl,"POST",payload);
+}
+
+async function deleteStudentFromSupabase(roll){
+  const filter=`roll=eq.${encodeURIComponent(String(roll))}`;
+  const response=await fetch(`${SUPABASE_URL}/rest/v1/Student?${filter}`,{
+    method:"DELETE",
+    headers:supabaseHeaders({Accept:"application/json",Prefer:"return=representation"})
+  });
+  const body=await response.text();
+  if(!response.ok){
+    let detail=body||`HTTP ${response.status}`;
+    try{const parsed=JSON.parse(body);detail=parsed.message||parsed.details||parsed.hint||detail;}catch(_){}
+    throw new Error(`Supabase DELETE failed (HTTP ${response.status}): ${detail}`);
+  }
+  let deleted=null;try{deleted=body?JSON.parse(body):null;}catch(_){}
+  if(!Array.isArray(deleted) || deleted.length===0){
+    throw new Error("Supabase did not confirm deletion. Check Student SELECT/DELETE RLS policies; the local record was kept.");
+  }
+  return true;
 }
 
 function firstValue(obj, names, fallback=""){
