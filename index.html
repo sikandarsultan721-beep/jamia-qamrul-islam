@@ -1282,56 +1282,38 @@ padding:10px
 
 /* ================= ADMIN LOGIN ================= */
 
-function adminLogin(){
-
-const user=
-document.getElementById("adminUser")
-.value.trim();
-
-const pass=
-document.getElementById("adminPass")
-.value;
-
-
-if(user==="admin" && pass==="1234"){
-
-document.getElementById("adminLoginBox")
-.style.display="none";
-
-document.getElementById("adminPanel")
-.style.display="block";
-
-loadStudentList();
-
-}else{
-
-showMessage(
-"adminMessage",
-"Incorrect username or password.",
-"error"
-);
-
+async function adminLogin(){
+  const user=document.getElementById("adminUser").value.trim();
+  const pass=document.getElementById("adminPass").value;
+  const button=document.querySelector('#adminLoginBox button[onclick="adminLogin()"]');
+  if(button){button.disabled=true;button.textContent="Checking...";}
+  try{
+    const result=await callAdminAPI("login",{username:user,password:pass});
+    if(!result.token) throw new Error("The server did not return an admin session token.");
+    jamiaAdminToken=result.token;
+    sessionStorage.setItem("jamiaAdminToken",jamiaAdminToken);
+    document.getElementById("adminLoginBox").style.display="none";
+    document.getElementById("adminPanel").style.display="block";
+    document.getElementById("adminPass").value="";
+    await loadStudentList();
+    showMessage("adminMessage","Admin login successful.","success");
+  }catch(error){
+    jamiaAdminToken="";sessionStorage.removeItem("jamiaAdminToken");
+    document.getElementById("adminPanel").style.display="none";
+    document.getElementById("adminLoginBox").style.display="block";
+    showMessage("adminMessage",error?.message||"Admin login failed. Check Edge Function setup and credentials.","error");
+  }finally{
+    if(button){button.disabled=false;button.textContent="Login";}
+  }
 }
-
-}
-
 
 function adminLogout(){
-
-document.getElementById("adminPanel")
-.style.display="none";
-
-document.getElementById("adminLoginBox")
-.style.display="block";
-
-document.getElementById("adminUser")
-.value="";
-
-document.getElementById("adminPass")
-.value="";
-
+  jamiaAdminToken="";sessionStorage.removeItem("jamiaAdminToken");
+  document.getElementById("adminPanel").style.display="none";
+  document.getElementById("adminLoginBox").style.display="block";
+  document.getElementById("adminUser").value="";
+  document.getElementById("adminPass").value="";
 }
-
 
 /* ================= ADD STUDENT ================= */
 
@@ -1369,7 +1351,7 @@ async function addStudent(){
   }catch(e){showMessage("saveMessage",e.message||"Student photo could not be read.","error");return;}
 
   try{
-    await saveStudentToSupabase(student,isEditing?editingStudentOriginalRoll:null);
+    await callAdminAPI(isEditing?"update":"insert",{student,...(isEditing?{originalRoll:editingStudentOriginalRoll}:{})});
   }catch(error){
     console.error("Supabase Save Student error:",error);
     showMessage("saveMessage","Database did not confirm this change. Nothing was changed in the local list. Supabase says: "+(error?.message||"Connection/policy error"),"error");
@@ -1392,19 +1374,27 @@ async function addStudent(){
 }
 
 /* ================= STUDENT LIST ================= */
-function loadStudentList(){
+async function loadStudentList(){
   const tbody=document.getElementById("studentList");
-  tbody.innerHTML="";
-  getStudents().forEach((student,index)=>{
-    const row=document.createElement("tr");
-    row.innerHTML=`
-      <td>${escapeHTML(student.name)}</td>
-      <td>${escapeHTML(student.roll)}</td>
-      <td>${escapeHTML(student.className)}</td>
-      <td><button type="button" onclick="editStudent(${index})">Edit</button>
-      <button type="button" class="danger" onclick="deleteStudent(${index})">Delete</button></td>`;
-    tbody.appendChild(row);
-  });
+  tbody.innerHTML='<tr><td colspan="4">Loading online student records…</td></tr>';
+  try{
+    const result=await callAdminAPI("list");
+    const rows=Array.isArray(result.students)?result.students:[];
+    const remote=rows.map(mapSupabaseStudent);
+    saveStudents(remote);
+    tbody.innerHTML="";
+    remote.forEach((student,index)=>{
+      const row=document.createElement("tr");
+      row.innerHTML=`<td>${escapeHTML(student.name)}</td><td>${escapeHTML(student.roll)}</td><td>${escapeHTML(student.className)}</td><td><button type="button" onclick="editStudent(${index})">Edit</button> <button type="button" class="danger" onclick="deleteStudent(${index})">Delete</button></td>`;
+      tbody.appendChild(row);
+    });
+    if(!remote.length) tbody.innerHTML='<tr><td colspan="4">No students in the online database.</td></tr>';
+  }catch(error){
+    console.error("Admin list load failed:",error);
+    tbody.innerHTML='<tr><td colspan="4">Online records could not be loaded. Please check the admin connection.</td></tr>';
+    showMessage("saveMessage",error?.message||"Could not load online student records.","error");
+    throw error;
+  }
 }
 
 function editStudent(index){
@@ -1436,7 +1426,7 @@ async function deleteStudent(index){
   if(!student) return;
   if(!confirm("Delete this student from the online database and this device? This cannot be undone.")) return;
   try{
-    await deleteStudentFromSupabase(student.roll);
+    await callAdminAPI("delete",{roll:student.roll});
   }catch(error){
     console.error("Supabase delete student error:",error);
     alert("Database did not confirm deletion, so the record was kept on this device. Supabase says: "+(error?.message||"Connection/policy error"));
@@ -1583,6 +1573,25 @@ getStudents();
 
 const SUPABASE_URL = "https://fjwanngswvbahkqiaufn.supabase.co";
 const SUPABASE_KEY = "sb_publishable_jVL5UnGwjoNYSdSZrNaKAg_9Zjot0Iu";
+
+/* Secure admin CRUD runs in a Supabase Edge Function. No service-role key is
+   stored in this public HTML file. The function must be deployed before admin
+   login/save/edit/delete can use the online database. */
+let jamiaAdminToken = sessionStorage.getItem("jamiaAdminToken") || "";
+async function callAdminAPI(action, payload={}){
+  const headers=supabaseHeaders({"Content-Type":"application/json",Accept:"application/json"});
+  if(jamiaAdminToken) headers.Authorization=`Bearer ${jamiaAdminToken}`;
+  const response=await fetch(`${SUPABASE_URL}/functions/v1/admin-students`,{
+    method:"POST",headers,body:JSON.stringify({action,...payload})
+  });
+  const body=await response.text();
+  let data=null;try{data=body?JSON.parse(body):null;}catch(_){data=null;}
+  if(!response.ok){
+    const detail=data?.error||data?.message||body||`HTTP ${response.status}`;
+    throw new Error(`Admin database request failed (HTTP ${response.status}): ${detail}`);
+  }
+  return data||{};
+}
 
 /* Supabase publishable keys (sb_publishable_...) belong in the apikey header.
    They are NOT JWTs and must not be sent as Authorization: Bearer tokens.
