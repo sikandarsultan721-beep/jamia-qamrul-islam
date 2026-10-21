@@ -1581,7 +1581,7 @@ let jamiaAdminToken = sessionStorage.getItem("jamiaAdminToken") || "";
 async function callAdminAPI(action, payload={}){
   const headers=supabaseHeaders({"Content-Type":"application/json",Accept:"application/json"});
   if(jamiaAdminToken) headers.Authorization=`Bearer ${jamiaAdminToken}`;
-  const response=await fetch(`${SUPABASE_URL}/functions/v1/admin-students`,{
+  const response=await fetch(`${SUPABASE_URL}/functions/v1/smart-api`,{
     method:"POST",headers,body:JSON.stringify({action,...payload})
   });
   const body=await response.text();
