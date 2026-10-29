@@ -1008,52 +1008,69 @@ async function downloadPDF(btn){
   if(btn){btn.disabled=true;btn.textContent="Creating PDF...";}
   let stage=null;
   try{
-    /* Render a compact A4-proportioned copy so the browser-screen card's
-       tall layout does not make the downloaded PDF look narrow/elongated. */
+    /* Render the existing result card in portrait A4 without changing its design. */
     stage=document.createElement("div");
     stage.style.cssText="position:fixed;left:-12000px;top:0;width:760px;background:#fff;z-index:-1;overflow:visible;";
     const clone=card.cloneNode(true);
     clone.style.cssText += ";width:760px;max-width:none;margin:0;box-sizing:border-box;transform:none;box-shadow:none;";
     stage.appendChild(clone);
     document.body.appendChild(stage);
+    const sourceImages=Array.from(card.querySelectorAll("img"));
+    const clonedImages=Array.from(clone.querySelectorAll("img"));
+    clonedImages.forEach((img,index)=>{
+      const source=sourceImages[index];
+      if(source){
+        const imageUrl=source.currentSrc||source.src;
+        if(imageUrl && img.src!==imageUrl) img.src=imageUrl;
+      }
+    });
     const compact=document.createElement("style");
     compact.textContent=`
       #resultCard, .result-card{width:760px!important;max-width:none!important;margin:0!important;box-sizing:border-box!important;overflow:hidden!important;}
-      .result-top{padding:8px 14px!important;}
-      .result-body{padding:8px 12px!important;}
-      .result-brand-row{grid-template-columns:95px 1fr!important;gap:8px!important;}
-      .result-logo{width:88px!important;height:92px!important;}
-      .result-title .result-urdu{font-size:22px!important;}
-      .result-title h1{font-size:24px!important;margin:2px!important;}
-      .result-title .small{font-size:11px!important;}
-      .result-title p{font-size:11px!important;margin:3px!important;}
-      .student-head{gap:9px!important;margin-bottom:8px!important;grid-template-columns:1fr 125px!important;}
-      .student-info-row{grid-template-columns:135px 1fr!important;}
-      .student-info-row strong,.student-info-row span{padding:6px 8px!important;font-size:13px!important;}
-      .photo-box{width:125px!important;height:135px!important;flex:0 0 125px!important;overflow:hidden!important;}
+      .result-card{padding:7px!important;border-width:7px!important;border-radius:24px!important;}
+      .result-top{padding:13px 14px!important;}
+      .result-body{padding:14px 15px!important;}
+      .result-brand-row{grid-template-columns:110px 1fr!important;gap:10px!important;}
+      .result-logo{width:100px!important;height:108px!important;}
+      .result-title .result-urdu{font-size:25px!important;}
+      .result-title h1{font-size:27px!important;margin:3px!important;}
+      .result-title .small{font-size:12px!important;}
+      .result-title p{font-size:12px!important;margin:4px!important;}
+      .student-head{gap:12px!important;margin-bottom:14px!important;grid-template-columns:1fr 140px!important;}
+      .student-info-row{grid-template-columns:145px 1fr!important;}
+      .student-info-row strong,.student-info-row span{padding:8px 9px!important;font-size:14px!important;}
+      .photo-box{width:140px!important;height:160px!important;flex:0 0 140px!important;overflow:hidden!important;}
       #rPhoto{width:100%!important;height:100%!important;object-fit:cover!important;display:block!important;}
-      .marks-title{padding:6px 10px!important;margin-bottom:5px!important;}
+      .marks-title{padding:8px 10px!important;margin-bottom:7px!important;}
       .marks-table{width:100%!important;max-width:100%!important;table-layout:fixed!important;border-collapse:collapse!important;margin-bottom:7px!important;}
-      .marks-table th,.marks-table td{padding:5px 3px!important;font-size:11px!important;white-space:normal!important;overflow-wrap:anywhere!important;word-break:normal!important;line-height:1.2!important;}
+      .marks-table th,.marks-table td{padding:7px 4px!important;font-size:13px!important;white-space:normal!important;overflow-wrap:anywhere!important;word-break:normal!important;line-height:1.25!important;}
       .marks-table th:nth-child(1),.marks-table td:nth-child(1){width:22%!important;}
       .marks-table th:nth-child(2),.marks-table td:nth-child(2){width:26%!important;}
       .marks-table th:nth-child(3),.marks-table td:nth-child(3){width:29%!important;}
       .marks-table th:nth-child(4),.marks-table td:nth-child(4){width:23%!important;}
-      .summary{gap:5px!important;margin:7px 0!important;}
-      .summary-box{padding:5px 2px!important;}
-      .summary-box label{font-size:8px!important;}
-      .summary-box strong{font-size:16px!important;}
-      .status{font-size:18px!important;padding:3px 28px!important;}
-      .result-signatures{margin-top:10px!important;gap:45px!important;}
-      .signature{font-size:11px!important;}
+      .summary{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:7px!important;margin:12px 0!important;}
+      .summary-box{padding:8px 3px!important;}
+      .summary-box label{font-size:10px!important;}
+      .summary-box strong{font-size:20px!important;}
+      .status{font-size:21px!important;padding:4px 32px!important;}
+      .result-signatures{margin-top:20px!important;gap:45px!important;}
+      .signature{font-size:12px!important;}
       .result-footer{display:none!important;}
     `;
     stage.prepend(compact);
     await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
+    await Promise.all(clonedImages.map(img=>{
+      if(img.complete && img.naturalWidth>0) return Promise.resolve();
+      return new Promise(resolve=>{
+        img.addEventListener("load",resolve,{once:true});
+        img.addEventListener("error",resolve,{once:true});
+        setTimeout(resolve,3000);
+      });
+    }));
     const canvas=await html2canvas(clone,{scale:2,useCORS:true,backgroundColor:"#ffffff",logging:false,width:760,windowWidth:760});
     const {jsPDF}=window.jspdf;
-    const pdf=new jsPDF({orientation:"landscape",unit:"mm",format:"a4",compress:true});
-    const pageW=297,pageH=210,margin=5,availableW=pageW-margin*2,availableH=pageH-margin*2;
+    const pdf=new jsPDF({orientation:"portrait",unit:"mm",format:"a4",compress:true});
+    const pageW=210,pageH=297,margin=4,availableW=pageW-margin*2,availableH=pageH-margin*2;
     const ratio=canvas.width/canvas.height;
     let w=availableW,h=w/ratio;
     if(h>availableH){h=availableH;w=h*ratio;}
@@ -1083,45 +1100,45 @@ function printResult(){
   }
 
   const printStyles = `
-    @page { size: A4 landscape; margin: 5mm; }
+    @page { size: A4 portrait; margin: 4mm; }
     * { box-sizing: border-box !important; }
     html, body { margin: 0 !important; padding: 0 !important; width: 100% !important; min-width: 0 !important; background: #fff !important; }
     body { font-family: Arial, sans-serif; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
-    .result-card { width: 100% !important; max-width: 100% !important; min-width: 0 !important; margin: 0 auto !important; padding: 5px !important; overflow: visible !important; box-shadow: none !important; transform: none !important; border: 5px double #c9a333 !important; outline: 2px solid #07553d !important; border-radius: 12px !important; position: relative !important; background: #fffdf5 !important; }
+    .result-card { width: 100% !important; max-width: none !important; min-width: 0 !important; margin: 0 auto !important; padding: 7px !important; overflow: visible !important; box-shadow: none !important; transform: none !important; border: 7px double #c9a333 !important; outline: 2px solid #07553d !important; border-radius: 20px !important; position: relative !important; background: #fffdf5 !important; }
     .result-card:before { font-size: 40px !important; }
-    .result-top { padding: 7px 8px !important; }
-    .result-brand-row { display: grid !important; grid-template-columns: 82px minmax(0,1fr) !important; gap: 7px !important; width: 100% !important; align-items: center !important; }
-    .result-logo { width: 78px !important; height: 82px !important; object-fit: contain !important; }
+    .result-top { padding: 13px 12px !important; }
+    .result-brand-row { display: grid !important; grid-template-columns: 105px minmax(0,1fr) !important; gap: 8px !important; width: 100% !important; align-items: center !important; }
+    .result-logo { width: 98px !important; height: 105px !important; object-fit: contain !important; }
     .result-title { min-width: 0 !important; text-align: center !important; }
-    .result-title .result-urdu { font-size: 19px !important; line-height: 1.2 !important; }
-    .result-title h1 { font-size: 21px !important; line-height: 1.15 !important; overflow-wrap: anywhere !important; margin: 2px 0 !important; }
-    .result-title .small { font-size: 9px !important; letter-spacing: .5px !important; }
-    .result-title p { font-size: 10px !important; margin: 3px 0 !important; }
-    .result-flourish { font-size: 9px !important; }
-    .result-body { padding: 8px !important; }
-    .student-head { display: grid !important; grid-template-columns: minmax(0,1fr) 125px !important; gap: 10px !important; align-items: start !important; margin-bottom: 9px !important; }
+    .result-title .result-urdu { font-size: 24px !important; line-height: 1.2 !important; }
+    .result-title h1 { font-size: 26px !important; line-height: 1.15 !important; overflow-wrap: anywhere !important; margin: 3px 0 !important; }
+    .result-title .small { font-size: 11px !important; letter-spacing: .5px !important; }
+    .result-title p { font-size: 12px !important; margin: 4px 0 !important; }
+    .result-flourish { font-size: 10px !important; }
+    .result-body { padding: 12px !important; }
+    .student-head { display: grid !important; grid-template-columns: minmax(0,1fr) 135px !important; gap: 10px !important; align-items: start !important; margin-bottom: 13px !important; }
     .student-info { min-width: 0 !important; width: 100% !important; }
     .student-info-row { display: grid !important; grid-template-columns: 39% minmax(0,1fr) !important; min-width: 0 !important; }
-    .student-info-row strong, .student-info-row span { min-width: 0 !important; padding: 6px 5px !important; font-size: 10px !important; overflow-wrap: anywhere !important; }
-    .photo-box { width: 125px !important; height: 145px !important; min-width: 125px !important; flex: 0 0 125px !important; border-width: 3px !important; }
+    .student-info-row strong, .student-info-row span { min-width: 0 !important; padding: 8px 6px !important; font-size: 12px !important; overflow-wrap: anywhere !important; }
+    .photo-box { width: 135px !important; height: 155px !important; min-width: 135px !important; flex: 0 0 135px !important; border-width: 4px !important; }
     .photo-box img, #rPhoto { width: 100% !important; height: 100% !important; max-width: 100% !important; max-height: 100% !important; object-fit: cover !important; display: block !important; }
-    .marks-title { width: 100% !important; max-width: 100% !important; padding: 6px 4px !important; margin: 0 auto 6px !important; font-size: 16px !important; }
-    .marks-table { display: table !important; width: 100% !important; max-width: 100% !important; table-layout: fixed !important; border-collapse: collapse !important; border-spacing: 0 !important; margin: 0 0 8px !important; overflow: visible !important; }
+    .marks-title { width: 100% !important; max-width: 100% !important; padding: 8px 4px !important; margin: 0 auto 7px !important; font-size: 17px !important; }
+    .marks-table { display: table !important; width: 100% !important; max-width: 100% !important; table-layout: fixed !important; border-collapse: collapse !important; border-spacing: 0 !important; margin: 0 0 10px !important; overflow: visible !important; }
     .marks-table thead { display: table-header-group !important; }
     .marks-table tbody { display: table-row-group !important; }
     .marks-table tr { display: table-row !important; break-inside: avoid !important; page-break-inside: avoid !important; }
-    .marks-table th, .marks-table td { display: table-cell !important; width: auto !important; min-width: 0 !important; padding: 5px 2px !important; font-size: 10px !important; line-height: 1.25 !important; white-space: normal !important; overflow-wrap: anywhere !important; word-break: normal !important; vertical-align: middle !important; border: 1px solid #c9a33c !important; }
+    .marks-table th, .marks-table td { display: table-cell !important; width: auto !important; min-width: 0 !important; padding: 7px 3px !important; font-size: 12px !important; line-height: 1.25 !important; white-space: normal !important; overflow-wrap: anywhere !important; word-break: normal !important; vertical-align: middle !important; border: 1px solid #c9a33c !important; }
     .marks-table th:nth-child(1), .marks-table td:nth-child(1) { width: 22% !important; }
     .marks-table th:nth-child(2), .marks-table td:nth-child(2) { width: 26% !important; }
     .marks-table th:nth-child(3), .marks-table td:nth-child(3) { width: 29% !important; }
     .marks-table th:nth-child(4), .marks-table td:nth-child(4) { width: 23% !important; }
-    .summary { display: grid !important; grid-template-columns: repeat(2, minmax(0,1fr)) !important; gap: 6px !important; margin: 8px 0 !important; }
-    .summary-box { min-width: 0 !important; padding: 6px 3px !important; }
-    .summary-box label { font-size: 9px !important; }
-    .summary-box strong { font-size: 17px !important; overflow-wrap: anywhere !important; }
-    .status { font-size: 17px !important; padding: 3px 24px !important; }
-    .result-signatures { display: grid !important; grid-template-columns: repeat(2,minmax(0,1fr)) !important; gap: 18px !important; margin: 14px 8px 4px !important; }
-    .signature { min-width: 0 !important; font-size: 10px !important; }
+    .summary { display: grid !important; grid-template-columns: repeat(2, minmax(0,1fr)) !important; gap: 7px !important; margin: 11px 0 !important; }
+    .summary-box { min-width: 0 !important; padding: 8px 3px !important; }
+    .summary-box label { font-size: 10px !important; }
+    .summary-box strong { font-size: 20px !important; overflow-wrap: anywhere !important; }
+    .status { font-size: 21px !important; padding: 4px 28px !important; }
+    .result-signatures { display: grid !important; grid-template-columns: repeat(2,minmax(0,1fr)) !important; gap: 25px !important; margin: 20px 8px 5px !important; }
+    .signature { min-width: 0 !important; font-size: 11px !important; }
     .result-footer { display: none !important; }
     button, .result-actions, nav, header, footer { display: none !important; }
     img { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
@@ -1137,12 +1154,26 @@ function printResult(){
   w.document.write(`<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Jamia Qamrul Islam Result</title><style>${printStyles}</style><style>${getResultStylesForPrint()}</style><style>${printStyles}</style></head><body>${card.outerHTML}</body></html>`);
   w.document.close();
 
+  let printStarted = false;
   const doPrint = () => {
+    if (printStarted || w.closed) return;
+    printStarted = true;
     try { w.focus(); w.print(); }
     catch (e) { console.error("Print error:", e); }
   };
-  w.onload = () => setTimeout(doPrint, 350);
-  setTimeout(() => { if (!w.closed) doPrint(); }, 1000);
+  const waitForImages = () => {
+    const images = Array.from(w.document.images || []);
+    Promise.all(images.map(img => {
+      if (img.complete && img.naturalWidth > 0) return Promise.resolve();
+      return new Promise(resolve => {
+        img.addEventListener("load", resolve, { once: true });
+        img.addEventListener("error", resolve, { once: true });
+        setTimeout(resolve, 2500);
+      });
+    })).then(() => setTimeout(doPrint, 250));
+  };
+  w.onload = waitForImages;
+  setTimeout(() => { if (!w.closed) waitForImages(); }, 700);
 }
 
 function getResultStylesForPrint(){
