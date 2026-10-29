@@ -1033,8 +1033,12 @@ async function downloadPDF(btn){
       .photo-box{width:125px!important;height:135px!important;flex:0 0 125px!important;overflow:hidden!important;}
       #rPhoto{width:100%!important;height:100%!important;object-fit:contain!important;display:block!important;}
       .marks-title{padding:6px 10px!important;margin-bottom:5px!important;}
-      .marks-table{margin-bottom:7px!important;}
-      .marks-table th,.marks-table td{padding:5px 4px!important;font-size:12px!important;}
+      .marks-table{width:100%!important;max-width:100%!important;table-layout:fixed!important;border-collapse:collapse!important;margin-bottom:7px!important;}
+      .marks-table th,.marks-table td{padding:5px 3px!important;font-size:11px!important;white-space:normal!important;overflow-wrap:anywhere!important;word-break:normal!important;line-height:1.2!important;}
+      .marks-table th:nth-child(1),.marks-table td:nth-child(1){width:22%!important;}
+      .marks-table th:nth-child(2),.marks-table td:nth-child(2){width:26%!important;}
+      .marks-table th:nth-child(3),.marks-table td:nth-child(3){width:29%!important;}
+      .marks-table th:nth-child(4),.marks-table td:nth-child(4){width:23%!important;}
       .summary{gap:5px!important;margin:7px 0!important;}
       .summary-box{padding:5px 2px!important;}
       .summary-box label{font-size:8px!important;}
@@ -1069,68 +1073,77 @@ async function downloadPDF(btn){
 /* ================= PRINT ================= */
 
 function printResult(){
+  const card = document.getElementById("resultCard");
+  if (!card) return;
 
-const card=
-document.getElementById("resultCard");
+  const w = window.open("", "_blank", "width=900,height=1100");
+  if (!w) {
+    alert("Please allow pop-ups to print the result card.");
+    return;
+  }
 
+  const printStyles = `
+    @page { size: A4 portrait; margin: 5mm; }
+    * { box-sizing: border-box !important; }
+    html, body { margin: 0 !important; padding: 0 !important; width: 100% !important; min-width: 0 !important; background: #fff !important; }
+    body { font-family: Arial, sans-serif; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+    .result-card { width: 100% !important; max-width: 100% !important; min-width: 0 !important; margin: 0 auto !important; padding: 5px !important; overflow: visible !important; box-shadow: none !important; transform: none !important; border: 5px double #c9a333 !important; outline: 2px solid #07553d !important; border-radius: 12px !important; position: relative !important; background: #fffdf5 !important; }
+    .result-card:before { font-size: 40px !important; }
+    .result-top { padding: 7px 8px !important; }
+    .result-brand-row { display: grid !important; grid-template-columns: 82px minmax(0,1fr) !important; gap: 7px !important; width: 100% !important; align-items: center !important; }
+    .result-logo { width: 78px !important; height: 82px !important; object-fit: contain !important; }
+    .result-title { min-width: 0 !important; text-align: center !important; }
+    .result-title .result-urdu { font-size: 19px !important; line-height: 1.2 !important; }
+    .result-title h1 { font-size: 21px !important; line-height: 1.15 !important; overflow-wrap: anywhere !important; margin: 2px 0 !important; }
+    .result-title .small { font-size: 9px !important; letter-spacing: .5px !important; }
+    .result-title p { font-size: 10px !important; margin: 3px 0 !important; }
+    .result-flourish { font-size: 9px !important; }
+    .result-body { padding: 8px !important; }
+    .student-head { display: grid !important; grid-template-columns: minmax(0,1fr) 100px !important; gap: 7px !important; align-items: start !important; margin-bottom: 9px !important; }
+    .student-info { min-width: 0 !important; width: 100% !important; }
+    .student-info-row { display: grid !important; grid-template-columns: 39% minmax(0,1fr) !important; min-width: 0 !important; }
+    .student-info-row strong, .student-info-row span { min-width: 0 !important; padding: 6px 5px !important; font-size: 10px !important; overflow-wrap: anywhere !important; }
+    .photo-box { width: 100px !important; height: 118px !important; min-width: 0 !important; border-width: 3px !important; }
+    .photo-box img, #rPhoto { max-width: 100% !important; max-height: 100% !important; object-fit: cover !important; }
+    .marks-title { width: 100% !important; max-width: 100% !important; padding: 6px 4px !important; margin: 0 auto 6px !important; font-size: 16px !important; }
+    .marks-table { display: table !important; width: 100% !important; max-width: 100% !important; table-layout: fixed !important; border-collapse: collapse !important; border-spacing: 0 !important; margin: 0 0 8px !important; overflow: visible !important; }
+    .marks-table thead { display: table-header-group !important; }
+    .marks-table tbody { display: table-row-group !important; }
+    .marks-table tr { display: table-row !important; break-inside: avoid !important; page-break-inside: avoid !important; }
+    .marks-table th, .marks-table td { display: table-cell !important; width: auto !important; min-width: 0 !important; padding: 5px 2px !important; font-size: 10px !important; line-height: 1.25 !important; white-space: normal !important; overflow-wrap: anywhere !important; word-break: normal !important; vertical-align: middle !important; border: 1px solid #c9a33c !important; }
+    .marks-table th:nth-child(1), .marks-table td:nth-child(1) { width: 22% !important; }
+    .marks-table th:nth-child(2), .marks-table td:nth-child(2) { width: 26% !important; }
+    .marks-table th:nth-child(3), .marks-table td:nth-child(3) { width: 29% !important; }
+    .marks-table th:nth-child(4), .marks-table td:nth-child(4) { width: 23% !important; }
+    .summary { display: grid !important; grid-template-columns: repeat(2, minmax(0,1fr)) !important; gap: 6px !important; margin: 8px 0 !important; }
+    .summary-box { min-width: 0 !important; padding: 6px 3px !important; }
+    .summary-box label { font-size: 9px !important; }
+    .summary-box strong { font-size: 17px !important; overflow-wrap: anywhere !important; }
+    .status { font-size: 17px !important; padding: 3px 24px !important; }
+    .result-signatures { display: grid !important; grid-template-columns: repeat(2,minmax(0,1fr)) !important; gap: 18px !important; margin: 14px 8px 4px !important; }
+    .signature { min-width: 0 !important; font-size: 10px !important; }
+    .result-footer { display: none !important; }
+    button, .result-actions, nav, header, footer { display: none !important; }
+    img { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+    @media print {
+      html, body { width: 100% !important; height: auto !important; }
+      .result-card, .student-head, .student-info, .summary, .summary-box, .result-signatures { break-inside: avoid !important; page-break-inside: avoid !important; }
+      .marks-table { break-inside: auto !important; page-break-inside: auto !important; }
+      .marks-table tr { break-inside: avoid !important; page-break-inside: avoid !important; }
+    }
+  `;
 
-const w=window.open(
-"",
-"_blank",
-"width=1000,height=900"
-);
+  w.document.open();
+  w.document.write(`<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Jamia Qamrul Islam Result</title><style>${printStyles}</style><style>${getResultStylesForPrint()}</style><style>${printStyles}</style></head><body>${card.outerHTML}</body></html>`);
+  w.document.close();
 
-
-w.document.write(`
-
-<!DOCTYPE html>
-
-<html>
-
-<head>
-
-<title>
-Jamia Qamrul Islam Result
-</title>
-
-<style>
-
-@page{size:A4 portrait;margin:4mm}
-html,body{width:202mm!important;margin:0!important;padding:0!important;background:white;font-family:Arial,sans-serif;-webkit-print-color-adjust:exact;print-color-adjust:exact}
-.result-card{width:194mm!important;max-width:194mm!important;margin:0 auto!important;box-sizing:border-box!important;box-shadow:none;break-inside:avoid;page-break-inside:avoid;transform:none;border-radius:18px}
-.result-body{padding:10px 12px}.student-head{gap:10px;margin-bottom:10px}.marks-table{margin-bottom:9px}.marks-table th,.marks-table td{padding:7px 4px}.summary{gap:5px;margin:9px 0}.summary-box{padding:6px 2px}.result-top{padding:9px 12px}.result-title h1{font-size:25px}.result-brand-row{grid-template-columns:100px 1fr}.result-logo{width:92px;height:100px}.result-title .result-urdu{font-size:23px}.result-signatures{margin-top:22px}.result-card:after{display:none}
-
-${getResultStylesForPrint()}
-.result-card{border:8px double #c9a333;outline:3px solid #07553d;border-radius:22px;background:#fffdf5;padding:7px;box-shadow:none}.result-card:before{content:"جامعہ قمر الاسلام";position:absolute;left:50%;top:54%;transform:translate(-50%,-50%) rotate(-28deg);font-size:48px;color:rgba(7,85,61,.055);white-space:nowrap;z-index:0}.result-top{background:linear-gradient(120deg,#fffdf5,#fff 50%,#f8f1dc);border-bottom:3px solid #c7a02e;padding:9px 12px}.result-brand-row{display:grid;grid-template-columns:100px 1fr;align-items:center;gap:10px}.result-logo{width:92px;height:100px;object-fit:contain;mix-blend-mode:multiply}.result-title{text-align:center}.result-title .result-urdu{font-family:Georgia,serif;font-size:23px;font-weight:bold;color:#07553d}.result-title h1{font-family:Georgia,serif;font-size:25px;color:#07553d;margin:3px}.result-title .small{color:#ad811b;font-size:12px;letter-spacing:1px;font-weight:bold}.result-title p{color:#07553d;font-weight:bold;font-size:12px;margin:4px}.result-flourish{color:#c39a2d;font-size:11px}.result-body{padding:10px 12px}.student-head{gap:10px;margin-bottom:10px}.student-info{border:2px solid #c9a33c;border-radius:8px}.student-info-row{grid-template-columns:140px 1fr}.student-info-row strong{background:#07553d;color:#fff;padding:8px 10px;border-right:3px solid #d4af37}.student-info-row span{padding:8px 10px;background:#f7f8f3}.photo-box{border:4px solid #c9a33c;border-radius:0;width:140px;height:150px}.marks-title{background:#07553d;color:#fff4bd;text-align:center;border:2px solid #c9a33c;border-radius:22px;padding:7px;margin:0 auto 7px;max-width:460px}.marks-table{border:2px solid #07553d;margin-bottom:9px}.marks-table th{background:#07553d;color:#fff7d8;border-color:#c9a33c;padding:7px 4px}.marks-table td{padding:7px 4px;font-size:14px}.summary{gap:5px;margin:9px 0}.summary-box{border:3px double #c9a33c;border-radius:0;background:#fffdf5;padding:6px 2px}.summary-box label{font-size:9px;color:#07553d}.summary-box strong{font-size:18px;color:#07553d}.status{background:#07553d;color:#fff3bb;border:3px double #d4af37;border-radius:22px;font-size:21px;font-weight:bold;padding:4px 35px}.result-signatures{display:grid;grid-template-columns:1fr 1fr;gap:65px;margin:22px 25px 5px}.signature{text-align:center;color:#073f2f;font-family:Georgia,serif;font-size:13px}.signature-line{display:block;border-top:2px solid #c7a02e;margin:0 0 6px;height:1px}.signature strong{font-weight:bold}.result-footer{display:none}.result-card:after{display:none}
-@media print{html,body{width:202mm!important;height:auto!important}.result-card{width:194mm!important;max-width:194mm!important;margin:0 auto!important;break-inside:avoid;page-break-inside:avoid}.result-top{padding:7px 10px!important}.result-body{padding:8px 10px!important}.student-head{gap:8px!important;margin-bottom:8px!important}.photo-box{width:125px!important;height:135px!important}.student-info-row strong,.student-info-row span{padding:6px 8px!important}.marks-table th,.marks-table td{padding:5px 4px!important;font-size:12px!important}.summary{gap:5px!important;margin:7px 0!important}.summary-box{padding:5px 2px!important}.result-signatures{margin-top:12px!important}}
-
-</style>
-
-</head>
-
-<body>
-
-${card.outerHTML}
-
-</body>
-
-</html>
-
-`);
-
-
-w.document.close();
-
-
-setTimeout(()=>{
-
-w.focus();
-w.print();
-
-},700);
-
+  const doPrint = () => {
+    try { w.focus(); w.print(); }
+    catch (e) { console.error("Print error:", e); }
+  };
+  w.onload = () => setTimeout(doPrint, 350);
+  setTimeout(() => { if (!w.closed) doPrint(); }, 1000);
 }
-
 
 function getResultStylesForPrint(){
 
