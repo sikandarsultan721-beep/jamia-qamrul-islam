@@ -463,6 +463,7 @@ placeholder="Roll Number">
 <option>8</option>
 <option>9</option>
 <option>10</option>
+<option>Hifz-ul-Quran</option>
 
 </select>
 
@@ -556,7 +557,7 @@ value="0">
 
 <div>
 <label>Namaz - Maximum</label>
-<input id="namazMax" type="number" value="100">
+<input id="namazMax" type="number" value="50" min="0">
 <label>Namaz - Obtained</label>
 <input id="namazObt" type="number" value="0">
 </div>
@@ -877,8 +878,8 @@ const mark=normalizeMark(
 student.marks[subject]
 );
 
-const max=mark.max;
-const obt=mark.obtained;
+const max=subject==="Namaz" ? 50 : mark.max;
+const obt=subject==="Namaz" ? Math.min(50,mark.obtained) : mark.obtained;
 
 total+=max;
 obtained+=obt;
@@ -1018,16 +1019,29 @@ async function downloadPDF(btn){
     const compact=document.createElement("style");
     compact.textContent=`
       #resultCard, .result-card{width:760px!important;max-width:none!important;margin:0!important;box-sizing:border-box!important;overflow:hidden!important;}
-      .result-top{padding:13px 18px!important;}
-      .result-body{padding:12px 16px!important;}
-      .student-head{gap:12px!important;margin-bottom:12px!important;}
-      .photo-box{width:140px!important;height:150px!important;flex:0 0 140px!important;overflow:hidden!important;}
+      .result-top{padding:8px 14px!important;}
+      .result-body{padding:8px 12px!important;}
+      .result-brand-row{grid-template-columns:95px 1fr!important;gap:8px!important;}
+      .result-logo{width:88px!important;height:92px!important;}
+      .result-title .result-urdu{font-size:22px!important;}
+      .result-title h1{font-size:24px!important;margin:2px!important;}
+      .result-title .small{font-size:11px!important;}
+      .result-title p{font-size:11px!important;margin:3px!important;}
+      .student-head{gap:9px!important;margin-bottom:8px!important;grid-template-columns:1fr 125px!important;}
+      .student-info-row{grid-template-columns:135px 1fr!important;}
+      .student-info-row strong,.student-info-row span{padding:6px 8px!important;font-size:13px!important;}
+      .photo-box{width:125px!important;height:135px!important;flex:0 0 125px!important;overflow:hidden!important;}
       #rPhoto{width:100%!important;height:100%!important;object-fit:contain!important;display:block!important;}
-      .marks-table{margin-bottom:10px!important;}
-      .marks-table th,.marks-table td{padding:6px 5px!important;}
-      .summary{gap:6px!important;margin:10px 0!important;}
-      .summary-box{padding:6px 3px!important;}
-      .result-signatures{margin-top:16px!important;}
+      .marks-title{padding:6px 10px!important;margin-bottom:5px!important;}
+      .marks-table{margin-bottom:7px!important;}
+      .marks-table th,.marks-table td{padding:5px 4px!important;font-size:12px!important;}
+      .summary{gap:5px!important;margin:7px 0!important;}
+      .summary-box{padding:5px 2px!important;}
+      .summary-box label{font-size:8px!important;}
+      .summary-box strong{font-size:16px!important;}
+      .status{font-size:18px!important;padding:3px 28px!important;}
+      .result-signatures{margin-top:10px!important;gap:45px!important;}
+      .signature{font-size:11px!important;}
       .result-footer{display:none!important;}
     `;
     stage.prepend(compact);
@@ -1082,12 +1096,13 @@ Jamia Qamrul Islam Result
 <style>
 
 @page{size:A4 portrait;margin:4mm}
-body{margin:0;padding:0;background:white;font-family:Arial,sans-serif;-webkit-print-color-adjust:exact;print-color-adjust:exact}
-.result-card{width:100%;max-width:none;box-shadow:none;break-inside:avoid;page-break-inside:avoid;transform:none;border-radius:18px}
+html,body{width:202mm!important;margin:0!important;padding:0!important;background:white;font-family:Arial,sans-serif;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.result-card{width:194mm!important;max-width:194mm!important;margin:0 auto!important;box-sizing:border-box!important;box-shadow:none;break-inside:avoid;page-break-inside:avoid;transform:none;border-radius:18px}
 .result-body{padding:10px 12px}.student-head{gap:10px;margin-bottom:10px}.marks-table{margin-bottom:9px}.marks-table th,.marks-table td{padding:7px 4px}.summary{gap:5px;margin:9px 0}.summary-box{padding:6px 2px}.result-top{padding:9px 12px}.result-title h1{font-size:25px}.result-brand-row{grid-template-columns:100px 1fr}.result-logo{width:92px;height:100px}.result-title .result-urdu{font-size:23px}.result-signatures{margin-top:22px}.result-card:after{display:none}
 
 ${getResultStylesForPrint()}
 .result-card{border:8px double #c9a333;outline:3px solid #07553d;border-radius:22px;background:#fffdf5;padding:7px;box-shadow:none}.result-card:before{content:"جامعہ قمر الاسلام";position:absolute;left:50%;top:54%;transform:translate(-50%,-50%) rotate(-28deg);font-size:48px;color:rgba(7,85,61,.055);white-space:nowrap;z-index:0}.result-top{background:linear-gradient(120deg,#fffdf5,#fff 50%,#f8f1dc);border-bottom:3px solid #c7a02e;padding:9px 12px}.result-brand-row{display:grid;grid-template-columns:100px 1fr;align-items:center;gap:10px}.result-logo{width:92px;height:100px;object-fit:contain;mix-blend-mode:multiply}.result-title{text-align:center}.result-title .result-urdu{font-family:Georgia,serif;font-size:23px;font-weight:bold;color:#07553d}.result-title h1{font-family:Georgia,serif;font-size:25px;color:#07553d;margin:3px}.result-title .small{color:#ad811b;font-size:12px;letter-spacing:1px;font-weight:bold}.result-title p{color:#07553d;font-weight:bold;font-size:12px;margin:4px}.result-flourish{color:#c39a2d;font-size:11px}.result-body{padding:10px 12px}.student-head{gap:10px;margin-bottom:10px}.student-info{border:2px solid #c9a33c;border-radius:8px}.student-info-row{grid-template-columns:140px 1fr}.student-info-row strong{background:#07553d;color:#fff;padding:8px 10px;border-right:3px solid #d4af37}.student-info-row span{padding:8px 10px;background:#f7f8f3}.photo-box{border:4px solid #c9a33c;border-radius:0;width:140px;height:150px}.marks-title{background:#07553d;color:#fff4bd;text-align:center;border:2px solid #c9a33c;border-radius:22px;padding:7px;margin:0 auto 7px;max-width:460px}.marks-table{border:2px solid #07553d;margin-bottom:9px}.marks-table th{background:#07553d;color:#fff7d8;border-color:#c9a33c;padding:7px 4px}.marks-table td{padding:7px 4px;font-size:14px}.summary{gap:5px;margin:9px 0}.summary-box{border:3px double #c9a33c;border-radius:0;background:#fffdf5;padding:6px 2px}.summary-box label{font-size:9px;color:#07553d}.summary-box strong{font-size:18px;color:#07553d}.status{background:#07553d;color:#fff3bb;border:3px double #d4af37;border-radius:22px;font-size:21px;font-weight:bold;padding:4px 35px}.result-signatures{display:grid;grid-template-columns:1fr 1fr;gap:65px;margin:22px 25px 5px}.signature{text-align:center;color:#073f2f;font-family:Georgia,serif;font-size:13px}.signature-line{display:block;border-top:2px solid #c7a02e;margin:0 0 6px;height:1px}.signature strong{font-weight:bold}.result-footer{display:none}.result-card:after{display:none}
+@media print{html,body{width:202mm!important;height:auto!important}.result-card{width:194mm!important;max-width:194mm!important;margin:0 auto!important;break-inside:avoid;page-break-inside:avoid}.result-top{padding:7px 10px!important}.result-body{padding:8px 10px!important}.student-head{gap:8px!important;margin-bottom:8px!important}.photo-box{width:125px!important;height:135px!important}.student-info-row strong,.student-info-row span{padding:6px 8px!important}.marks-table th,.marks-table td{padding:5px 4px!important;font-size:12px!important}.summary{gap:5px!important;margin:7px 0!important}.summary-box{padding:5px 2px!important}.result-signatures{margin-top:12px!important}}
 
 </style>
 
@@ -1341,7 +1356,7 @@ async function addStudent(){
       Urdu:{max:Number(document.getElementById("urduMax").value)||100,obtained:Number(document.getElementById("urduObt").value)||0,enabled:document.getElementById("urduEnabled").checked},
       Mathematics:{max:Number(document.getElementById("mathMax").value)||100,obtained:Number(document.getElementById("mathObt").value)||0,enabled:document.getElementById("mathEnabled").checked},
       Quran:{max:Number(document.getElementById("quranMax").value)||100,obtained:Number(document.getElementById("quranObt").value)||0,enabled:document.getElementById("quranEnabled").checked},
-      Namaz:{max:Number(document.getElementById("namazMax").value)||100,obtained:Number(document.getElementById("namazObt").value)||0,enabled:document.getElementById("namazEnabled").checked}
+      Namaz:{max:50,obtained:Math.min(50,Number(document.getElementById("namazObt").value)||0),enabled:document.getElementById("namazEnabled").checked}
     }
   };
   try{
@@ -1467,7 +1482,7 @@ document.getElementById("mathMax").value=100;
 document.getElementById("mathObt").value=0;
 document.getElementById("quranMax").value=100;
 document.getElementById("quranObt").value=0;
-document.getElementById("namazMax").value=100;
+document.getElementById("namazMax").value=50;
 document.getElementById("namazObt").value=0;
 document.getElementById("engEnabled").checked=true;
 document.getElementById("urduEnabled").checked=true;
@@ -1750,7 +1765,7 @@ function mapSupabaseStudent(s){
       Urdu:{max:100,obtained:urduValue===null?0:Number(urduValue)||0,enabled:urduValue!==null},
       Mathematics:{max:100,obtained:mathValue===null?0:Number(mathValue)||0,enabled:mathValue!==null},
       Quran:{max:100,obtained:quranValue===null?0:Number(quranValue)||0,enabled:quranValue!==null},
-      Namaz:{max:100,obtained:namazValue===null?0:Number(namazValue)||0,enabled:namazValue!==null}
+      Namaz:{max:50,obtained:Math.min(50,namazValue===null?0:Number(namazValue)||0),enabled:namazValue!==null}
     }
   });
 }
